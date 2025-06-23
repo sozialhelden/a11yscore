@@ -1,4 +1,4 @@
-# ADR 3 - Scoring Algorithm Design
+# ADR 4 - Scoring Algorithm Design
 
 ## Status
 
