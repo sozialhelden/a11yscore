@@ -4,6 +4,7 @@ export default defineNitroConfig({
 	srcDir: "server",
 	preset: "bun",
 	runtimeConfig: {
+		baseUrl: "",
 		databaseUrl: "",
 	},
 });

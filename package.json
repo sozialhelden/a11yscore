@@ -7,13 +7,17 @@
 		"preview": "bun .output/server/index.mjs",
 		"format": "bunx biome format --write",
 		"lint": "bunx biome lint --write",
+		"test": "bun run test:unit",
+		"test:unit": "vitest run",
 		"postinstall": "nitro prepare",
 		"prepare": "husky"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.2",
+		"dotenv": "^17.2.0",
 		"husky": "^9.1.7",
 		"lint-staged": "^16.1.2",
-		"nitropack": "latest"
+		"nitropack": "latest",
+		"vitest": "^3.2.4"
 	}
 }
