@@ -1,0 +1,13 @@
+{
+  "name": "a11yscore",
+  "private": true,
+  "scripts": {
+    "build": "nitro build",
+    "dev": "nitro dev",
+    "preview": "bun .output/server/index.mjs",
+    "postinstall": "nitro prepare"
+  },
+  "devDependencies": {
+    "nitropack": "latest"
+  }
+}
