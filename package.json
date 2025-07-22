@@ -1,13 +1,19 @@
 {
-  "name": "a11yscore",
-  "private": true,
-  "scripts": {
-    "build": "nitro build",
-    "dev": "nitro dev",
-    "preview": "bun .output/server/index.mjs",
-    "postinstall": "nitro prepare"
-  },
-  "devDependencies": {
-    "nitropack": "latest"
-  }
+	"name": "a11yscore",
+	"private": true,
+	"scripts": {
+		"build": "nitro build",
+		"dev": "nitro dev",
+		"preview": "bun .output/server/index.mjs",
+		"format": "bunx biome format --write",
+		"lint": "bunx biome lint --write",
+		"postinstall": "nitro prepare",
+		"prepare": "husky"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.1.2",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.1.2",
+		"nitropack": "latest"
+	}
 }
