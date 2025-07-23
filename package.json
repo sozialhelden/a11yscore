@@ -8,7 +8,7 @@
 		"lint": "biome lint --write && alex -w",
 		"format": "biome format --write",
 		"test": "bun run test:unit",
-		"test:unit": "vitest run",
+		"test:unit": "bun test",
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
@@ -18,14 +18,14 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.2",
+		"@types/bun": "^1.2.19",
 		"@types/pg": "8.15.4",
 		"alex": "^11.0.1",
 		"drizzle-kit": "0.31.4",
 		"husky": "9.1.7",
 		"lint-staged": "16.1.2",
 		"nitropack": "2.12.4",
-		"tsx": "4.20.3",
-		"vitest": "3.2.4"
+		"tsx": "4.20.3"
 	},
 	"dependencies": {
 		"dotenv": "17.2.0",

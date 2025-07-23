@@ -1,4 +1,5 @@
-import { ENABLE_TASK_SCHEDULER, REDIS_URL } from "~/utils/env";
+// needs to be relative, aliases don't work
+import { ENABLE_TASK_SCHEDULER, REDIS_URL } from "./server/utils/env";
 
 //https://nitro.unjs.io/config
 export default defineNitroConfig({

@@ -37,7 +37,7 @@ export const OSM_SYNC_DATABASE_URL = `postgres://${OSM_SYNC_POSTGRES_USER}:${OSM
 const { REDIS_USER, REDIS_PASSWORD, REDIS_HOST, REDIS_PORT } = process.env;
 export const REDIS_URL = `redis://${REDIS_USER || REDIS_PASSWORD ? `${REDIS_USER}:${REDIS_PASSWORD}@` : ""}${REDIS_HOST}:${REDIS_PORT}`;
 
-export const BASE_URL = process.env.NITRO_PUBLIC_BASE_URL;
+export const BASE_URL = process.env.NITRO_BASE_URL;
 
 export const ENABLE_TASK_SCHEDULER =
 	process.env.NITRO_ENABLE_TASK_SCHEDULER === "true";

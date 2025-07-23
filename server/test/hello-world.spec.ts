@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 import { BASE_URL } from "~/utils/env";
 
 test("it displays hello world", async () => {
