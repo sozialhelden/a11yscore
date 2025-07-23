@@ -11,7 +11,9 @@ export default defineNitroConfig({
 	},
 	scheduledTasks: ENABLE_TASK_SCHEDULER && {
 		// runs at 2am every Sunday
-		"0 2 * * 7": ["calculate"],
+		// "0 2 * * 7": ["calculate"],
+		// TODO: this is testing code to see if the task scheduler works
+		"* * * * *": ["calculate"],
 	},
 	runtimeConfig: {
 		baseUrl: "",

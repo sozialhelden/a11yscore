@@ -1,8 +1,14 @@
 import { drizzle } from "drizzle-orm/node-postgres";
-import { DATABASE_URL } from "~/utils/env";
-import * as schema from "./schema";
+import * as osmSyncSchema from "~/db/schema/osm-sync";
+import * as resultsSchema from "~/db/schema/results";
+import { OSM_SYNC_DATABASE_URL, RESULTS_DATABASE_URL } from "~/utils/env";
 
-export const db = drizzle({
-	connection: DATABASE_URL,
-	schema,
+export const resultsDb = drizzle({
+	connection: RESULTS_DATABASE_URL,
+	schema: resultsSchema,
+});
+
+export const osmSyncDb = drizzle({
+	connection: OSM_SYNC_DATABASE_URL,
+	schema: osmSyncSchema,
 });
