@@ -12,6 +12,8 @@
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
+		"task:run": "nitro task run",
+		"task:list": "nitro task list",
 		"postinstall": "nitro prepare && husky"
 	},
 	"devDependencies": {

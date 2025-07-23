@@ -1,10 +1,17 @@
-import { REDIS_URL } from "~/utils/env";
+import { ENABLE_TASK_SCHEDULER, REDIS_URL } from "~/utils/env";
 
 //https://nitro.unjs.io/config
 export default defineNitroConfig({
 	compatibilityDate: "2025-07-22",
 	srcDir: "server",
 	preset: "bun",
+	experimental: {
+		tasks: ENABLE_TASK_SCHEDULER,
+	},
+	scheduledTasks: ENABLE_TASK_SCHEDULER && {
+		// runs at 2am every Sunday
+		"0 2 * * 7": ["calculate"],
+	},
 	runtimeConfig: {
 		baseUrl: "",
 	},
