@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { BASE_URL } from "~/test/utils/server";
+import { BASE_URL } from "~/utils/env";
 
 test("it displays hello world", async () => {
 	const response = await fetch(BASE_URL);

@@ -2,22 +2,32 @@
 	"name": "a11yscore",
 	"private": true,
 	"scripts": {
-		"build": "nitro build",
 		"dev": "nitro dev",
+		"build": "nitro build",
 		"preview": "bun .output/server/index.mjs",
-		"format": "bunx biome format --write",
-		"lint": "bunx biome lint --write",
+		"lint": "biome lint --write",
+		"format": "biome format --write",
 		"test": "bun run test:unit",
 		"test:unit": "vitest run",
-		"postinstall": "nitro prepare",
-		"prepare": "husky"
+		"db:push": "drizzle-kit push",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"postinstall": "nitro prepare && husky"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.2",
-		"dotenv": "^17.2.0",
-		"husky": "^9.1.7",
-		"lint-staged": "^16.1.2",
-		"nitropack": "latest",
-		"vitest": "^3.2.4"
+		"@types/pg": "8.15.4",
+		"drizzle-kit": "0.31.4",
+		"husky": "9.1.7",
+		"lint-staged": "16.1.2",
+		"nitropack": "2.12.4",
+		"tsx": "4.20.3",
+		"vitest": "3.2.4"
+	},
+	"dependencies": {
+		"dotenv": "17.2.0",
+		"drizzle-orm": "0.44.3",
+		"ioredis": "^5.6.1",
+		"pg": "8.16.3"
 	}
 }

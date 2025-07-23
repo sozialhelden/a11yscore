@@ -1,3 +1,6 @@
-export default defineEventHandler((_event) => {
-	return "Hello World!";
-});
+export default defineCachedEventHandler(
+	async (_event) => {
+		return "Hello World!";
+	},
+	{ maxAge: 60 * 60 },
+);
