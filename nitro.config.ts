@@ -7,6 +7,7 @@ export default defineNitroConfig({
 	preset: "bun",
 	experimental: {
 		tasks: ENABLE_TASK_SCHEDULER,
+		openAPI: true,
 	},
 	scheduledTasks: ENABLE_TASK_SCHEDULER && {
 		// runs at 2am every Sunday
