@@ -1,6 +1,11 @@
 FROM oven/bun:1.2.19-slim AS base
 WORKDIR /app
 
+RUN apt-get update && \
+    apt-get install -y curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 FROM base AS install
 
 # install all dependencies into tmp directory this will cache them and speed up future builds
@@ -31,3 +36,7 @@ COPY --from=build --chown=bun:bun /app/package.json .
 USER bun
 EXPOSE 3000/tcp
 CMD [ "bun", "run", "./server/index.mjs" ]
+
+# check if the app is healthy
+HEALTHCHECK --interval=10s --timeout=3s --retries=1 --start-period=10s \
+    CMD curl -f http://localhost:3000/health || exit 1
