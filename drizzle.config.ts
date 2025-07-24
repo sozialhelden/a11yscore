@@ -21,7 +21,6 @@ const ssl =
 	NITRO_DATABASE_RESULTS_SSL !== "true"
 		? false
 		: {
-				require: true,
 				rejectUnauthorized: NITRO_DATABASE_RESULTS_ALLOW_SELF_SIGNED !== "true",
 			};
 

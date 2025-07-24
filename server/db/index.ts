@@ -29,7 +29,6 @@ function getSslConfig({
 		return false;
 	}
 	return {
-		require: true,
 		rejectUnauthorized: allowSelfSigned,
 	};
 }
