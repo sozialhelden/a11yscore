@@ -6,6 +6,9 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 FROM base AS install
 
 # install all dependencies into tmp directory this will cache them and speed up future builds
@@ -40,3 +43,5 @@ CMD [ "bun", "run", "./server/index.mjs" ]
 # check if the app is healthy
 HEALTHCHECK --interval=10s --timeout=3s --retries=1 --start-period=10s \
     CMD curl -f http://localhost:3000/health || exit 1
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

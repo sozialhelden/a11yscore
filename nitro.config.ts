@@ -1,5 +1,6 @@
-// needs to be relative, aliases don't work
-import { ENABLE_TASK_SCHEDULER, REDIS_URL } from "./server/utils/env";
+import "dotenv/config";
+
+const enableTaskScheduler = process.env.NITRO_ENABLE_TASK_SCHEDULER === "true";
 
 //https://nitro.unjs.io/config
 export default defineNitroConfig({
@@ -7,10 +8,10 @@ export default defineNitroConfig({
 	srcDir: "server",
 	preset: "bun",
 	experimental: {
-		tasks: ENABLE_TASK_SCHEDULER,
+		tasks: enableTaskScheduler,
 		openAPI: true,
 	},
-	scheduledTasks: ENABLE_TASK_SCHEDULER && {
+	scheduledTasks: enableTaskScheduler && {
 		// runs at 2am every Sunday
 		// "0 2 * * 7": ["calculate"],
 		// TODO: this is testing code to see if the task scheduler works
@@ -18,17 +19,25 @@ export default defineNitroConfig({
 	},
 	runtimeConfig: {
 		baseUrl: "",
-	},
-	storage: {
-		cache: {
-			driver: "redis",
-			base: "cache",
-			url: REDIS_URL,
-		},
-		default: {
-			driver: "redis",
-			base: "default",
-			url: REDIS_URL,
+		database: {
+			results: {
+				user: "a11yscore",
+				password: "a11yscore",
+				db: "a11yscore",
+				host: "localhost",
+				port: "5432",
+				ssl: false,
+				allowSelfSigned: false,
+			},
+			osmSync: {
+				user: "imposm",
+				password: "",
+				db: "imposm",
+				host: "localhost",
+				port: "5433",
+				ssl: false,
+				allowSelfSigned: false,
+			},
 		},
 	},
 });

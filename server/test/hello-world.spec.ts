@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { BASE_URL } from "~/utils/env";
+import { BASE_URL } from "./utils/setup";
 
 test("it displays hello world", async () => {
 	const response = await fetch(BASE_URL);
