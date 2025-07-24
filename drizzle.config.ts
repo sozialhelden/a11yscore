@@ -25,13 +25,16 @@ const ssl =
 				rejectUnauthorized: NITRO_DATABASE_RESULTS_ALLOW_SELF_SIGNED !== "true",
 			};
 
-const url = `postgres://${NITRO_DATABASE_RESULTS_USER}:${NITRO_DATABASE_RESULTS_PASSWORD}@${NITRO_DATABASE_RESULTS_HOST}:${NITRO_DATABASE_RESULTS_PORT}/${NITRO_DATABASE_RESULTS_DB}`;
-
-console.log(process.env, url, ssl);
-
 export default defineConfig({
 	out: "./server/db/migrations",
 	schema: "./server/db/schema/results/index.ts",
 	dialect: "postgresql",
-	dbCredentials: { url, ssl },
+	dbCredentials: {
+		host: NITRO_DATABASE_RESULTS_HOST,
+		port: parseInt(NITRO_DATABASE_RESULTS_PORT),
+		user: NITRO_DATABASE_RESULTS_USER,
+		password: NITRO_DATABASE_RESULTS_PASSWORD,
+		database: NITRO_DATABASE_RESULTS_DB,
+		ssl,
+	},
 });
