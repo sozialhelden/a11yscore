@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import * as osmSyncSchema from "~/db/schema/osm-sync";
 import * as resultsSchema from "~/db/schema/results";
 
-function getDatabaseUrl({
+function getDatabaseCredentials({
 	user,
 	password,
 	db,
@@ -15,7 +15,7 @@ function getDatabaseUrl({
 	host: string;
 	port: string;
 }) {
-	return `postgres://${user}:${password}@${host}:${port}/${db}`;
+	return { user, password, db, host, port: parseInt(port) };
 }
 
 function getSslConfig({
@@ -33,9 +33,19 @@ function getSslConfig({
 	};
 }
 
+console.log({
+	...getDatabaseCredentials(useRuntimeConfig().database.results),
+	ssl: getSslConfig(useRuntimeConfig().database.results),
+});
+
+console.log({
+	...getDatabaseCredentials(useRuntimeConfig().database.osmSync),
+	ssl: getSslConfig(useRuntimeConfig().database.osmSync),
+});
+
 export const resultsDb = drizzle({
 	connection: {
-		connectionString: getDatabaseUrl(useRuntimeConfig().database.results),
+		...getDatabaseCredentials(useRuntimeConfig().database.results),
 		ssl: getSslConfig(useRuntimeConfig().database.results),
 	},
 	schema: resultsSchema,
@@ -43,7 +53,7 @@ export const resultsDb = drizzle({
 
 export const osmSyncDb = drizzle({
 	connection: {
-		connectionString: getDatabaseUrl(useRuntimeConfig().database.osmSync),
+		...getDatabaseCredentials(useRuntimeConfig().database.osmSync),
 		ssl: getSslConfig(useRuntimeConfig().database.osmSync),
 	},
 	schema: osmSyncSchema,
