@@ -13,7 +13,9 @@ export const resultsDb = drizzle({
 export const osmSyncDb = drizzle({
 	connection: {
 		connectionString: OSM_SYNC_DATABASE_URL,
-		ssl: true,
+		ssl: {
+			rejectUnauthorized: false,
+		},
 	},
 	schema: osmSyncSchema,
 });
