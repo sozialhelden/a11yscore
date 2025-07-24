@@ -28,12 +28,10 @@ function getSslConfig({
 	if (!ssl) {
 		return false;
 	}
-	if (allowSelfSigned) {
-		return {
-			rejectUnauthorized: false,
-		};
-	}
-	return true;
+	return {
+		require: true,
+		rejectUnauthorized: allowSelfSigned,
+	};
 }
 
 export const resultsDb = drizzle({

@@ -20,11 +20,10 @@ const {
 const ssl =
 	NITRO_DATABASE_RESULTS_SSL !== "true"
 		? false
-		: NITRO_DATABASE_RESULTS_ALLOW_SELF_SIGNED === "true"
-			? {
-					rejectUnauthorized: false,
-				}
-			: true;
+		: {
+				require: true,
+				rejectUnauthorized: NITRO_DATABASE_RESULTS_ALLOW_SELF_SIGNED !== "true",
+			};
 
 const url = `postgres://${NITRO_DATABASE_RESULTS_USER}:${NITRO_DATABASE_RESULTS_PASSWORD}@${NITRO_DATABASE_RESULTS_HOST}:${NITRO_DATABASE_RESULTS_PORT}/${NITRO_DATABASE_RESULTS_DB}`;
 
