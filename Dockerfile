@@ -35,6 +35,8 @@ COPY --from=install --chown=bun:bun /tmp/prod/node_modules node_modules
 COPY --from=build --chown=bun:bun /app/.output .
 COPY --from=build --chown=bun:bun /app/package.json .
 COPY --from=build --chown=bun:bun /app/drizzle.config.ts .
+COPY --from=build --chown=bun:bun /app/server/db/migrations ./server/db/migrations
+COPY --from=build --chown=bun:bun /app/server/db/schema/results ./server/db/schema/results
 
 # run the app
 USER bun
