@@ -29,19 +29,9 @@ function getSslConfig({
 		return false;
 	}
 	return {
-		rejectUnauthorized: allowSelfSigned,
+		rejectUnauthorized: !allowSelfSigned,
 	};
 }
-
-console.log({
-	...getDatabaseCredentials(useRuntimeConfig().database.results),
-	ssl: getSslConfig(useRuntimeConfig().database.results),
-});
-
-console.log({
-	...getDatabaseCredentials(useRuntimeConfig().database.osmSync),
-	ssl: getSslConfig(useRuntimeConfig().database.osmSync),
-});
 
 export const resultsDb = drizzle({
 	connection: {
