@@ -4,11 +4,16 @@ import * as resultsSchema from "~/db/schema/results";
 import { OSM_SYNC_DATABASE_URL, RESULTS_DATABASE_URL } from "~/utils/env";
 
 export const resultsDb = drizzle({
-	connection: RESULTS_DATABASE_URL,
+	connection: {
+		connectionString: RESULTS_DATABASE_URL,
+	},
 	schema: resultsSchema,
 });
 
 export const osmSyncDb = drizzle({
-	connection: OSM_SYNC_DATABASE_URL,
+	connection: {
+		connectionString: OSM_SYNC_DATABASE_URL,
+		ssl: true,
+	},
 	schema: osmSyncSchema,
 });
