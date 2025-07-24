@@ -6,6 +6,9 @@ import { OSM_SYNC_DATABASE_URL, RESULTS_DATABASE_URL } from "~/utils/env";
 export const resultsDb = drizzle({
 	connection: {
 		connectionString: RESULTS_DATABASE_URL,
+		ssl: {
+			rejectUnauthorized: false,
+		},
 	},
 	schema: resultsSchema,
 });
