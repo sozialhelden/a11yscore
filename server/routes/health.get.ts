@@ -1,24 +1,25 @@
-import { osmSyncDb, resultsDb } from "~/db";
+import { appDb, osmSyncDb } from "~/db";
+import { results } from "~/db/schema/app";
 import { osm_amenities } from "~/db/schema/osm-sync";
-import { results } from "~/db/schema/results";
 
 export default defineEventHandler(async (_event) => {
-	// TODO: enable again after initial deployment
-	// try {
-	// 	await useStorage().set("health", "ok");
-	// 	await resultsDb.select({ id: results.id }).from(results).limit(1);
-	// 	await osmSyncDb
-	// 		.select({ id: osm_amenities.id })
-	// 		.from(osm_amenities)
-	// 		.limit(1);
-	// } catch (_error) {
-	// 	console.error("Healthcheck failed:", _error);
-	// 	throw createError({
-	// 		status: 500,
-	// 		statusMessage: "Server error",
-	// 		message: "Service is not healthy",
-	// 	});
-	// }
-
+	try {
+		// test the kv-storage
+		await useStorage().set("health", "ok");
+		// test the app db
+		await appDb.select({ id: results.id }).from(results).limit(1);
+		// test the osm-sync db
+		await osmSyncDb
+			.select({ id: osm_amenities.id })
+			.from(osm_amenities)
+			.limit(1);
+	} catch (_error) {
+		console.error("Healthcheck failed:", _error);
+		throw createError({
+			status: 500,
+			statusMessage: "Server error",
+			message: "Service is not healthy",
+		});
+	}
 	return { healthy: true };
 });

@@ -1,11 +1,11 @@
-import { resultsDb } from "~/db";
-import { results } from "~/db/schema/results";
+import { appDb } from "~/db";
+import { results } from "~/db/schema/app";
 
 // TODO: this is testing code to see if the results database connection works
 export default defineEventHandler(async (_event) => {
-	const count = await resultsDb.$count(results);
+	const count = await appDb.$count(results);
 	if (count === 0) {
-		await resultsDb.insert(results).values({});
+		await appDb.insert(results).values({});
 	}
-	return await resultsDb.query.results.findFirst();
+	return await appDb.query.results.findFirst();
 });

@@ -1,50 +1,44 @@
 import { drizzle } from "drizzle-orm/node-postgres";
+import * as appSchema from "~/db/schema/app";
 import * as osmSyncSchema from "~/db/schema/osm-sync";
-import * as resultsSchema from "~/db/schema/results";
 
-function getDatabaseCredentials({
+function getConnection({
 	user,
 	password,
 	db,
 	host,
 	port,
+	ssl,
+	allowSelfSigned,
 }: {
 	user: string;
 	password: string;
 	db: string;
 	host: string;
 	port: string;
-}) {
-	return { user, password, db, host, port: parseInt(port) };
-}
-
-function getSslConfig({
-	ssl,
-	allowSelfSigned,
-}: {
 	ssl: boolean;
 	allowSelfSigned: boolean;
 }) {
-	if (!ssl) {
-		return false;
-	}
 	return {
-		rejectUnauthorized: !allowSelfSigned,
+		user,
+		password,
+		db,
+		host,
+		port: parseInt(port),
+		// if you want to connect to the database with an encrypted connection, the ssl options must
+		// either be `true` or an object with additional ssl options. in this case, we pass an object
+		// with the rejectUnauthorized options. when rejectUnauthorized is true, it will reject
+		// self-signed certificates. so in order to allow self-signed certificates, we set it to false.
+		ssl: ssl && { rejectUnauthorized: !allowSelfSigned },
 	};
 }
 
-export const resultsDb = drizzle({
-	connection: {
-		...getDatabaseCredentials(useRuntimeConfig().database.results),
-		ssl: getSslConfig(useRuntimeConfig().database.results),
-	},
-	schema: resultsSchema,
+export const appDb = drizzle({
+	connection: getConnection(useRuntimeConfig().database.app),
+	schema: appSchema,
 });
 
 export const osmSyncDb = drizzle({
-	connection: {
-		...getDatabaseCredentials(useRuntimeConfig().database.osmSync),
-		ssl: getSslConfig(useRuntimeConfig().database.osmSync),
-	},
+	connection: getConnection(useRuntimeConfig().database.osmSync),
 	schema: osmSyncSchema,
 });

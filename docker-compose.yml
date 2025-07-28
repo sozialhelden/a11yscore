@@ -8,9 +8,9 @@ services:
       - postgres-data:/var/lib/postgresql/data
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_USER: $RESULTS_POSTGRES_USER
-      POSTGRES_PASSWORD: $RESULTS_POSTGRES_PASSWORD
-      POSTGRES_DB: $RESULTS_POSTGRES_DB
+      POSTGRES_USER: $NITRO_DATABASE_APP_USER
+      POSTGRES_PASSWORD: $NITRO_DATABASE_APP_PASSWORD
+      POSTGRES_DB: $NITRO_DATABASE_APP_DB
     ports:
       - 5432:5432
 

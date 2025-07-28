@@ -20,7 +20,7 @@ export default defineNitroConfig({
 	runtimeConfig: {
 		baseUrl: "",
 		database: {
-			results: {
+			app: {
 				user: "a11yscore",
 				password: "a11yscore",
 				db: "a11yscore",
