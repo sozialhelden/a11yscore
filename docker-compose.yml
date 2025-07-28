@@ -1,0 +1,18 @@
+services:
+
+  database:
+    image: postgis/postgis:17-3.5
+    platform: linux/amd64
+    shm_size: 128mb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: $NITRO_DATABASE_APP_USER
+      POSTGRES_PASSWORD: $NITRO_DATABASE_APP_PASSWORD
+      POSTGRES_DB: $NITRO_DATABASE_APP_DB
+    ports:
+      - 5432:5432
+
+volumes:
+  postgres-data:
