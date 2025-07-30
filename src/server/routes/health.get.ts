@@ -13,8 +13,8 @@ export default defineEventHandler(async (_event) => {
 			.select({ id: osm_amenities.id })
 			.from(osm_amenities)
 			.limit(1);
-	} catch (_error) {
-		console.error("Healthcheck failed:", _error);
+	} catch (error) {
+		console.error("Healthcheck failed:", error);
 		throw createError({
 			status: 500,
 			statusMessage: "Server error",

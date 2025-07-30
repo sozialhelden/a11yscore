@@ -25,8 +25,8 @@ const ssl =
 			};
 
 export default defineConfig({
-	out: "./server/db/migrations",
-	schema: "./server/db/schema/app/index.ts",
+	out: "./src/server/db/migrations",
+	schema: "./src/server/db/schema/app/index.ts",
 	dialect: "postgresql",
 	dbCredentials: {
 		host: NITRO_DATABASE_APP_HOST,
