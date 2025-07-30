@@ -15,12 +15,12 @@ As established in ADR 3, the algorithm breaks down the accessibility of the phys
 
 Each criterium directly corresponds to a calculation based on OSM tags and their values - for now - and translates into a numeric single score of integer values (points).
 
-A score of 100 points for a criterium means, we consider a place to be fully accessible for that specific criterium. However, we include the possibility to have a score of more than 100 points in order to be able to reward outstanding efforts if special features are present, e.g. "Changing Place" toilets.
+A score of 100 points for a criterium means, we consider a place to be fully accessible for that specific criterium. However, we include the possibility to have a score of more than 100 points in order to be able to reward outstanding efforts if rare features are present, e.g. "Changing Place" toilets.
 
 Depending on the nature of the OSM tags used, the scores of single places/geometries within a criterium will be averaged. We choose either median (in case of counts that should not be sensitive to outliers) or arithmetic mean (in case of lengths, areas or outlier sensitive counts) for averaging.
 
 #### Selection
-For the first version of the score we will focus only on existing OSM tags and only on those that can be translated into numeric values in a straightforward way. For example, we will use the "wheelchair" and the "blind" tag since their values can only be "yes", "limited", "no", if tagged correctly. The strings can then be translated into points, e.g. yes => 100 points, limited => 50 points, no => 10 points.
+For the first version of the score we will focus only on existing OSM tags and only on those that can be more or less directly translated into numeric values. For example, we will use the "wheelchair" and the "blind" tag since their values can only be "yes", "limited", "no", if tagged correctly. The strings can then be translated into points, e.g. yes => 100 points, limited => 50 points, no => 10 points.
 
 > [!NOTE]
 > This incentivizes the mere presence of a tag by giving at least some positive number of points for each value. Zero points will be given if a tag is missing entirely or tagged wrongly.
