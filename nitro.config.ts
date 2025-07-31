@@ -16,7 +16,7 @@ export default defineNitroConfig({
 		"0 2 * * 7": ["calculate"],
 	},
 	runtimeConfig: {
-		baseUrl: "",
+		env: process.env.NODE_ENV || "production",
 		database: {
 			app: {
 				user: "a11yscore",
