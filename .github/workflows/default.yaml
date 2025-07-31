@@ -1,4 +1,4 @@
-name: Tests
+name: ci
 on:
   pull_request:
   merge_group:
@@ -21,7 +21,48 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run test:unit
-      - run: bun run test:e2e
+      - id: get_deployment_url
+        name: Wait for deployment and get URL
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PR_SHA: ${{ github.event.after }}
+        run: |
+          COUNTER=0
+          DEPLOYED=false
+          
+          while [ "$DEPLOYED" = "false" ]; do
+            sleep 20
+            ((COUNTER=COUNTER+1))
+          
+            DEPLOYMENT=$(\
+              curl -L -s \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/repos/$GITHUB_REPOSITORY/commits/$GITHUB_PR_SHA/status \
+              | jq '.statuses[] | select(.context == "argo / deployment") | .' \
+            )
+            STATUS=$(echo "$DEPLOYMENT" | jq -r '.state')
+            TARGET_URL=$(echo "$DEPLOYMENT" | jq -r '.target_url')
+          
+            if [ "$STATUS" = "success" ]; then
+              echo "Deployment was successful: $TARGET_URL"
+              echo "url=$TARGET_URL" >> $GITHUB_OUTPUT
+              DEPLOYED=true
+            else
+              echo "Deployment status: $STATUS - checking again in 20 seconds..."
+            fi
+          
+            if [ $COUNTER -gt 30 ]; then
+              echo "Deployment did not succeed after 10 minutes, exiting."
+              exit 1
+            fi
+          done
+      - env:
+          NITRO_TEST_BASE_URL: ${{ steps.get_deployment_url.outputs.url }}
+        run: bun run test:e2e
+
 
   build:
     runs-on: ubuntu-latest
