@@ -48,6 +48,16 @@ export type TopLevelCategory = {
 	 */
 	sustainableDevelopmentGoals: Readonly<SustainableDevelopmentGoalId[]>;
 	/**
+	 * An optional description of this top-level category, explaining its relevance.
+	 * It should also be used to explain the reasoning behind the individual weight.
+	 * Make sure to use the `t` function to translate the description.
+	 * @example
+	 * ```
+	 * () => t("This sub-category is important because...")
+	 * ```
+	 */
+	reason?: () => string;
+	/**
 	 * A numeric weight that indicates the importance of this category in relation to
 	 * other top-level categories. Ideally, the weights of all top-level categories should
 	 * sum up to 1.
