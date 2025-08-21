@@ -15,6 +15,9 @@ export default defineNitroConfig({
 		// runs at 2am every Sunday
 		"0 2 * * 7": ["calculate"],
 	},
+	routeRules: {
+		"/v1/**": { cors: true },
+	},
 	runtimeConfig: {
 		env: process.env.NODE_ENV || "production",
 		database: {
