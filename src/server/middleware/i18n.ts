@@ -23,11 +23,9 @@ export default defineEventHandler(async (event) => {
 	try {
 		await tx.setCurrentLocale(languageTag);
 	} catch (error) {
+		// When Transifex is down, setting the locale (and downloading the translations)
+		// will fail. We'd rather show an untranslated page than a completely one in this
+		// case, that's why we catch the error here and just go on with the default.
 		console.error("Could not set Transifex locale:", error);
-		// throw createError({
-		// 	status: 500,
-		// 	statusMessage: "Server error",
-		// 	message: "Could not set Transifex locale",
-		// });
 	}
 });
