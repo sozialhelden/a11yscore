@@ -1,10 +1,35 @@
 import { sql } from "drizzle-orm";
 import { osm_amenities } from "~/db/schema/osm-sync";
 import { t } from "~/plugins/i18n";
-import type { SubCategory } from "~~/src/score/categories/index";
+import type {
+	SubCategory,
+	TopLevelCategory,
+} from "~~/src/score/categories/index";
+
+/*
+ * top-level category
+ */
+
+export type FoodAndDrinksTopLevelCategoryId = "food-and-drinks";
+export const foodAndDrinksTopLevelCategory: ({
+	weight,
+}: {
+	weight: number;
+}) => Record<FoodAndDrinksTopLevelCategoryId, Omit<TopLevelCategory, "id">> = ({
+	weight,
+}) => ({
+	"food-and-drinks": {
+		name: () => t("Food and Drinks"),
+		sustainableDevelopmentGoals: [2, 12, 13, 14],
+		weight,
+	},
+});
+
+/*
+ * sub categories
+ */
 
 export type FoodAndDrinksSubCategoryId = "restaurants" | "cafes";
-
 export const foodAndDrinksSubCategories: Record<
 	FoodAndDrinksSubCategoryId,
 	Omit<SubCategory, "id">
