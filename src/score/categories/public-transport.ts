@@ -1,10 +1,34 @@
 import { sql } from "drizzle-orm";
 import { osm_amenities } from "~/db/schema/osm-sync";
 import { t } from "~/plugins/i18n";
-import type { SubCategory } from "~~/src/score/categories/index";
+import type {
+	SubCategory,
+	TopLevelCategory,
+} from "~~/src/score/categories/index";
+
+/*
+ * top-level category
+ */
+
+export type PublicTransportTopLevelCategoryId = "public-transport";
+export const publicTransportTopLevelCategory: ({
+	weight,
+}: {
+	weight: number;
+}) => Record<PublicTransportTopLevelCategoryId, Omit<TopLevelCategory, "id">> =
+	({ weight }) => ({
+		"public-transport": {
+			name: () => t("Public Transport"),
+			sustainableDevelopmentGoals: [9, 13, 15, 16],
+			weight,
+		},
+	});
+
+/*
+ * sub categories
+ */
 
 export type PublicTransportSubCategoryId = "train-stations";
-
 export const publicTransportSubCategories: Record<
 	PublicTransportSubCategoryId,
 	Omit<SubCategory, "id">

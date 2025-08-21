@@ -1,20 +1,25 @@
 import type { SQL } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
-import { t } from "~/plugins/i18n";
 import {
 	type FoodAndDrinksSubCategoryId,
+	type FoodAndDrinksTopLevelCategoryId,
 	foodAndDrinksSubCategories,
+	foodAndDrinksTopLevelCategory,
 } from "~~/src/score/categories/food-and-drinks";
 import {
 	type PublicTransportSubCategoryId,
+	type PublicTransportTopLevelCategoryId,
 	publicTransportSubCategories,
+	publicTransportTopLevelCategory,
 } from "~~/src/score/categories/public-transport";
 import type { CriteriaId } from "~~/src/score/criteria";
 import type { SustainableDevelopmentGoalId } from "~~/src/score/sdgs";
 import type { TopicId } from "~~/src/score/topics";
 import { addIdToConfigEntries } from "~~/src/score/utils/config";
 
-export type TopLevelCategoryId = "food-and-drinks" | "public-transport";
+export type TopLevelCategoryId =
+	| FoodAndDrinksTopLevelCategoryId
+	| PublicTransportTopLevelCategoryId;
 
 export type SubCategoryId =
 	| FoodAndDrinksSubCategoryId
@@ -220,16 +225,8 @@ const configuredTopLevelCategories: Record<
 	TopLevelCategoryId,
 	Omit<TopLevelCategory, "id">
 > = {
-	"food-and-drinks": {
-		name: () => t("Food and Drinks"),
-		sustainableDevelopmentGoals: [2, 12, 13, 14],
-		weight: 0.6,
-	},
-	"public-transport": {
-		name: () => t("Public Transport"),
-		sustainableDevelopmentGoals: [9, 13, 15, 16],
-		weight: 0.4,
-	},
+	...foodAndDrinksTopLevelCategory({ weight: 0.6 }),
+	...publicTransportTopLevelCategory({ weight: 0.4 }),
 };
 
 const configuredSubCategories: Record<
