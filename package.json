@@ -24,7 +24,7 @@
 		"husky": "9.1.7",
 		"lint-staged": "16.1.2",
 		"nitropack": "2.12.4",
-		"tsx": "4.20.3"
+		"tsx": "4.20.5"
 	},
 	"dependencies": {
 		"dotenv": "17.2.1",
