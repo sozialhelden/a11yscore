@@ -1,20 +1,20 @@
 import type { SQL } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 import {
-	type ClimateCriteriaId,
+	type ClimateCriterionId,
 	climateCriteria,
 } from "~~/src/score/criteria/climate";
 import {
-	type WheelchairCriteriaId,
+	type WheelchairCriterionId,
 	wheelchairCriteria,
 } from "~~/src/score/criteria/wheelchair";
 import { addIdToConfigEntries } from "~~/src/score/utils/config";
 
-export type CriteriaId = WheelchairCriteriaId | ClimateCriteriaId;
+export type CriterionId = WheelchairCriterionId | ClimateCriterionId;
 
-export type CriteriaProperties = {
+export type CriterionProperties = {
 	/**
-	 * The name of the criterium, used for display purposes.
+	 * The name of the criterion, used for display purposes.
 	 * Make sure to use the `t` function to translate it.
 	 * @example
 	 * ```
@@ -23,7 +23,7 @@ export type CriteriaProperties = {
 	 */
 	name: () => string;
 	/**
-	 * Links to resources that explain this criterium in more detail.
+	 * Links to resources that explain this criterion in more detail.
 	 * E.g. links to the OSM wiki of the relevant tags.
 	 * @example
 	 * ```
@@ -32,7 +32,7 @@ export type CriteriaProperties = {
 	 */
 	resources?: `${"http://" | "https://"}${string}`[];
 	/**
-	 * SQL clause that calculates the score for this criterium. This
+	 * SQL clause that calculates the score for this criterion. This
 	 * will be embedded into a SELECT clause and aliased, so skip the
 	 * `SELECT` and `AS` parts. A score of 100 points is considered
 	 * fully accessible. A score higher than 100 is possible, but should
@@ -48,15 +48,15 @@ export type CriteriaProperties = {
 	sql: (table: PgTableWithColumns<any>) => SQL;
 };
 
-const configuredCriteria: Record<CriteriaId, CriteriaProperties> = {
+const configuredCriteria: Record<CriterionId, CriterionProperties> = {
 	...wheelchairCriteria,
 	...climateCriteria,
 };
 
-export type Criteria = CriteriaProperties & {
-	id: CriteriaId;
+export type Criterion = CriterionProperties & {
+	id: CriterionId;
 };
-export const criteria: Record<CriteriaId, Criteria> = addIdToConfigEntries<
-	CriteriaId,
-	CriteriaProperties
+export const criteria: Record<CriterionId, Criterion> = addIdToConfigEntries<
+	CriterionId,
+	CriterionProperties
 >(configuredCriteria);

@@ -12,7 +12,7 @@ import {
 	publicTransportSubCategories,
 	publicTransportTopLevelCategory,
 } from "~~/src/score/categories/public-transport";
-import type { CriteriaId } from "~~/src/score/criteria";
+import type { CriterionId } from "~~/src/score/criteria";
 import type { SustainableDevelopmentGoalId } from "~~/src/score/sdgs";
 import type { TopicId } from "~~/src/score/topics";
 import { addIdToConfigEntries } from "~~/src/score/utils/config";
@@ -190,15 +190,15 @@ export type SubCategory = {
 		 */
 		criteria: Array<{
 			/**
-			 * The ID of the criteria.
+			 * The ID of the criterion.
 			 * @example
 			 * ```
 			 * "is-wheelchair-accessible"
 			 * ```
 			 */
-			criteriaId: CriteriaId;
+			criterionId: CriterionId;
 			/**
-			 * A numeric weight, that indicates the importance of this criterium
+			 * A numeric weight, that indicates the importance of this criterion
 			 * within the topic for this category. Ideally, all weights in this topic
 			 * should sum up to 1.
 			 * @example
@@ -208,7 +208,7 @@ export type SubCategory = {
 			 */
 			weight: number;
 			/**
-			 * An optional description why this criterium is relevant for this topic
+			 * An optional description why this criterion is relevant for this topic
 			 * in this category. It should also be used to explain the reasoning
 			 * behind the individual weight.
 			 * @example

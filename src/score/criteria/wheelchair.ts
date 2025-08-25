@@ -1,14 +1,14 @@
 import { sql } from "drizzle-orm";
 import { t } from "~/plugins/i18n";
-import type { CriteriaProperties } from "~~/src/score/criteria/index";
+import type { CriterionProperties } from "~~/src/score/criteria/index";
 
-export type WheelchairCriteriaId =
+export type WheelchairCriterionId =
 	| "is-wheelchair-accessible"
 	| "has-wheelchair-accessible-toilet";
 
 export const wheelchairCriteria: Record<
-	WheelchairCriteriaId,
-	CriteriaProperties
+	WheelchairCriterionId,
+	CriterionProperties
 > = {
 	"is-wheelchair-accessible": {
 		name: () => t("Is accessible with wheelchair"),

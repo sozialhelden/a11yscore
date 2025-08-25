@@ -49,12 +49,12 @@ export const foodAndDrinksSubCategories: Record<
 				topicId: "mobility",
 				criteria: [
 					{
-						criteriaId: "is-wheelchair-accessible",
+						criterionId: "is-wheelchair-accessible",
 						weight: 0.8,
 						reason: () => "",
 					},
 					{
-						criteriaId: "has-wheelchair-accessible-toilet",
+						criterionId: "has-wheelchair-accessible-toilet",
 						weight: 0.2,
 						reason: () => "",
 					},
@@ -64,12 +64,12 @@ export const foodAndDrinksSubCategories: Record<
 				topicId: "air-and-climate",
 				criteria: [
 					{
-						criteriaId: "smoking-is-prohibited",
+						criterionId: "smoking-is-prohibited",
 						weight: 0.7,
 						reason: () => "",
 					},
 					{
-						criteriaId: "has-air-conditioning",
+						criterionId: "has-air-conditioning",
 						weight: 0.3,
 						reason: () => "",
 					},
@@ -92,12 +92,12 @@ export const foodAndDrinksSubCategories: Record<
 				topicId: "mobility",
 				criteria: [
 					{
-						criteriaId: "is-wheelchair-accessible",
+						criterionId: "is-wheelchair-accessible",
 						weight: 0.8,
 						reason: () => "",
 					},
 					{
-						criteriaId: "has-wheelchair-accessible-toilet",
+						criterionId: "has-wheelchair-accessible-toilet",
 						weight: 0.2,
 						reason: () => "",
 					},

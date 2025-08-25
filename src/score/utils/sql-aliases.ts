@@ -3,11 +3,11 @@ import type {
 	SubCategoryId,
 	TopLevelCategoryId,
 } from "~~/src/score/categories";
-import type { CriteriaId } from "~~/src/score/criteria";
+import type { CriterionId } from "~~/src/score/criteria";
 import type { TopicId } from "~~/src/score/topics";
 
 // there is a limit on column name length, so we keep it as compact as possible
-// "c" - prefix = criteria score
+// "c" - prefix = criterion score
 // "t" - prefix = topic score
 // "sc" - prefix = sub category score
 // "tc" - prefix = top level category score
@@ -16,13 +16,13 @@ export function escapeTableOrColumnAlias(alias: string): SQL {
 	return sql.raw(`"${alias.replace(/"/g, "")}"`);
 }
 
-export function getCriteriaScoreAlias(
+export function getCriterionScoreAlias(
 	subCategoryId: SubCategoryId,
 	topicId: TopicId,
-	criteriaId: CriteriaId,
+	criterionId: CriterionId,
 ): SQL {
 	return escapeTableOrColumnAlias(
-		`c/${subCategoryId}/${topicId}/${criteriaId}`,
+		`c/${subCategoryId}/${topicId}/${criterionId}`,
 	);
 }
 
@@ -47,8 +47,8 @@ export function getCombinedScoreAlias(): SQL {
 	return escapeTableOrColumnAlias("score");
 }
 
-export function getCriteriaSubSelectAlias(subCategoryId: SubCategoryId): SQL {
-	return escapeTableOrColumnAlias(`criteria-scores__${subCategoryId}`);
+export function getCriterionSubSelectAlias(subCategoryId: SubCategoryId): SQL {
+	return escapeTableOrColumnAlias(`criterion-scores__${subCategoryId}`);
 }
 
 export function getTopicSubSelectAlias(subCategoryId: SubCategoryId): SQL {

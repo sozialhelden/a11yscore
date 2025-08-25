@@ -8,8 +8,8 @@ import { criteria } from "~~/src/score/criteria";
 import { getChildCategories } from "~~/src/score/utils/categories";
 import {
 	getCombinedScoreAlias,
-	getCriteriaScoreAlias,
-	getCriteriaSubSelectAlias,
+	getCriterionScoreAlias,
+	getCriterionSubSelectAlias,
 	getSubCategoryScoreAlias,
 	getSubCategorySubSelectAlias,
 	getTopicScoreAlias,
@@ -38,14 +38,14 @@ export function getCriteriaSelectClauses(subCategory: SubCategory): SQL[] {
 	const selects: SQL[] = [];
 
 	for (const { topicId, criteria: criteriaList } of subCategory.topics) {
-		for (const { criteriaId } of criteriaList) {
-			const criteriaAlias = getCriteriaScoreAlias(
+		for (const { criterionId } of criteriaList) {
+			const criteriaAlias = getCriterionScoreAlias(
 				subCategory.id,
 				topicId,
-				criteriaId,
+				criterionId,
 			);
 			selects.push(
-				sql`CEIL(${criteria[criteriaId].sql(subCategory.sql.from)}) AS ${criteriaAlias}`,
+				sql`CEIL(${criteria[criterionId].sql(subCategory.sql.from)}) AS ${criteriaAlias}`,
 			);
 		}
 	}
@@ -79,17 +79,17 @@ export function getCriteriaSelectClauses(subCategory: SubCategory): SQL[] {
  * ```
  */
 export function getTopicSelectClauses(subCategory: SubCategory): SQL[] {
-	const criteriaSubSelectAlias = getCriteriaSubSelectAlias(subCategory.id);
+	const criteriaSubSelectAlias = getCriterionSubSelectAlias(subCategory.id);
 	const selects: SQL[] = [sql`${criteriaSubSelectAlias}.*`];
 
 	for (const { topicId, criteria: criteriaList } of subCategory.topics) {
 		const topicAlias = getTopicScoreAlias(subCategory.id, topicId);
 		const criteriaWeights: SQL[] = [];
-		for (const { criteriaId, weight } of criteriaList) {
-			const criteriaAlias = getCriteriaScoreAlias(
+		for (const { criterionId, weight } of criteriaList) {
+			const criteriaAlias = getCriterionScoreAlias(
 				subCategory.id,
 				topicId,
-				criteriaId,
+				criterionId,
 			);
 			criteriaWeights.push(
 				sql`${sql.raw(String(weight))} * ${criteriaSubSelectAlias}.${criteriaAlias}`,
