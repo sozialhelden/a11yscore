@@ -13,11 +13,11 @@ Open Street Map as our primary data source offers a wide range of information on
 #### Scoring
 As established in ADR 3, the algorithm breaks down the accessibility of the physical world using a tree of _categories_ (e.g. food & drinks), where each _sub-category_ (e.g. restaurant) has a list of _criteria_ (e.g. wheelchair-accessible) grouped into _topics_ (.e.g. mobility). 
 
-Each criterium directly corresponds to a calculation based on OSM tags and their values - for now - and translates into a numeric single score of integer values (points).
+Each criterion directly corresponds to a calculation based on OSM tags and their values - for now - and translates into a numeric single score of integer values (points).
 
-A score of 100 points for a criterium means, we consider a place to be fully accessible for that specific criterium. However, we include the possibility to have a score of more than 100 points in order to be able to reward outstanding efforts if rare features are present, e.g. "Changing Place" toilets.
+A score of 100 points for a criterion means, we consider a place to be fully accessible for that specific criterion. However, we include the possibility to have a score of more than 100 points in order to be able to reward outstanding efforts if rare features are present, e.g. "Changing Place" toilets.
 
-Depending on the nature of the OSM tags used, the scores of single places/geometries within a criterium will be averaged. We choose either median (in case of counts that should not be sensitive to outliers) or arithmetic mean (in case of lengths, areas or outlier sensitive counts) for averaging.
+Depending on the nature of the OSM tags used, the scores of single places/geometries within a criterion will be averaged. We choose either median (in case of counts that should not be sensitive to outliers) or arithmetic mean (in case of lengths, areas or outlier sensitive counts) for averaging.
 
 #### Selection
 For the first version of the score we will focus only on existing OSM tags and only on those that can be more or less directly translated into numeric values. For example, we will use the "wheelchair" and the "blind" tag since their values can only be "yes", "limited", "no", if tagged correctly. The strings can then be translated into points, e.g. yes => 100 points, limited => 50 points, no => 10 points.
@@ -29,7 +29,7 @@ For the first version of the score we will focus only on existing OSM tags and o
 > For the first version we will omit tags for which scoring is more complex, e.g. entrances since they require bundling of multiple semantically overlapping tags, or surfaces since they require computation of areas.
 
 ### Topic Score
-All individual criteria scores within a topic for a given category will be aggregated into a single topic score. This will be done by applying weights to each individual criterium within a given topic. For example: in the "mobility" topic, the "wheelchair-accessibility" criterium should probably be weighted more heavily than the "accepts-credit-cards" criterium.
+All individual criteria scores within a topic for a given category will be aggregated into a single topic score. This will be done by applying weights to each individual criterion within a given topic. For example: in the "mobility" topic, the "wheelchair-accessibility" criterion should probably be weighted more heavily than the "accepts-credit-cards" criterion.
 
 ### Sub-Category Score
 To compute the sub-category score, all individual topic scores will be determined and averaged. Since the topics correspond to different groups of accessibility needs, there will be no weighing factors applied for averaging.

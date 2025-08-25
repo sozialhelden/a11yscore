@@ -6,7 +6,7 @@ import {
 } from "~~/src/score/categories";
 import { getChildCategories } from "~~/src/score/utils/categories";
 import {
-	getCriteriaSubSelectAlias,
+	getCriterionSubSelectAlias,
 	getSubCategorySubSelectAlias,
 	getTopicSubSelectAlias,
 	getTopLevelCategorySubSelectAlias,
@@ -106,7 +106,7 @@ export function getTopicSubSelect({
 		where,
 		groupBy,
 	});
-	const criteriaSubSelectAlias = getCriteriaSubSelectAlias(subCategory.id);
+	const criteriaSubSelectAlias = getCriterionSubSelectAlias(subCategory.id);
 	const selects = getTopicSelectClauses(subCategory);
 
 	return sql`

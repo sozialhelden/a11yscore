@@ -48,7 +48,7 @@ export const publicTransportSubCategories: Record<
 				topicId: "mobility",
 				criteria: [
 					{
-						criteriaId: "is-wheelchair-accessible",
+						criterionId: "is-wheelchair-accessible",
 						weight: 1,
 						reason: () => "",
 					},
