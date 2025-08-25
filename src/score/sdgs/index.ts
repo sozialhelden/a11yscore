@@ -1,24 +1,8 @@
+import type { IntRange } from "type-fest";
 import { t } from "~/plugins/i18n";
 import { addIdToConfigEntries } from "~~/src/score/utils/config";
 
-export type SustainableDevelopmentGoalId =
-	| 1
-	| 2
-	| 3
-	| 4
-	| 5
-	| 6
-	| 7
-	| 8
-	| 9
-	| 10
-	| 11
-	| 12
-	| 13
-	| 14
-	| 15
-	| 16
-	| 17;
+export type SustainableDevelopmentGoalId = IntRange<1, 18>;
 
 type SustainableDevelopmentGoalProperties = {
 	name: () => string;
