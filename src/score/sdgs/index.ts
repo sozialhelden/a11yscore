@@ -1,5 +1,5 @@
 import type { IntRange } from "type-fest";
-import { t } from "~/plugins/i18n";
+import { t } from "~/utils/i18n";
 import { addIdToConfigEntries } from "~~/src/score/utils/config";
 
 export type SustainableDevelopmentGoalId = IntRange<1, 18>;

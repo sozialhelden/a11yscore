@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { t } from "~/plugins/i18n";
+import { t } from "~/utils/i18n";
 import type { CriterionProperties } from "~~/src/score/criteria/index";
 
 export type ClimateCriterionId =

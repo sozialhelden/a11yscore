@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { osm_amenities } from "~/db/schema/osm-sync";
-import { t } from "~/plugins/i18n";
+import { t } from "~/utils/i18n";
 import type {
 	SubCategory,
 	TopLevelCategory,
