@@ -1,4 +1,4 @@
-import { t } from "~/plugins/i18n";
+import { t } from "~/utils/i18n";
 import { addIdToConfigEntries } from "~~/src/score/utils/config";
 
 export type TopicId =

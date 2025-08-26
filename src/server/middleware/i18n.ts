@@ -3,7 +3,8 @@ import {
 	getILanguageTagsFromAcceptLanguageHeader,
 	getMostPreferableLanguageTag,
 } from "@sozialhelden/core";
-import { tx } from "~/plugins/i18n";
+
+import { tx } from "~/utils/i18n";
 
 export default defineEventHandler(async (event) => {
 	const acceptLanguageHeader = event.headers.get("accept-language");
