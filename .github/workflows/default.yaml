@@ -16,6 +16,10 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      statuses: write
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -24,7 +28,7 @@ jobs:
       - uses: sozialhelden/get-commit-status-target-url@v1
         id: get_deployment_url
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.ELEVATED_GITHUB_TOKEN }}
       - env:
           NITRO_TEST_BASE_URL: ${{ steps.get_deployment_url.outputs.target-url }}
         run: bun run test:e2e
