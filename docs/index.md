@@ -3,7 +3,7 @@
 ## Table of contents
 
 1. Architecture
-   1. [Introduction](./architecture/01.introduction.md)
+   1. [Overview](architecture/01.overview.md)
    2. Decisions
       1. [ADR 1 - Documenting Architectural Decisions](./architecture/decisions/001-documenting-architectural-decisions.md)
       2. [ADR 2 - Initial Technology Choices](./architecture/decisions/002-initial-technology-choices.md)
