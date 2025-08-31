@@ -35,7 +35,7 @@
 		"typescript": "5.9.2"
 	},
 	"dependencies": {
-		"@sozialhelden/core": "2.2.0",
+		"@sozialhelden/core": "2.2.3",
 		"@transifex/native": "7.1.4",
 		"dotenv": "17.2.1",
 		"drizzle-kit": "0.31.4",
