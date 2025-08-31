@@ -1,4 +1,4 @@
-FROM oven/bun:1.2.19-slim AS base
+FROM oven/bun:1.2.21-slim AS base
 WORKDIR /app
 
 RUN apt-get update && \
