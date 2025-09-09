@@ -39,7 +39,7 @@
 		"@transifex/native": "7.1.4",
 		"dotenv": "17.2.2",
 		"drizzle-kit": "0.31.4",
-		"drizzle-orm": "0.44.3",
+		"drizzle-orm": "0.44.5",
 		"pg": "8.16.3"
 	}
 }
