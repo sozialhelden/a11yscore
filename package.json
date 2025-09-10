@@ -27,7 +27,7 @@
 		"@types/bun": "1.2.21",
 		"@types/pg": "8.15.5",
 		"alex": "11.0.1",
-		"env-cmd": "10.1.0",
+		"env-cmd": "11.0.0",
 		"husky": "9.1.7",
 		"lint-staged": "16.1.6",
 		"nitropack": "2.12.5",
