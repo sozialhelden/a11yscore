@@ -24,7 +24,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.2.4",
 		"@transifex/cli": "7.1.4",
-		"@types/bun": "1.2.21",
+		"@types/bun": "1.2.22",
 		"@types/pg": "8.15.5",
 		"alex": "11.0.1",
 		"env-cmd": "11.0.0",
