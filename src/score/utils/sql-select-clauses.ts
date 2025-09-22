@@ -7,6 +7,7 @@ import {
 import { criteria } from "~~/src/score/criteria";
 import { getChildCategories } from "~~/src/score/utils/categories";
 import {
+	escapeTableOrColumnAlias,
 	getCombinedScoreAlias,
 	getCriterionScoreAlias,
 	getCriterionSubSelectAlias,
@@ -39,10 +40,8 @@ export function getCriteriaSelectClauses(subCategory: SubCategory): SQL[] {
 
 	for (const { topicId, criteria: criteriaList } of subCategory.topics) {
 		for (const { criterionId } of criteriaList) {
-			const criteriaAlias = getCriterionScoreAlias(
-				subCategory.id,
-				topicId,
-				criterionId,
+			const criteriaAlias = escapeTableOrColumnAlias(
+				getCriterionScoreAlias(subCategory.id, topicId, criterionId),
 			);
 			selects.push(
 				sql`CEIL(${criteria[criterionId].sql(subCategory.sql.from)}) AS ${criteriaAlias}`,
@@ -83,13 +82,13 @@ export function getTopicSelectClauses(subCategory: SubCategory): SQL[] {
 	const selects: SQL[] = [sql`${criteriaSubSelectAlias}.*`];
 
 	for (const { topicId, criteria: criteriaList } of subCategory.topics) {
-		const topicAlias = getTopicScoreAlias(subCategory.id, topicId);
+		const topicAlias = escapeTableOrColumnAlias(
+			getTopicScoreAlias(subCategory.id, topicId),
+		);
 		const criteriaWeights: SQL[] = [];
 		for (const { criterionId, weight } of criteriaList) {
-			const criteriaAlias = getCriterionScoreAlias(
-				subCategory.id,
-				topicId,
-				criterionId,
+			const criteriaAlias = escapeTableOrColumnAlias(
+				getCriterionScoreAlias(subCategory.id, topicId, criterionId),
 			);
 			criteriaWeights.push(
 				sql`${sql.raw(String(weight))} * ${criteriaSubSelectAlias}.${criteriaAlias}`,
@@ -120,12 +119,12 @@ export function getSubCategorySelectClauses(subCategory: SubCategory): SQL[] {
 
 	const topics = subCategory.topics.map(
 		({ topicId }) =>
-			sql`${topicSubSelectAlias}.${getTopicScoreAlias(subCategory.id, topicId)}`,
+			sql`${topicSubSelectAlias}.${escapeTableOrColumnAlias(getTopicScoreAlias(subCategory.id, topicId))}`,
 	);
 
 	return [
 		sql`${topicSubSelectAlias}.*`,
-		sql`CEIL((${sql.join(topics, sql` + `)}) / ${sql.raw(String(topics.length))}) AS ${getSubCategoryScoreAlias(subCategory.id)}`,
+		sql`CEIL((${sql.join(topics, sql` + `)}) / ${sql.raw(String(topics.length))}) AS ${escapeTableOrColumnAlias(getSubCategoryScoreAlias(subCategory.id))}`,
 	];
 }
 
@@ -152,12 +151,12 @@ export function getTopLevelCategorySelectClauses(
 		const subCategorySubSelectAlias = getSubCategorySubSelectAlias(id);
 		selects.push(sql`${subCategorySubSelectAlias}.*`);
 		weights.push(
-			sql`${sql.raw(String(weight))} * ${subCategorySubSelectAlias}.${getSubCategoryScoreAlias(id)}`,
+			sql`${sql.raw(String(weight))} * ${subCategorySubSelectAlias}.${escapeTableOrColumnAlias(getSubCategoryScoreAlias(id))}`,
 		);
 	}
 
 	selects.push(
-		sql`CEIL(${sql.join(weights, sql` + `)}) AS ${getTopLevelCategoryScoreAlias(topLevelCategory.id)}`,
+		sql`CEIL(${sql.join(weights, sql` + `)}) AS ${escapeTableOrColumnAlias(getTopLevelCategoryScoreAlias(topLevelCategory.id))}`,
 	);
 
 	return selects;
@@ -185,12 +184,12 @@ export function getCombinedScoreSelectClauses(): SQL[] {
 			getTopLevelCategorySubSelectAlias(id);
 		selects.push(sql`${topLevelCategorySubSelectAlias}.*`);
 		weights.push(
-			sql`${sql.raw(String(weight))} * ${topLevelCategorySubSelectAlias}.${getTopLevelCategoryScoreAlias(id)}`,
+			sql`${sql.raw(String(weight))} * ${topLevelCategorySubSelectAlias}.${escapeTableOrColumnAlias(getTopLevelCategoryScoreAlias(id))}`,
 		);
 	}
 
 	selects.push(
-		sql`CEIL(${sql.join(weights, sql` + `)}) AS ${getCombinedScoreAlias()}`,
+		sql`CEIL(${sql.join(weights, sql` + `)}) AS ${escapeTableOrColumnAlias(getCombinedScoreAlias())}`,
 	);
 
 	return selects;

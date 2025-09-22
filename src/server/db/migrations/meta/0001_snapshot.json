@@ -1,0 +1,278 @@
+{
+	"id": "93b9010d-adca-4805-871a-bbad4552e8b1",
+	"prevId": "6a3e6c57-920c-4fc1-a95e-48a7137e7fd9",
+	"version": "7",
+	"dialect": "postgresql",
+	"tables": {
+		"public.criterion_scores": {
+			"name": "criterion_scores",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "uuid",
+					"primaryKey": true,
+					"notNull": true,
+					"default": "gen_random_uuid()"
+				},
+				"topic_score_id": {
+					"name": "topic_score_id",
+					"type": "uuid",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"criterion": {
+					"name": "criterion",
+					"type": "varchar",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"score": {
+					"name": "score",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false,
+					"default": "now()"
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"criterion_scores_topic_score_id_topic_scores_id_fk": {
+					"name": "criterion_scores_topic_score_id_topic_scores_id_fk",
+					"tableFrom": "criterion_scores",
+					"tableTo": "topic_scores",
+					"columnsFrom": ["topic_score_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.scores": {
+			"name": "scores",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "uuid",
+					"primaryKey": true,
+					"notNull": true,
+					"default": "gen_random_uuid()"
+				},
+				"admin_area_id": {
+					"name": "admin_area_id",
+					"type": "varchar",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"score": {
+					"name": "score",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false,
+					"default": "now()"
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.sub_category_scores": {
+			"name": "sub_category_scores",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "uuid",
+					"primaryKey": true,
+					"notNull": true,
+					"default": "gen_random_uuid()"
+				},
+				"toplevel_category_score_id": {
+					"name": "toplevel_category_score_id",
+					"type": "uuid",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"sub_category": {
+					"name": "sub_category",
+					"type": "varchar",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"score": {
+					"name": "score",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false,
+					"default": "now()"
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"sub_category_scores_toplevel_category_score_id_toplevel_category_scores_id_fk": {
+					"name": "sub_category_scores_toplevel_category_score_id_toplevel_category_scores_id_fk",
+					"tableFrom": "sub_category_scores",
+					"tableTo": "toplevel_category_scores",
+					"columnsFrom": ["toplevel_category_score_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.topic_scores": {
+			"name": "topic_scores",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "uuid",
+					"primaryKey": true,
+					"notNull": true,
+					"default": "gen_random_uuid()"
+				},
+				"sub_category_score_id": {
+					"name": "sub_category_score_id",
+					"type": "uuid",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"topic": {
+					"name": "topic",
+					"type": "varchar",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"score": {
+					"name": "score",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false,
+					"default": "now()"
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"topic_scores_sub_category_score_id_sub_category_scores_id_fk": {
+					"name": "topic_scores_sub_category_score_id_sub_category_scores_id_fk",
+					"tableFrom": "topic_scores",
+					"tableTo": "sub_category_scores",
+					"columnsFrom": ["sub_category_score_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.toplevel_category_scores": {
+			"name": "toplevel_category_scores",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "uuid",
+					"primaryKey": true,
+					"notNull": true,
+					"default": "gen_random_uuid()"
+				},
+				"score_id": {
+					"name": "score_id",
+					"type": "uuid",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"toplevel_category": {
+					"name": "toplevel_category",
+					"type": "varchar",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"score": {
+					"name": "score",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false,
+					"default": "now()"
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"toplevel_category_scores_score_id_scores_id_fk": {
+					"name": "toplevel_category_scores_score_id_scores_id_fk",
+					"tableFrom": "toplevel_category_scores",
+					"tableTo": "scores",
+					"columnsFrom": ["score_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		}
+	},
+	"enums": {},
+	"schemas": {},
+	"sequences": {},
+	"roles": {},
+	"policies": {},
+	"views": {},
+	"_meta": {
+		"columns": {},
+		"schemas": {},
+		"tables": {}
+	}
+}

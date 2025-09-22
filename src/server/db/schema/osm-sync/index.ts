@@ -17,6 +17,7 @@ export const osm_amenities = pgTable("osm_amenities", {
 });
 
 export const osm_admin = pgTable("osm_admin", {
+	osm_id: integer().notNull(),
 	name: varchar().notNull(),
 	geometry: geometry().notNull(),
 });

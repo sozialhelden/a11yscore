@@ -20,31 +20,29 @@ export function getCriterionScoreAlias(
 	subCategoryId: SubCategoryId,
 	topicId: TopicId,
 	criterionId: CriterionId,
-): SQL {
-	return escapeTableOrColumnAlias(
-		`c/${subCategoryId}/${topicId}/${criterionId}`,
-	);
+): string {
+	return `c/${subCategoryId}/${topicId}/${criterionId}`;
 }
 
 export function getTopicScoreAlias(
 	subCategoryId: SubCategoryId,
 	topicId: TopicId,
-): SQL {
-	return escapeTableOrColumnAlias(`t/${subCategoryId}/${topicId}`);
+): string {
+	return `t/${subCategoryId}/${topicId}`;
 }
 
-export function getSubCategoryScoreAlias(subCategoryId: SubCategoryId): SQL {
-	return escapeTableOrColumnAlias(`sc/${subCategoryId}`);
+export function getSubCategoryScoreAlias(subCategoryId: SubCategoryId): string {
+	return `sc/${subCategoryId}`;
 }
 
 export function getTopLevelCategoryScoreAlias(
 	topLevelCategoryId: TopLevelCategoryId,
-): SQL {
-	return escapeTableOrColumnAlias(`tc/${topLevelCategoryId}`);
+): string {
+	return `tc/${topLevelCategoryId}`;
 }
 
-export function getCombinedScoreAlias(): SQL {
-	return escapeTableOrColumnAlias("score");
+export function getCombinedScoreAlias(): string {
+	return "score";
 }
 
 export function getCriterionSubSelectAlias(subCategoryId: SubCategoryId): SQL {

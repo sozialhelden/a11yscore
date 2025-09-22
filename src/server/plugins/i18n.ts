@@ -1,9 +1,9 @@
-// need to use the default import because this package doesn't include
-// an es module ¯\_(ツ)_/¯
-import transifex from "@transifex/native";
+import { tx } from "~/utils/i18n";
 
+// Because this is a server plugin, this should only be initialized once
+// when the server starts, not on every request.
 export default defineNitroPlugin(() => {
-	transifex.tx.init({
+	tx.init({
 		token: useRuntimeConfig().transifex.token,
 	});
 });

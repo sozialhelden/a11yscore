@@ -1,5 +1,5 @@
 import { appDb, osmSyncDb } from "~/db";
-import { results } from "~/db/schema/app";
+import { scores } from "~/db/schema/app";
 import { osm_amenities } from "~/db/schema/osm-sync";
 
 defineRouteMeta({
@@ -22,7 +22,7 @@ export default defineEventHandler(async (_event) => {
 		// test the kv-storage
 		await useStorage().set("health", "ok");
 		// test the app db
-		await appDb.select({ id: results.id }).from(results).limit(1);
+		await appDb.select({ id: scores.id }).from(scores).limit(1);
 		// test the osm-sync db
 		await osmSyncDb
 			.select({ id: osm_amenities.id })
