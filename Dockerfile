@@ -36,6 +36,8 @@ COPY --from=build --chown=bun:bun /app/.output .
 COPY --from=build --chown=bun:bun /app/package.json .
 COPY --from=build --chown=bun:bun /app/drizzle.config.ts .
 COPY --from=build --chown=bun:bun /app/src ./src
+COPY --from=build --chown=bun:bun /app/tsconfig.json ./tsconfig.json
+COPY --from=build --chown=bun:bun /app/.nitro/types ./.nitro/types
 
 # run the app
 USER bun
