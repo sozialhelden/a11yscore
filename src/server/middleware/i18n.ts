@@ -1,4 +1,5 @@
 import {
+  configuredLanguageTags,
   fallbackLanguageTag,
   getILanguageTagsFromAcceptLanguageHeader,
   getMostPreferableLanguageTag,
@@ -9,16 +10,22 @@ import { tx } from "~/utils/i18n";
 
 export default defineEventHandler(async (event) => {
   const acceptLanguageHeader = event.headers.get("accept-language");
+  const languageFromQuery = getQuery(event).lang as string | undefined;
+
   let languageTag: LanguageTag;
 
-  try {
-    languageTag = acceptLanguageHeader
-      ? getMostPreferableLanguageTag(
-          getILanguageTagsFromAcceptLanguageHeader(acceptLanguageHeader),
-        )
-      : fallbackLanguageTag;
-  } catch {
-    languageTag = fallbackLanguageTag;
+  if (Object.keys(configuredLanguageTags).includes(languageFromQuery)) {
+    languageTag = languageFromQuery as LanguageTag;
+  } else {
+    try {
+      languageTag = acceptLanguageHeader
+        ? getMostPreferableLanguageTag([
+            ...getILanguageTagsFromAcceptLanguageHeader(acceptLanguageHeader),
+          ])
+        : fallbackLanguageTag;
+    } catch {
+      languageTag = fallbackLanguageTag;
+    }
   }
 
   event.context.languageTag = languageTag;
