@@ -16,8 +16,7 @@
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "task:run": "nitro task run",
-    "task:list": "nitro task list",
+    "score:calculate": "bun src/server/scripts/calculate-score.ts",
     "transifex:sync": "env-cmd --use-shell -- txjs-cli push src/ --token=\\$NITRO_TRANSIFEX_TOKEN --secret=\\$NITRO_TRANSIFEX_SECRET",
     "postinstall": "nitro prepare && husky"
   },

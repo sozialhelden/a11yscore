@@ -29,27 +29,21 @@ type ScoreQueryResults = Record<string, number>;
 
 // TODO: replace this with a proper task management system like Bull or Bree
 //  that supports monitoring, retries, concurrency, etc.
-export default defineTask({
-  meta: {
-    name: "calculate-score",
-    description: "",
-  },
-  run: async () => {
-    for (const { id: adminAreaId } of allowedAdminAreas) {
-      console.info(`Calculating score for admin area ${adminAreaId}...`);
-      const results = await calculateScoreByAdminArea(adminAreaId);
+calculate()
+  .catch((error) => console.error(error))
+  .then(() => console.info("Score calculation task completed."));
 
-      console.info(`Persisting score for admin area ${adminAreaId}...`);
-      await appDb.transaction(async (tx) => {
-        await persistScore(tx, results, { adminAreaId });
-      });
-    }
+async function calculate() {
+  for (const { id: adminAreaId } of allowedAdminAreas) {
+    console.info(`Calculating score for admin area ${adminAreaId}...`);
+    const results = await calculateScoreByAdminArea(adminAreaId);
 
-    return {
-      result: "okay",
-    };
-  },
-});
+    console.info(`Persisting score for admin area ${adminAreaId}...`);
+    await appDb.transaction(async (tx) => {
+      await persistScore(tx, results, { adminAreaId });
+    });
+  }
+}
 
 async function persistScore(
   tx: AppDbTransaction,
