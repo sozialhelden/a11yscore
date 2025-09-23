@@ -85,6 +85,7 @@ export default defineEventHandler(async (event) => {
   return {
     score: {
       ...scoreResults,
+      name: allowedAdminAreas.find(({ id }) => id === adminAreaId)?.name,
       toplevelCategories: result,
     },
   };
