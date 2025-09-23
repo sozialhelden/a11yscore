@@ -12,8 +12,7 @@ export default defineNitroConfig({
     openAPI: true,
   },
   scheduledTasks: enableTaskScheduler && {
-    "45 14 * * *": ["calculate-score"],
-    "45 12 * * *": ["calculate-score"],
+    "*/10 * * * *": ["calculate-score"],
   },
   routeRules: {
     "/v1/**": { cors: true },
