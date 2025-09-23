@@ -44,6 +44,14 @@ export default defineEventHandler(async (event) => {
     criterionScoreResults,
   } = await queryScoreResultsByAdminArea(adminAreaId);
 
+  if (!scoreResults) {
+    throw createError({
+      status: 404,
+      statusMessage: "Not found",
+      message: "Calculated score for admin area not found",
+    });
+  }
+
   // TODO: refactor this
   const result = toplevelCategoryScoreResults.map(
     ({ id, toplevelCategory, score }) => ({

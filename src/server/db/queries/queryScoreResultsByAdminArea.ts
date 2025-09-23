@@ -17,6 +17,10 @@ export async function queryScoreResultsByAdminArea(adminAreaId: number) {
     .limit(1)
     .execute();
 
+  if (!scoreResults) {
+    return { scoreResults: undefined };
+  }
+
   const toplevelCategoryScoreResults = await appDb
     .select()
     .from(toplevelCategoryScores)
