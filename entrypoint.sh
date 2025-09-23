@@ -1,5 +1,6 @@
 #!/bin/sh
 
-bun run db:migrate
+env
+bun run --verbose db:migrate
 
 exec $@
