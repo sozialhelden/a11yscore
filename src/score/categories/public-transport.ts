@@ -2,8 +2,8 @@ import { sql } from "drizzle-orm";
 import { osm_amenities } from "~/db/schema/osm-sync";
 import { t } from "~/utils/i18n";
 import type {
-	SubCategory,
-	TopLevelCategory,
+  SubCategory,
+  TopLevelCategory,
 } from "~~/src/score/categories/index";
 
 /*
@@ -12,17 +12,17 @@ import type {
 
 export type PublicTransportTopLevelCategoryId = "public-transport";
 export const publicTransportTopLevelCategory: ({
-	weight,
+  weight,
 }: {
-	weight: number;
+  weight: number;
 }) => Record<PublicTransportTopLevelCategoryId, Omit<TopLevelCategory, "id">> =
-	({ weight }) => ({
-		"public-transport": {
-			name: () => t("Public Transport"),
-			sustainableDevelopmentGoals: [9, 13, 15, 16],
-			weight,
-		},
-	});
+  ({ weight }) => ({
+    "public-transport": {
+      name: () => t("Public Transport"),
+      sustainableDevelopmentGoals: [9, 13, 15, 16],
+      weight,
+    },
+  });
 
 /*
  * sub categories
@@ -30,30 +30,30 @@ export const publicTransportTopLevelCategory: ({
 
 export type PublicTransportSubCategoryId = "train-stations";
 export const publicTransportSubCategories: Record<
-	PublicTransportSubCategoryId,
-	Omit<SubCategory, "id">
+  PublicTransportSubCategoryId,
+  Omit<SubCategory, "id">
 > = {
-	"train-stations": {
-		name: () => t("Train Stations"),
-		parent: "public-transport",
-		weight: 1,
-		reason: () => "",
-		resources: ["https://wiki.openstreetmap.org/wiki/Tag:railway%3Dstation"],
-		sql: {
-			from: osm_amenities,
-			where: sql`${osm_amenities.tags}->'railway' = 'station'`,
-		},
-		topics: [
-			{
-				topicId: "mobility",
-				criteria: [
-					{
-						criterionId: "is-wheelchair-accessible",
-						weight: 1,
-						reason: () => "",
-					},
-				],
-			},
-		],
-	},
+  "train-stations": {
+    name: () => t("Train Stations"),
+    parent: "public-transport",
+    weight: 1,
+    reason: () => "",
+    resources: ["https://wiki.openstreetmap.org/wiki/Tag:railway%3Dstation"],
+    sql: {
+      from: osm_amenities,
+      where: sql`${osm_amenities.tags}->'railway' = 'station'`,
+    },
+    topics: [
+      {
+        topicId: "mobility",
+        criteria: [
+          {
+            criterionId: "is-wheelchair-accessible",
+            weight: 1,
+            reason: () => "",
+          },
+        ],
+      },
+    ],
+  },
 };

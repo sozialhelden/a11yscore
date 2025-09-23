@@ -1,22 +1,22 @@
 import { type SQL, sql } from "drizzle-orm";
 import {
-	type SubCategory,
-	type TopLevelCategory,
-	topLevelCategories,
+  type SubCategory,
+  type TopLevelCategory,
+  topLevelCategories,
 } from "~~/src/score/categories";
 import { criteria } from "~~/src/score/criteria";
 import { getChildCategories } from "~~/src/score/utils/categories";
 import {
-	escapeTableOrColumnAlias,
-	getCombinedScoreAlias,
-	getCriterionScoreAlias,
-	getCriterionSubSelectAlias,
-	getSubCategoryScoreAlias,
-	getSubCategorySubSelectAlias,
-	getTopicScoreAlias,
-	getTopicSubSelectAlias,
-	getTopLevelCategoryScoreAlias,
-	getTopLevelCategorySubSelectAlias,
+  escapeTableOrColumnAlias,
+  getCombinedScoreAlias,
+  getCriterionScoreAlias,
+  getCriterionSubSelectAlias,
+  getSubCategoryScoreAlias,
+  getSubCategorySubSelectAlias,
+  getTopicScoreAlias,
+  getTopicSubSelectAlias,
+  getTopLevelCategoryScoreAlias,
+  getTopLevelCategorySubSelectAlias,
 } from "~~/src/score/utils/sql-aliases";
 
 /**
@@ -36,20 +36,20 @@ import {
  * ```
  */
 export function getCriteriaSelectClauses(subCategory: SubCategory): SQL[] {
-	const selects: SQL[] = [];
+  const selects: SQL[] = [];
 
-	for (const { topicId, criteria: criteriaList } of subCategory.topics) {
-		for (const { criterionId } of criteriaList) {
-			const criteriaAlias = escapeTableOrColumnAlias(
-				getCriterionScoreAlias(subCategory.id, topicId, criterionId),
-			);
-			selects.push(
-				sql`CEIL(${criteria[criterionId].sql(subCategory.sql.from)}) AS ${criteriaAlias}`,
-			);
-		}
-	}
+  for (const { topicId, criteria: criteriaList } of subCategory.topics) {
+    for (const { criterionId } of criteriaList) {
+      const criteriaAlias = escapeTableOrColumnAlias(
+        getCriterionScoreAlias(subCategory.id, topicId, criterionId),
+      );
+      selects.push(
+        sql`CEIL(${criteria[criterionId].sql(subCategory.sql.from)}) AS ${criteriaAlias}`,
+      );
+    }
+  }
 
-	return selects;
+  return selects;
 }
 
 /**
@@ -78,28 +78,28 @@ export function getCriteriaSelectClauses(subCategory: SubCategory): SQL[] {
  * ```
  */
 export function getTopicSelectClauses(subCategory: SubCategory): SQL[] {
-	const criteriaSubSelectAlias = getCriterionSubSelectAlias(subCategory.id);
-	const selects: SQL[] = [sql`${criteriaSubSelectAlias}.*`];
+  const criteriaSubSelectAlias = getCriterionSubSelectAlias(subCategory.id);
+  const selects: SQL[] = [sql`${criteriaSubSelectAlias}.*`];
 
-	for (const { topicId, criteria: criteriaList } of subCategory.topics) {
-		const topicAlias = escapeTableOrColumnAlias(
-			getTopicScoreAlias(subCategory.id, topicId),
-		);
-		const criteriaWeights: SQL[] = [];
-		for (const { criterionId, weight } of criteriaList) {
-			const criteriaAlias = escapeTableOrColumnAlias(
-				getCriterionScoreAlias(subCategory.id, topicId, criterionId),
-			);
-			criteriaWeights.push(
-				sql`${sql.raw(String(weight))} * ${criteriaSubSelectAlias}.${criteriaAlias}`,
-			);
-		}
-		selects.push(
-			sql`CEIL(${sql.join(criteriaWeights, sql` + `)}) AS ${topicAlias}`,
-		);
-	}
+  for (const { topicId, criteria: criteriaList } of subCategory.topics) {
+    const topicAlias = escapeTableOrColumnAlias(
+      getTopicScoreAlias(subCategory.id, topicId),
+    );
+    const criteriaWeights: SQL[] = [];
+    for (const { criterionId, weight } of criteriaList) {
+      const criteriaAlias = escapeTableOrColumnAlias(
+        getCriterionScoreAlias(subCategory.id, topicId, criterionId),
+      );
+      criteriaWeights.push(
+        sql`${sql.raw(String(weight))} * ${criteriaSubSelectAlias}.${criteriaAlias}`,
+      );
+    }
+    selects.push(
+      sql`CEIL(${sql.join(criteriaWeights, sql` + `)}) AS ${topicAlias}`,
+    );
+  }
 
-	return selects;
+  return selects;
 }
 
 /**
@@ -115,17 +115,17 @@ export function getTopicSelectClauses(subCategory: SubCategory): SQL[] {
  * ```
  */
 export function getSubCategorySelectClauses(subCategory: SubCategory): SQL[] {
-	const topicSubSelectAlias = getTopicSubSelectAlias(subCategory.id);
+  const topicSubSelectAlias = getTopicSubSelectAlias(subCategory.id);
 
-	const topics = subCategory.topics.map(
-		({ topicId }) =>
-			sql`${topicSubSelectAlias}.${escapeTableOrColumnAlias(getTopicScoreAlias(subCategory.id, topicId))}`,
-	);
+  const topics = subCategory.topics.map(
+    ({ topicId }) =>
+      sql`${topicSubSelectAlias}.${escapeTableOrColumnAlias(getTopicScoreAlias(subCategory.id, topicId))}`,
+  );
 
-	return [
-		sql`${topicSubSelectAlias}.*`,
-		sql`CEIL((${sql.join(topics, sql` + `)}) / ${sql.raw(String(topics.length))}) AS ${escapeTableOrColumnAlias(getSubCategoryScoreAlias(subCategory.id))}`,
-	];
+  return [
+    sql`${topicSubSelectAlias}.*`,
+    sql`CEIL((${sql.join(topics, sql` + `)}) / ${sql.raw(String(topics.length))}) AS ${escapeTableOrColumnAlias(getSubCategoryScoreAlias(subCategory.id))}`,
+  ];
 }
 
 /**
@@ -142,24 +142,24 @@ export function getSubCategorySelectClauses(subCategory: SubCategory): SQL[] {
  * ```
  */
 export function getTopLevelCategorySelectClauses(
-	topLevelCategory: TopLevelCategory,
+  topLevelCategory: TopLevelCategory,
 ): SQL[] {
-	const selects: SQL[] = [];
-	const weights: SQL[] = [];
+  const selects: SQL[] = [];
+  const weights: SQL[] = [];
 
-	for (const { id, weight } of getChildCategories(topLevelCategory.id)) {
-		const subCategorySubSelectAlias = getSubCategorySubSelectAlias(id);
-		selects.push(sql`${subCategorySubSelectAlias}.*`);
-		weights.push(
-			sql`${sql.raw(String(weight))} * ${subCategorySubSelectAlias}.${escapeTableOrColumnAlias(getSubCategoryScoreAlias(id))}`,
-		);
-	}
+  for (const { id, weight } of getChildCategories(topLevelCategory.id)) {
+    const subCategorySubSelectAlias = getSubCategorySubSelectAlias(id);
+    selects.push(sql`${subCategorySubSelectAlias}.*`);
+    weights.push(
+      sql`${sql.raw(String(weight))} * ${subCategorySubSelectAlias}.${escapeTableOrColumnAlias(getSubCategoryScoreAlias(id))}`,
+    );
+  }
 
-	selects.push(
-		sql`CEIL(${sql.join(weights, sql` + `)}) AS ${escapeTableOrColumnAlias(getTopLevelCategoryScoreAlias(topLevelCategory.id))}`,
-	);
+  selects.push(
+    sql`CEIL(${sql.join(weights, sql` + `)}) AS ${escapeTableOrColumnAlias(getTopLevelCategoryScoreAlias(topLevelCategory.id))}`,
+  );
 
-	return selects;
+  return selects;
 }
 
 /**
@@ -176,21 +176,21 @@ export function getTopLevelCategorySelectClauses(
  * ```
  */
 export function getCombinedScoreSelectClauses(): SQL[] {
-	const selects: SQL[] = [];
-	const weights: SQL[] = [];
+  const selects: SQL[] = [];
+  const weights: SQL[] = [];
 
-	for (const { id, weight } of Object.values(topLevelCategories)) {
-		const topLevelCategorySubSelectAlias =
-			getTopLevelCategorySubSelectAlias(id);
-		selects.push(sql`${topLevelCategorySubSelectAlias}.*`);
-		weights.push(
-			sql`${sql.raw(String(weight))} * ${topLevelCategorySubSelectAlias}.${escapeTableOrColumnAlias(getTopLevelCategoryScoreAlias(id))}`,
-		);
-	}
+  for (const { id, weight } of Object.values(topLevelCategories)) {
+    const topLevelCategorySubSelectAlias =
+      getTopLevelCategorySubSelectAlias(id);
+    selects.push(sql`${topLevelCategorySubSelectAlias}.*`);
+    weights.push(
+      sql`${sql.raw(String(weight))} * ${topLevelCategorySubSelectAlias}.${escapeTableOrColumnAlias(getTopLevelCategoryScoreAlias(id))}`,
+    );
+  }
 
-	selects.push(
-		sql`CEIL(${sql.join(weights, sql` + `)}) AS ${escapeTableOrColumnAlias(getCombinedScoreAlias())}`,
-	);
+  selects.push(
+    sql`CEIL(${sql.join(weights, sql` + `)}) AS ${escapeTableOrColumnAlias(getCombinedScoreAlias())}`,
+  );
 
-	return selects;
+  return selects;
 }

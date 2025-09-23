@@ -1,7 +1,7 @@
 import { type SQL, sql } from "drizzle-orm";
 import type {
-	SubCategoryId,
-	TopLevelCategoryId,
+  SubCategoryId,
+  TopLevelCategoryId,
 } from "~~/src/score/categories";
 import type { CriterionId } from "~~/src/score/criteria";
 import type { TopicId } from "~~/src/score/topics";
@@ -13,56 +13,56 @@ import type { TopicId } from "~~/src/score/topics";
 // "tc" - prefix = top level category score
 
 export function escapeTableOrColumnAlias(alias: string): SQL {
-	return sql.raw(`"${alias.replace(/"/g, "")}"`);
+  return sql.raw(`"${alias.replace(/"/g, "")}"`);
 }
 
 export function getCriterionScoreAlias(
-	subCategoryId: SubCategoryId,
-	topicId: TopicId,
-	criterionId: CriterionId,
+  subCategoryId: SubCategoryId,
+  topicId: TopicId,
+  criterionId: CriterionId,
 ): string {
-	return `c/${subCategoryId}/${topicId}/${criterionId}`;
+  return `c/${subCategoryId}/${topicId}/${criterionId}`;
 }
 
 export function getTopicScoreAlias(
-	subCategoryId: SubCategoryId,
-	topicId: TopicId,
+  subCategoryId: SubCategoryId,
+  topicId: TopicId,
 ): string {
-	return `t/${subCategoryId}/${topicId}`;
+  return `t/${subCategoryId}/${topicId}`;
 }
 
 export function getSubCategoryScoreAlias(subCategoryId: SubCategoryId): string {
-	return `sc/${subCategoryId}`;
+  return `sc/${subCategoryId}`;
 }
 
 export function getTopLevelCategoryScoreAlias(
-	topLevelCategoryId: TopLevelCategoryId,
+  topLevelCategoryId: TopLevelCategoryId,
 ): string {
-	return `tc/${topLevelCategoryId}`;
+  return `tc/${topLevelCategoryId}`;
 }
 
 export function getCombinedScoreAlias(): string {
-	return "score";
+  return "score";
 }
 
 export function getCriterionSubSelectAlias(subCategoryId: SubCategoryId): SQL {
-	return escapeTableOrColumnAlias(`criterion-scores__${subCategoryId}`);
+  return escapeTableOrColumnAlias(`criterion-scores__${subCategoryId}`);
 }
 
 export function getTopicSubSelectAlias(subCategoryId: SubCategoryId): SQL {
-	return escapeTableOrColumnAlias(`topic-scores__${subCategoryId}`);
+  return escapeTableOrColumnAlias(`topic-scores__${subCategoryId}`);
 }
 
 export function getSubCategorySubSelectAlias(
-	subCategoryId: SubCategoryId,
+  subCategoryId: SubCategoryId,
 ): SQL {
-	return escapeTableOrColumnAlias(`sub-category-scores__${subCategoryId}`);
+  return escapeTableOrColumnAlias(`sub-category-scores__${subCategoryId}`);
 }
 
 export function getTopLevelCategorySubSelectAlias(
-	topLevelCategoryId: TopLevelCategoryId,
+  topLevelCategoryId: TopLevelCategoryId,
 ): SQL {
-	return escapeTableOrColumnAlias(
-		`top-level-category-scores__${topLevelCategoryId}`,
-	);
+  return escapeTableOrColumnAlias(
+    `top-level-category-scores__${topLevelCategoryId}`,
+  );
 }

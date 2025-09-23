@@ -1,22 +1,22 @@
 import { type SQL, sql } from "drizzle-orm";
 import {
-	type SubCategory,
-	type TopLevelCategory,
-	topLevelCategories,
+  type SubCategory,
+  type TopLevelCategory,
+  topLevelCategories,
 } from "~~/src/score/categories";
 import { getChildCategories } from "~~/src/score/utils/categories";
 import {
-	getCriterionSubSelectAlias,
-	getSubCategorySubSelectAlias,
-	getTopicSubSelectAlias,
-	getTopLevelCategorySubSelectAlias,
+  getCriterionSubSelectAlias,
+  getSubCategorySubSelectAlias,
+  getTopicSubSelectAlias,
+  getTopLevelCategorySubSelectAlias,
 } from "~~/src/score/utils/sql-aliases";
 import {
-	getCombinedScoreSelectClauses,
-	getCriteriaSelectClauses,
-	getSubCategorySelectClauses,
-	getTopicSelectClauses,
-	getTopLevelCategorySelectClauses,
+  getCombinedScoreSelectClauses,
+  getCriteriaSelectClauses,
+  getSubCategorySelectClauses,
+  getTopicSelectClauses,
+  getTopLevelCategorySelectClauses,
 } from "~~/src/score/utils/sql-select-clauses";
 
 /**
@@ -33,27 +33,27 @@ import {
  * ```
  */
 export function getCriteriaSubSelect({
-	subCategory,
-	join = [],
-	where = [],
-	groupBy = [],
+  subCategory,
+  join = [],
+  where = [],
+  groupBy = [],
 }: {
-	subCategory: SubCategory;
-	join?: SQL[];
-	where?: SQL[];
-	groupBy?: SQL[];
+  subCategory: SubCategory;
+  join?: SQL[];
+  where?: SQL[];
+  groupBy?: SQL[];
 }): SQL {
-	const selects = [
-		subCategory.sql.groupBy,
-		...groupBy,
-		...getCriteriaSelectClauses(subCategory),
-	].filter(Boolean);
+  const selects = [
+    subCategory.sql.groupBy,
+    ...groupBy,
+    ...getCriteriaSelectClauses(subCategory),
+  ].filter(Boolean);
 
-	const joins = [...join, subCategory.sql.join].filter(Boolean);
-	const wheres = [...where, subCategory.sql.where].filter(Boolean);
-	const groupBys = [...groupBy, subCategory.sql.groupBy].filter(Boolean);
+  const joins = [...join, subCategory.sql.join].filter(Boolean);
+  const wheres = [...where, subCategory.sql.where].filter(Boolean);
+  const groupBys = [...groupBy, subCategory.sql.groupBy].filter(Boolean);
 
-	return sql`
+  return sql`
 		SELECT ${sql.join(selects, sql`, `)} 
 		FROM ${subCategory.sql.from} 
 		${sql.join(joins, sql`\n`)}
@@ -90,26 +90,26 @@ export function getCriteriaSubSelect({
  * ```
  */
 export function getTopicSubSelect({
-	subCategory,
-	join = [],
-	where = [],
-	groupBy = [],
+  subCategory,
+  join = [],
+  where = [],
+  groupBy = [],
 }: {
-	subCategory: SubCategory;
-	join?: SQL[];
-	where?: SQL[];
-	groupBy?: SQL[];
+  subCategory: SubCategory;
+  join?: SQL[];
+  where?: SQL[];
+  groupBy?: SQL[];
 }): SQL {
-	const criteriaSubSelect = getCriteriaSubSelect({
-		subCategory,
-		join,
-		where,
-		groupBy,
-	});
-	const criteriaSubSelectAlias = getCriterionSubSelectAlias(subCategory.id);
-	const selects = getTopicSelectClauses(subCategory);
+  const criteriaSubSelect = getCriteriaSubSelect({
+    subCategory,
+    join,
+    where,
+    groupBy,
+  });
+  const criteriaSubSelectAlias = getCriterionSubSelectAlias(subCategory.id);
+  const selects = getTopicSelectClauses(subCategory);
 
-	return sql`
+  return sql`
         SELECT ${sql.join(selects, sql`, `)}
         FROM (${criteriaSubSelect}) AS ${criteriaSubSelectAlias}
     `;
@@ -148,26 +148,26 @@ export function getTopicSubSelect({
  * ```
  */
 export function getSubCategorySubSelect({
-	subCategory,
-	join = [],
-	where = [],
-	groupBy = [],
+  subCategory,
+  join = [],
+  where = [],
+  groupBy = [],
 }: {
-	subCategory: SubCategory;
-	join?: SQL[];
-	where?: SQL[];
-	groupBy?: SQL[];
+  subCategory: SubCategory;
+  join?: SQL[];
+  where?: SQL[];
+  groupBy?: SQL[];
 }): SQL {
-	const topicSubSelectAlias = getTopicSubSelectAlias(subCategory.id);
-	const topicSubSelect = getTopicSubSelect({
-		subCategory,
-		join,
-		where,
-		groupBy,
-	});
-	const selects = getSubCategorySelectClauses(subCategory);
+  const topicSubSelectAlias = getTopicSubSelectAlias(subCategory.id);
+  const topicSubSelect = getTopicSubSelect({
+    subCategory,
+    join,
+    where,
+    groupBy,
+  });
+  const selects = getSubCategorySelectClauses(subCategory);
 
-	return sql`
+  return sql`
         SELECT ${sql.join(selects, sql`, `)}
         FROM (${topicSubSelect}) AS ${topicSubSelectAlias}
     `;
@@ -190,30 +190,30 @@ export function getSubCategorySubSelect({
  * ```
  */
 export function getTopLevelCategorySubSelect({
-	topLevelCategory,
-	join = [],
-	where = [],
-	groupBy = [],
+  topLevelCategory,
+  join = [],
+  where = [],
+  groupBy = [],
 }: {
-	topLevelCategory: TopLevelCategory;
-	join?: SQL[];
-	where?: SQL[];
-	groupBy?: SQL[];
+  topLevelCategory: TopLevelCategory;
+  join?: SQL[];
+  where?: SQL[];
+  groupBy?: SQL[];
 }): SQL {
-	const subCategorySubSelects = getChildCategories(topLevelCategory.id).map(
-		(subCategory) =>
-			sql`(
+  const subCategorySubSelects = getChildCategories(topLevelCategory.id).map(
+    (subCategory) =>
+      sql`(
 				${getSubCategorySubSelect({
-					subCategory,
-					join,
-					where,
-					groupBy,
-				})}
+          subCategory,
+          join,
+          where,
+          groupBy,
+        })}
 			) AS ${getSubCategorySubSelectAlias(subCategory.id)}`,
-	);
-	const selects = getTopLevelCategorySelectClauses(topLevelCategory);
+  );
+  const selects = getTopLevelCategorySelectClauses(topLevelCategory);
 
-	return sql`
+  return sql`
 		SELECT ${sql.join(selects, sql`, `)}
 		FROM ${sql.join(subCategorySubSelects, sql`, `)}
 	`;
@@ -236,28 +236,28 @@ export function getTopLevelCategorySubSelect({
  * ```
  */
 export function getCombinedScoreQuery({
-	join = [],
-	where = [],
-	groupBy = [],
+  join = [],
+  where = [],
+  groupBy = [],
 }: {
-	join?: SQL[];
-	where?: SQL[];
-	groupBy?: SQL[];
+  join?: SQL[];
+  where?: SQL[];
+  groupBy?: SQL[];
 }): SQL {
-	const topLevelCategorySubSelects = Object.values(topLevelCategories).map(
-		(topLevelCategory) =>
-			sql`(
+  const topLevelCategorySubSelects = Object.values(topLevelCategories).map(
+    (topLevelCategory) =>
+      sql`(
 				${getTopLevelCategorySubSelect({
-					topLevelCategory,
-					join,
-					where,
-					groupBy,
-				})}
+          topLevelCategory,
+          join,
+          where,
+          groupBy,
+        })}
 			) AS ${getTopLevelCategorySubSelectAlias(topLevelCategory.id)}`,
-	);
-	const selects = getCombinedScoreSelectClauses();
+  );
+  const selects = getCombinedScoreSelectClauses();
 
-	return sql`
+  return sql`
 		SELECT ${sql.join(selects, sql`, `)}
 		FROM ${sql.join(topLevelCategorySubSelects, sql`, `)}
 	`;

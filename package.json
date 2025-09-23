@@ -1,45 +1,45 @@
 {
-	"name": "a11yscore",
-	"private": true,
-	"scripts": {
-		"dev": "nitro dev",
-		"build": "nitro build",
-		"preview": "bun .output/server/index.mjs",
-		"lint": "biome lint && alex -w",
-		"lint:fix": "biome lint --write && alex -w",
-		"format": "biome format",
-		"format:fix": "biome format --write",
-		"typecheck": "tsc --noEmit",
-		"test": "bun run test:unit && bun run test:e2e",
-		"test:unit": "bun test -t unit",
-		"test:e2e": "bun test -t e2e",
-		"db:push": "drizzle-kit push",
-		"db:generate": "drizzle-kit generate",
-		"db:migrate": "drizzle-kit migrate",
-		"task:run": "nitro task run",
-		"task:list": "nitro task list",
-		"transifex:sync": "env-cmd --use-shell -- txjs-cli push src/ --token=\\$NITRO_TRANSIFEX_TOKEN --secret=\\$NITRO_TRANSIFEX_SECRET",
-		"postinstall": "nitro prepare && husky"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "2.2.4",
-		"@transifex/cli": "7.1.4",
-		"@types/bun": "1.2.22",
-		"@types/pg": "8.15.5",
-		"alex": "11.0.1",
-		"env-cmd": "11.0.0",
-		"husky": "9.1.7",
-		"lint-staged": "16.2.0",
-		"nitropack": "2.12.6",
-		"type-fest": "4.41.0",
-		"typescript": "5.9.2"
-	},
-	"dependencies": {
-		"@sozialhelden/core": "2.2.3",
-		"@transifex/native": "7.1.4",
-		"dotenv": "17.2.2",
-		"drizzle-kit": "0.31.4",
-		"drizzle-orm": "0.44.5",
-		"pg": "8.16.3"
-	}
+  "name": "a11yscore",
+  "private": true,
+  "scripts": {
+    "dev": "nitro dev",
+    "build": "nitro build",
+    "preview": "bun .output/server/index.mjs",
+    "lint": "biome lint && alex -w",
+    "lint:fix": "biome lint --write && alex -w",
+    "format": "biome format",
+    "format:fix": "biome format --write",
+    "typecheck": "tsc --noEmit",
+    "test": "bun run test:unit && bun run test:e2e",
+    "test:unit": "bun test -t unit",
+    "test:e2e": "bun test -t e2e",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "task:run": "nitro task run",
+    "task:list": "nitro task list",
+    "transifex:sync": "env-cmd --use-shell -- txjs-cli push src/ --token=\\$NITRO_TRANSIFEX_TOKEN --secret=\\$NITRO_TRANSIFEX_SECRET",
+    "postinstall": "nitro prepare && husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.4",
+    "@transifex/cli": "7.1.4",
+    "@types/bun": "1.2.22",
+    "@types/pg": "8.15.5",
+    "alex": "11.0.1",
+    "env-cmd": "11.0.0",
+    "husky": "9.1.7",
+    "lint-staged": "16.2.0",
+    "nitropack": "2.12.6",
+    "type-fest": "4.41.0",
+    "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "@sozialhelden/core": "2.2.3",
+    "@transifex/native": "7.1.4",
+    "dotenv": "17.2.2",
+    "drizzle-kit": "0.31.4",
+    "drizzle-orm": "0.44.5",
+    "pg": "8.16.3"
+  }
 }
