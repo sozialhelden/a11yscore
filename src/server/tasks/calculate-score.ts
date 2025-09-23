@@ -1,110 +1,176 @@
-import { sql } from "drizzle-orm";
-import { appDb, osmSyncDb } from "~/db";
+import { appDb } from "~/db";
+import { calculateScoreByAdminArea } from "~/db/queries/calculateScoreByAdminArea";
 import {
-	criterionScores,
-	scores,
-	subCategoryScores,
-	topicScores,
-	toplevelCategoryScores,
+  criterionScores,
+  scores,
+  subCategoryScores,
+  topicScores,
+  toplevelCategoryScores,
 } from "~/db/schema/app";
-import { osm_admin, osm_amenities } from "~/db/schema/osm-sync";
+import { allowedAdminAreas } from "~~/src/config";
 import {
-	type TopicId,
-	type TopLevelCategoryId,
-	topics,
-	topLevelCategories,
-} from "~~/src/score";
+  type SubCategory,
+  type SubCategoryId,
+  type TopLevelCategoryId,
+  topLevelCategoryList,
+} from "~~/src/score/categories";
+import type { TopicId } from "~~/src/score/topics";
 import { getChildCategories } from "~~/src/score/utils/categories";
 import {
-	getCriterionScoreAlias,
-	getSubCategoryScoreAlias,
-	getTopicScoreAlias,
-	getTopLevelCategoryScoreAlias,
+  getCombinedScoreAlias,
+  getCriterionScoreAlias,
+  getSubCategoryScoreAlias,
+  getTopicScoreAlias,
+  getTopLevelCategoryScoreAlias,
 } from "~~/src/score/utils/sql-aliases";
-import { getCombinedScoreQuery } from "~~/src/score/utils/sql-sub-selects";
+
+type AppDbTransaction = Parameters<Parameters<typeof appDb.transaction>[0]>[0];
+type ScoreQueryResults = Record<string, number>;
 
 // TODO: replace this with a proper task management system like Bull or Bree
+//  that supports monitoring, retries, concurrency, etc.
 export default defineTask({
-	meta: {
-		name: "calculate-score",
-		description: "",
-	},
-	run: async () => {
-		const adminAreas = ["-55764"];
+  meta: {
+    name: "calculate-score",
+    description: "",
+  },
+  run: async () => {
+    for (const { id: adminAreaId } of allowedAdminAreas) {
+      console.info(`Calculating score for admin area ${adminAreaId}...`);
+      const results = await calculateScoreByAdminArea(adminAreaId);
 
-		await Promise.all(
-			adminAreas.map(async (adminAreaId) => {
-				const join = [
-					sql`JOIN ${osm_admin} ON ST_Intersects(${osm_amenities.geometry}, ${osm_admin.geometry})`,
-				];
-				const where = [sql`${osm_admin.osm_id} = ${adminAreaId}`];
+      console.info(`Persisting score for admin area ${adminAreaId}...`);
+      await appDb.transaction(async (tx) => {
+        await persistScore(tx, results, { adminAreaId });
+      });
+    }
 
-				const sqlClause = getCombinedScoreQuery({ join, where });
-
-				const { rows } = await osmSyncDb.execute(sqlClause);
-				const result = rows.shift() as Record<string, number>;
-
-				await appDb.transaction(async (tx) => {
-					const [{ scoreId }] = await tx
-						.insert(scores)
-						.values({ adminAreaId, score: result.score })
-						.returning({ scoreId: scores.id });
-
-					for (const toplevelCategory of Object.keys(
-						topLevelCategories,
-					) as TopLevelCategoryId[]) {
-						const [{ toplevelCategoryScoreId }] = await tx
-							.insert(toplevelCategoryScores)
-							.values({
-								scoreId,
-								toplevelCategory,
-								score: result[getTopLevelCategoryScoreAlias(toplevelCategory)],
-							})
-							.returning({
-								toplevelCategoryScoreId: toplevelCategoryScores.id,
-							});
-
-						for (const { id: subCategory, topics } of getChildCategories(
-							toplevelCategory,
-						)) {
-							const [{ subCategoryScoreId }] = await tx
-								.insert(subCategoryScores)
-								.values({
-									toplevelCategoryScoreId,
-									subCategory,
-									score: result[getSubCategoryScoreAlias(subCategory)],
-								})
-								.returning({ subCategoryScoreId: subCategoryScores.id });
-
-							for (const { topicId: topic, criteria } of topics) {
-								const [{ topicScoreId }] = await tx
-									.insert(topicScores)
-									.values({
-										subCategoryScoreId,
-										topic,
-										score: result[getTopicScoreAlias(subCategory, topic)],
-									})
-									.returning({ topicScoreId: topicScores.id });
-
-								for (const { criterionId: criterion } of criteria) {
-									await tx.insert(criterionScores).values({
-										topicScoreId,
-										criterion,
-										score:
-											result[
-												getCriterionScoreAlias(subCategory, topic, criterion)
-											],
-									});
-								}
-							}
-						}
-					}
-				});
-			}),
-		);
-
-		return {
-			result: "okay",
-		};
-	},
+    return {
+      result: "okay",
+    };
+  },
 });
+
+async function persistScore(
+  tx: AppDbTransaction,
+  results: ScoreQueryResults,
+  { adminAreaId }: { adminAreaId: number },
+) {
+  const [{ scoreId }] = await tx
+    .insert(scores)
+    .values({ adminAreaId, score: results[getCombinedScoreAlias()] })
+    .returning({ scoreId: scores.id });
+
+  await persistTopLevelCategoryScores(tx, results, { scoreId });
+}
+
+async function persistTopLevelCategoryScores(
+  tx: AppDbTransaction,
+  results: ScoreQueryResults,
+  { scoreId }: { scoreId: string },
+) {
+  for (const toplevelCategory of topLevelCategoryList) {
+    const [{ toplevelCategoryScoreId }] = await tx
+      .insert(toplevelCategoryScores)
+      .values({
+        scoreId,
+        toplevelCategory,
+        score: results[getTopLevelCategoryScoreAlias(toplevelCategory)],
+      })
+      .returning({
+        toplevelCategoryScoreId: toplevelCategoryScores.id,
+      });
+
+    await persistSubCategoryScores(tx, results, {
+      toplevelCategory,
+      toplevelCategoryScoreId,
+    });
+  }
+}
+
+async function persistSubCategoryScores(
+  tx: AppDbTransaction,
+  results: ScoreQueryResults,
+  {
+    toplevelCategory,
+    toplevelCategoryScoreId,
+  }: {
+    toplevelCategory: TopLevelCategoryId;
+    toplevelCategoryScoreId: string;
+  },
+) {
+  for (const { id: subCategory, topics } of getChildCategories(
+    toplevelCategory,
+  )) {
+    const [{ subCategoryScoreId }] = await tx
+      .insert(subCategoryScores)
+      .values({
+        toplevelCategoryScoreId,
+        subCategory,
+        score: results[getSubCategoryScoreAlias(subCategory)],
+      })
+      .returning({ subCategoryScoreId: subCategoryScores.id });
+
+    await persistTopicScores(tx, results, {
+      subCategory,
+      subCategoryScoreId,
+      topics,
+    });
+  }
+}
+
+async function persistTopicScores(
+  tx: AppDbTransaction,
+  results: ScoreQueryResults,
+  {
+    subCategory,
+    subCategoryScoreId,
+    topics,
+  }: {
+    subCategory: SubCategoryId;
+    subCategoryScoreId: string;
+    topics: SubCategory["topics"];
+  },
+) {
+  for (const { topicId: topic, criteria } of topics) {
+    const [{ topicScoreId }] = await tx
+      .insert(topicScores)
+      .values({
+        subCategoryScoreId,
+        topic,
+        score: results[getTopicScoreAlias(subCategory, topic)],
+      })
+      .returning({ topicScoreId: topicScores.id });
+
+    await persistCriterionScores(tx, results, {
+      topic,
+      topicScoreId,
+      subCategory,
+      criteria,
+    });
+  }
+}
+
+async function persistCriterionScores(
+  tx: AppDbTransaction,
+  results: ScoreQueryResults,
+  {
+    topic,
+    topicScoreId,
+    subCategory,
+    criteria,
+  }: {
+    topic: TopicId;
+    topicScoreId: string;
+    subCategory: SubCategoryId;
+    criteria: SubCategory["topics"][number]["criteria"];
+  },
+) {
+  for (const { criterionId: criterion } of criteria) {
+    await tx.insert(criterionScores).values({
+      topicScoreId,
+      criterion,
+      score: results[getCriterionScoreAlias(subCategory, topic, criterion)],
+    });
+  }
+}

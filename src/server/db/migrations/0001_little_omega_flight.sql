@@ -8,7 +8,7 @@ CREATE TABLE "criterion_scores" (
 --> statement-breakpoint
 CREATE TABLE "scores" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"admin_area_id" varchar NOT NULL,
+	"admin_area_id" integer NOT NULL,
 	"score" integer,
 	"created_at" timestamp DEFAULT now()
 );
