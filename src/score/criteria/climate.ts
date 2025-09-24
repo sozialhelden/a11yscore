@@ -9,7 +9,7 @@ export type ClimateCriterionId =
 export const climateCriteria: Record<ClimateCriterionId, CriterionProperties> =
   {
     "smoking-is-prohibited": {
-      name: () => t("Smoking is prohibited"),
+      name: () => t("Smoke-free environment"),
       resources: ["https://wiki.openstreetmap.org/wiki/Key:smoking"],
       sql: (table) => {
         return sql<number>`AVG(CASE 

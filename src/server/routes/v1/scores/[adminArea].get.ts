@@ -60,25 +60,30 @@ export default defineEventHandler(async (event) => {
       score,
       subCategories: subCategoryScoreResults
         .filter(({ toplevelCategoryScoreId }) => toplevelCategoryScoreId === id)
-        .map(({ id, subCategory, score }) => ({
-          name: subCategories[subCategory as SubCategoryId].name(),
-          subCategory,
-          score,
-          topics: topicScoreResults
-            .filter(({ subCategoryScoreId }) => subCategoryScoreId === id)
-            .map(({ id, topic, score }) => ({
-              name: topics[topic as TopicId].name(),
-              topic,
-              score,
-              criteria: criterionScoreResults
-                .filter(({ topicScoreId }) => topicScoreId === id)
-                .map(({ criterion, score }) => ({
-                  name: criteria[criterion as CriterionId].name(),
-                  criterion,
-                  score,
-                })),
-            })),
-        })),
+        .map(({ id, subCategory, score }) => {
+          const subCategoryProperties =
+            subCategories[subCategory as SubCategoryId];
+          return {
+            name: subCategoryProperties.name(),
+            description: subCategoryProperties.description?.(),
+            subCategory,
+            score,
+            topics: topicScoreResults
+              .filter(({ subCategoryScoreId }) => subCategoryScoreId === id)
+              .map(({ id, topic, score }) => ({
+                name: topics[topic as TopicId].name(),
+                topic,
+                score,
+                criteria: criterionScoreResults
+                  .filter(({ topicScoreId }) => topicScoreId === id)
+                  .map(({ criterion, score }) => ({
+                    name: criteria[criterion as CriterionId].name(),
+                    criterion,
+                    score,
+                  })),
+              })),
+          };
+        }),
     }),
   );
 
