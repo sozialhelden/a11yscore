@@ -48,14 +48,14 @@ export const foodAndDrinksSubCategories: Record<
     ],
     sql: {
       from: osm_amenities,
-      where: sql.join(
+      where: sql`(${sql.join(
         [
           sql`${osm_amenities.shop} = 'bakery'`,
           sql`${osm_amenities.shop} = 'confectionery'`,
           sql`${osm_amenities.shop} = 'pastry'`,
         ],
         sql` OR `,
-      ),
+      )})`,
     },
     topics: [
       {
@@ -123,7 +123,7 @@ export const foodAndDrinksSubCategories: Record<
     ],
     sql: {
       from: osm_amenities,
-      where: sql.join(
+      where: sql`(${sql.join(
         [
           sql`${osm_amenities.amenity} = 'restaurant'`,
           sql`${osm_amenities.amenity} = 'cafe'`,
@@ -132,7 +132,7 @@ export const foodAndDrinksSubCategories: Record<
           sql`${osm_amenities.amenity} = 'food_court'`,
         ],
         sql` OR `,
-      ),
+      )})`,
     },
     topics: [
       {
