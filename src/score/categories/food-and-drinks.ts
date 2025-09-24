@@ -29,20 +29,110 @@ export const foodAndDrinksTopLevelCategory: ({
  * sub categories
  */
 
-export type FoodAndDrinksSubCategoryId = "restaurants" | "cafes";
+export type FoodAndDrinksSubCategoryId = "restaurants" | "bakeries";
+
 export const foodAndDrinksSubCategories: Record<
   FoodAndDrinksSubCategoryId,
   Omit<SubCategory, "id">
 > = {
+  bakeries: {
+    name: () => t("Bakeries"),
+    parent: "food-and-drinks",
+    weight: 0.4,
+    reason: () => "",
+    description: () => t("Includes bakeries, pastry shops and confectionaries"),
+    resources: [
+      "https://wiki.openstreetmap.org/wiki/Tag:shop%3Dbakery",
+      "https://wiki.openstreetmap.org/wiki/Tag:shop%3Dconfectionery",
+      "https://wiki.openstreetmap.org/wiki/Tag:shop%3Dpastry",
+    ],
+    sql: {
+      from: osm_amenities,
+      where: sql.join(
+        [
+          sql`${osm_amenities.shop} = 'bakery'`,
+          sql`${osm_amenities.shop} = 'confectionery'`,
+          sql`${osm_amenities.shop} = 'pastry'`,
+        ],
+        sql` OR `,
+      ),
+    },
+    topics: [
+      {
+        topicId: "mobility",
+        criteria: [
+          {
+            criterionId: "is-wheelchair-accessible",
+            weight: 1,
+            reason: () => "",
+          },
+        ],
+      },
+      {
+        topicId: "vision",
+        criteria: [
+          {
+            criterionId: "is-accessible-to-visually-impaired",
+            weight: 0.8,
+            reason: () => "",
+          },
+          {
+            criterionId: "has-menu-on-website",
+            weight: 0.2,
+            reason: () => "",
+          },
+        ],
+      },
+      {
+        topicId: "air-and-climate",
+        criteria: [
+          {
+            criterionId: "has-air-conditioning",
+            weight: 1,
+            reason: () => "",
+          },
+        ],
+      },
+      {
+        topicId: "hearing",
+        criteria: [
+          {
+            criterionId: "is-accessible-to-hearing-impaired",
+            weight: 1,
+            reason: () => "",
+          },
+        ],
+      },
+    ],
+  },
   restaurants: {
     name: () => t("Restaurants"),
     parent: "food-and-drinks",
-    weight: 0.7,
+    weight: 0.6,
     reason: () => "",
-    resources: ["https://wiki.openstreetmap.org/wiki/Tag:amenity%3Drestaurant"],
+    description: () =>
+      t(
+        "Includes restaurants, cafes, fast-food, cafeterias, food-courts and canteens",
+      ),
+    resources: [
+      "https://wiki.openstreetmap.org/wiki/Tag:amenity%3Drestaurant",
+      "https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dcafe",
+      "https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dfast_food",
+      "https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dcanteen",
+      "https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dfood_court",
+    ],
     sql: {
       from: osm_amenities,
-      where: sql`${osm_amenities.amenity} = 'restaurant'`,
+      where: sql.join(
+        [
+          sql`${osm_amenities.amenity} = 'restaurant'`,
+          sql`${osm_amenities.amenity} = 'cafe'`,
+          sql`${osm_amenities.amenity} = 'fast_food'`,
+          sql`${osm_amenities.amenity} = 'canteen'`,
+          sql`${osm_amenities.amenity} = 'food_court'`,
+        ],
+        sql` OR `,
+      ),
     },
     topics: [
       {
@@ -56,6 +146,41 @@ export const foodAndDrinksSubCategories: Record<
           {
             criterionId: "has-wheelchair-accessible-toilet",
             weight: 0.2,
+            reason: () => "",
+          },
+        ],
+      },
+      {
+        topicId: "vision",
+        criteria: [
+          {
+            criterionId: "is-accessible-to-visually-impaired",
+            weight: 0.8,
+            reason: () => "",
+          },
+          {
+            criterionId: "has-menu-on-website",
+            weight: 0.2,
+            reason: () => "",
+          },
+        ],
+      },
+      {
+        topicId: "toilet",
+        criteria: [
+          {
+            criterionId: "has-toilet",
+            weight: 1,
+            reason: () => "",
+          },
+        ],
+      },
+      {
+        topicId: "neurodivergent",
+        criteria: [
+          {
+            criterionId: "has-quiet-hours",
+            weight: 1,
             reason: () => "",
           },
         ],
@@ -75,30 +200,27 @@ export const foodAndDrinksSubCategories: Record<
           },
         ],
       },
-    ],
-  },
-  cafes: {
-    name: () => t("Cafes"),
-    reason: () => "",
-    parent: "food-and-drinks",
-    weight: 0.3,
-    resources: ["https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dcafe"],
-    sql: {
-      from: osm_amenities,
-      where: sql`${osm_amenities.amenity} = 'cafe'`,
-    },
-    topics: [
       {
-        topicId: "mobility",
+        topicId: "hearing",
         criteria: [
           {
-            criterionId: "is-wheelchair-accessible",
-            weight: 0.8,
+            criterionId: "is-accessible-to-hearing-impaired",
+            weight: 0.7,
             reason: () => "",
           },
           {
-            criterionId: "has-wheelchair-accessible-toilet",
-            weight: 0.2,
+            criterionId: "reservation-via-website",
+            weight: 0.3,
+            reason: () => "",
+          },
+        ],
+      },
+      {
+        topicId: "general-assistance",
+        criteria: [
+          {
+            criterionId: "has-drinking-straws",
+            weight: 1,
             reason: () => "",
           },
         ],

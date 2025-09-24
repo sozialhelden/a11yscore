@@ -34,14 +34,32 @@ calculate()
   .then(() => console.info("Score calculation task completed."));
 
 async function calculate() {
-  for (const { id: adminAreaId } of allowedAdminAreas) {
-    console.info(`Calculating score for admin area ${adminAreaId}...`);
-    const results = await calculateScoreByAdminArea(adminAreaId);
+  const batchSize = 4;
 
-    console.info(`Persisting score for admin area ${adminAreaId}...`);
-    await appDb.transaction(async (tx) => {
-      await persistScore(tx, results, { adminAreaId });
-    });
+  for (let i = 0; i < allowedAdminAreas.length; i += batchSize) {
+    await Promise.all(
+      allowedAdminAreas
+        .slice(i, i + batchSize)
+        .map(async ({ id: adminAreaId, name }) => {
+          const startCalculation = new Date();
+          console.info(
+            `[${name}] Started calculation for admin-area "${adminAreaId}"`,
+          );
+          const results = await calculateScoreByAdminArea(adminAreaId);
+          console.info(
+            `[${name}] Calculation finished, took ${Math.ceil((Date.now() - startCalculation.getTime()) / 1000)}s`,
+          );
+
+          const startPersisting = new Date();
+          console.info(`[${name}] Persisting scores...`);
+          await appDb.transaction(async (tx) => {
+            await persistScore(tx, results, { adminAreaId });
+          });
+          console.info(
+            `[${name}] Scores persisted, took ${Math.ceil((Date.now() - startPersisting.getTime()) / 1000)}s`,
+          );
+        }),
+    );
   }
 }
 

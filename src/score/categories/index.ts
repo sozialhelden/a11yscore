@@ -88,7 +88,7 @@ export type SubCategory = {
    * Make sure to use the `t` function to translate the name.
    * @example
    * ```
-   * () => t("Restaurants")
+   * () => t("Gastronomy")
    * ```
    */
   name: () => string;
@@ -110,6 +110,15 @@ export type SubCategory = {
    * ```
    */
   weight: number;
+  /**
+   * An optional description of the category, used for display purposes.
+   * Make sure to use the `t` function to translate the description.
+   * @example
+   * ```
+   * () => t("Includes restaurants, cafes, fast-food, cafeteria and canteens.")
+   * ```
+   */
+  description?: () => string;
   /**
    * An optional description of this sub-category, explaining its relevance.
    * It should also be used to explain the reasoning behind the individual weight.

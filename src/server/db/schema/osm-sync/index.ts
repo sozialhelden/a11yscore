@@ -9,6 +9,7 @@ import {
 export const osm_amenities = pgTable("osm_amenities", {
   id: integer().notNull().primaryKey(),
   amenity: varchar(),
+  shop: varchar(),
   geometry: geometry().notNull(),
   smoking: varchar(),
   tags: jsonb().notNull(),

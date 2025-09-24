@@ -2,12 +2,13 @@ import { t } from "~/utils/i18n";
 import { addIdToConfigEntries } from "~~/src/score/utils/config";
 
 export type TopicId =
-  | "mobility"
-  | "vision"
+  | "air-and-climate"
+  | "general-assistance"
   | "hearing"
-  | "toilet"
+  | "mobility"
   | "neurodivergent"
-  | "air-and-climate";
+  | "toilet"
+  | "vision";
 
 type TopicProperties = {
   name: () => string;
@@ -31,6 +32,9 @@ const configuredTopics: Record<TopicId, TopicProperties> = {
   },
   "air-and-climate": {
     name: () => t("Air and Climate"),
+  },
+  "general-assistance": {
+    name: () => t("General Assistance"),
   },
 };
 

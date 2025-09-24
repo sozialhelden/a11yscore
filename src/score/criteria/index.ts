@@ -1,16 +1,45 @@
 import type { SQL } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 import {
+  type BlindCriterionId,
+  blindCriteria,
+} from "~~/src/score/criteria/blind";
+import {
   type ClimateCriterionId,
   climateCriteria,
 } from "~~/src/score/criteria/climate";
+import { type DeafCriterionId, deafCriteria } from "~~/src/score/criteria/deaf";
+import {
+  type EnvironmentCriterionId,
+  environmentCriteria,
+} from "~~/src/score/criteria/environment";
+import {
+  type GeneralCriterionId,
+  generalCriteria,
+} from "~~/src/score/criteria/general";
+import {
+  type ToiletCriterionId,
+  toiletCriteria,
+} from "~~/src/score/criteria/toilets";
+import {
+  type WebsiteCriterionId,
+  websiteCriteria,
+} from "~~/src/score/criteria/website";
 import {
   type WheelchairCriterionId,
   wheelchairCriteria,
 } from "~~/src/score/criteria/wheelchair";
 import { addIdToConfigEntries } from "~~/src/score/utils/config";
 
-export type CriterionId = WheelchairCriterionId | ClimateCriterionId;
+export type CriterionId =
+  | BlindCriterionId
+  | ClimateCriterionId
+  | DeafCriterionId
+  | EnvironmentCriterionId
+  | GeneralCriterionId
+  | ToiletCriterionId
+  | WebsiteCriterionId
+  | WheelchairCriterionId;
 
 export type CriterionProperties = {
   /**
@@ -49,8 +78,14 @@ export type CriterionProperties = {
 };
 
 const configuredCriteria: Record<CriterionId, CriterionProperties> = {
-  ...wheelchairCriteria,
+  ...generalCriteria,
+  ...blindCriteria,
   ...climateCriteria,
+  ...deafCriteria,
+  ...environmentCriteria,
+  ...toiletCriteria,
+  ...websiteCriteria,
+  ...wheelchairCriteria,
 };
 
 export type Criterion = CriterionProperties & {
