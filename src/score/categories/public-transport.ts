@@ -21,6 +21,18 @@ export const publicTransportTopLevelCategory: ({
       name: () => t("Public Transport"),
       sustainableDevelopmentGoals: [9, 13, 15, 16],
       weight,
+      interpretation: (score) => {
+        if (score >= 75)
+          return t("Most of the transport stops are accessible.");
+        if (score >= 50)
+          return t("Many of the transport stops are accessible.");
+        if (score >= 30)
+          return t("Some of the transport stops are accessible.");
+        if (score > 0)
+          return t("Only a few of the transport stops are accessible.");
+
+        return t("The score could not be determined due to missing data.");
+      },
     },
   });
 
