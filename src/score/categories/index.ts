@@ -72,6 +72,24 @@ export type TopLevelCategory = {
    * ```
    */
   weight: number;
+  /**
+   * A written interpretation of the score, used for display purposes.
+   * Make sure to use the `t` function to translate the description.
+   * @example
+   * ```
+   * (score) => {
+   *    if (score >= 0.75) {
+   *        return t("Many of the transport stops are accessible");
+   *    } else if (score >= 0.3) {
+   *        return t("Some of the transport stops are accessible");
+   *    } else if (score > 0) {
+   *        return t("Only a few transport stops are accessible");
+   *    }
+   *    return t("Score could not be calculated due to missing data");
+   * }
+   * ```
+   */
+  interpretation: (score: number) => string;
 };
 
 export type SubCategory = {
