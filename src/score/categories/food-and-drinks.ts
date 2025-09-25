@@ -41,14 +41,6 @@ export const foodAndDrinksTopLevelCategory: ({
  * sub categories
  */
 
-export type FoodAndDrinksSubCategoryId =
-  | "restaurants"
-  | "bakeries"
-  | "delicatessen"
-  | "bars"
-  | "drinking-water"
-  | "ice-cream";
-
 const genericGastronomyTopics: SubCategory["topics"] = [
   {
     topicId: "mobility",
@@ -141,6 +133,71 @@ const genericGastronomyTopics: SubCategory["topics"] = [
     ],
   },
 ];
+
+const genericShopTopics: SubCategory["topics"] = [
+  {
+    topicId: "mobility",
+    criteria: [
+      {
+        criterionId: "is-wheelchair-accessible",
+        weight: 1,
+        reason: () => "",
+      },
+    ],
+  },
+  {
+    topicId: "vision",
+    criteria: [
+      {
+        criterionId: "is-accessible-to-visually-impaired",
+        weight: 0.6,
+        reason: () => "",
+      },
+      {
+        criterionId: "has-menu-on-website",
+        weight: 0.2,
+        reason: () => "",
+      },
+      {
+        criterionId: "has-website",
+        weight: 0.2,
+        reason: () => "",
+      },
+    ],
+  },
+  {
+    topicId: "air-and-climate",
+    criteria: [
+      {
+        criterionId: "has-air-conditioning",
+        weight: 1,
+        reason: () => "",
+      },
+    ],
+  },
+  {
+    topicId: "hearing",
+    criteria: [
+      {
+        criterionId: "is-accessible-to-hearing-impaired",
+        weight: 1,
+        reason: () => "",
+      },
+    ],
+  },
+];
+
+export type FoodAndDrinksSubCategoryId =
+  | "restaurants"
+  | "bakeries"
+  | "delicatessen"
+  | "bars"
+  | "drinking-water"
+  | "cafes"
+  | "food-court"
+  | "fast-food"
+  | "canteen"
+  | "ice-cream";
 
 export const foodAndDrinksSubCategories: Record<
   FoodAndDrinksSubCategoryId,
@@ -286,58 +343,7 @@ export const foodAndDrinksSubCategories: Record<
         sql` OR `,
       )})`,
     },
-    topics: [
-      {
-        topicId: "mobility",
-        criteria: [
-          {
-            criterionId: "is-wheelchair-accessible",
-            weight: 1,
-            reason: () => "",
-          },
-        ],
-      },
-      {
-        topicId: "vision",
-        criteria: [
-          {
-            criterionId: "is-accessible-to-visually-impaired",
-            weight: 0.6,
-            reason: () => "",
-          },
-          {
-            criterionId: "has-menu-on-website",
-            weight: 0.2,
-            reason: () => "",
-          },
-          {
-            criterionId: "has-website",
-            weight: 0.2,
-            reason: () => "",
-          },
-        ],
-      },
-      {
-        topicId: "air-and-climate",
-        criteria: [
-          {
-            criterionId: "has-air-conditioning",
-            weight: 1,
-            reason: () => "",
-          },
-        ],
-      },
-      {
-        topicId: "hearing",
-        criteria: [
-          {
-            criterionId: "is-accessible-to-hearing-impaired",
-            weight: 1,
-            reason: () => "",
-          },
-        ],
-      },
-    ],
+    topics: genericShopTopics,
   },
   "ice-cream": {
     name: () => t("Ice cream shops"),
@@ -485,25 +491,58 @@ export const foodAndDrinksSubCategories: Record<
       t(
         "Includes restaurants, cafes, fast-food, cafeterias, food-courts and canteens",
       ),
-    resources: [
-      "https://wiki.openstreetmap.org/wiki/Tag:amenity%3Drestaurant",
-      "https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dcafe",
-      "https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dfast_food",
-      "https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dcanteen",
-      "https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dfood_court",
-    ],
+    resources: ["https://wiki.openstreetmap.org/wiki/Tag:amenity%3Drestaurant"],
     sql: {
       from: osm_amenities,
-      where: sql`(${sql.join(
-        [
-          sql`${osm_amenities.amenity} = 'restaurant'`,
-          sql`${osm_amenities.amenity} = 'cafe'`,
-          sql`${osm_amenities.amenity} = 'fast_food'`,
-          sql`${osm_amenities.amenity} = 'canteen'`,
-          sql`${osm_amenities.amenity} = 'food_court'`,
-        ],
-        sql` OR `,
-      )})`,
+      where: sql`${osm_amenities.amenity} = 'restaurant'`,
+    },
+    topics: genericGastronomyTopics,
+  },
+  cafes: {
+    name: () => t("Cafes"),
+    parent: "food-and-drinks",
+    weight: 0.3,
+    reason: () => "",
+    resources: ["https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dcafe"],
+    sql: {
+      from: osm_amenities,
+      where: sql`${osm_amenities.amenity} = 'cafe'`,
+    },
+    topics: genericGastronomyTopics,
+  },
+  "fast-food": {
+    name: () => t("Fast food"),
+    parent: "food-and-drinks",
+    weight: 0.3,
+    reason: () => "",
+    resources: ["https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dfast_food"],
+    sql: {
+      from: osm_amenities,
+      where: sql`(${osm_amenities.amenity} = 'fast_food' AND ${osm_amenities.tags}->'fast_food' != 'cafeteria')`,
+    },
+    topics: genericGastronomyTopics,
+  },
+  canteen: {
+    name: () => t("Canteen"),
+    parent: "food-and-drinks",
+    weight: 0.3,
+    reason: () => "",
+    resources: ["https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dcanteen"],
+    sql: {
+      from: osm_amenities,
+      where: sql`(${osm_amenities.amenity} = 'canteen' OR (${osm_amenities.amenity} = 'fast_food' AND ${osm_amenities.tags}->'fast_food' = 'cafeteria'))`,
+    },
+    topics: genericGastronomyTopics,
+  },
+  "food-court": {
+    name: () => t("Food court"),
+    parent: "food-and-drinks",
+    weight: 0.3,
+    reason: () => "",
+    resources: ["https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dfood_court"],
+    sql: {
+      from: osm_amenities,
+      where: sql`${osm_amenities.amenity} = 'food_court'`,
     },
     topics: genericGastronomyTopics,
   },
