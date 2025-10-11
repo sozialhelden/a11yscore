@@ -37,7 +37,7 @@
     "@sozialhelden/core": "2.2.3",
     "@transifex/native": "7.1.4",
     "dotenv": "17.2.3",
-    "drizzle-kit": "0.31.4",
+    "drizzle-kit": "0.31.5",
     "drizzle-orm": "0.44.5",
     "pg": "8.16.3"
   }
