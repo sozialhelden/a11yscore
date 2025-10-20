@@ -8,6 +8,23 @@ export default defineNitroConfig({
   experimental: {
     openAPI: true,
   },
+  openAPI: {
+    production: "prerender",
+    route: "/openapi.json",
+    ui: {
+      scalar: {
+        route: "/",
+        title: "API Reference",
+        layout: "modern",
+        defaultOpenAllTags: true,
+        hideClientButton: true,
+        theme: "deepSpace",
+        showSidebar: true,
+        telemetry: false,
+      },
+      swagger: false,
+    },
+  },
   routeRules: {
     "/v1/**": { cors: true },
   },
