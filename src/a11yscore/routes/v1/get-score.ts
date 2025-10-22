@@ -6,7 +6,7 @@ import {
 } from "~~/src/a11yscore/config/categories";
 import { type CriterionId, criteria } from "~~/src/a11yscore/config/criteria";
 import { type TopicId, topics } from "~~/src/a11yscore/config/topics";
-import { queryScoreResultsByAdminArea } from "~~/src/a11yscore/queries/queryScoreResultsByAdminArea";
+import { queryScoreResultsByAdminArea } from "~~/src/a11yscore/queries/query-score-results-by-admin-area";
 import { allowedAdminAreas } from "~~/src/config";
 
 export default defineEventHandler(async (event) => {
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
 
   const {
     scoreResults,
-    toplevelCategoryScoreResults,
+    topLevelCategoryScoreResults,
     subCategoryScoreResults,
     topicScoreResults,
     criterionScoreResults,
@@ -37,18 +37,18 @@ export default defineEventHandler(async (event) => {
   }
 
   // TODO: refactor this
-  const result = toplevelCategoryScoreResults.map(
-    ({ id, toplevelCategory, score }) => {
-      const toplevelCategoryProperties =
-        topLevelCategories[toplevelCategory as TopLevelCategoryId];
+  const result = topLevelCategoryScoreResults.map(
+    ({ id, topLevelCategory, score }) => {
+      const topLevelCategoryProperties =
+        topLevelCategories[topLevelCategory as TopLevelCategoryId];
       return {
-        name: toplevelCategoryProperties.name(),
-        interpretation: toplevelCategoryProperties.interpretation?.(score),
-        toplevelCategory,
+        name: topLevelCategoryProperties.name(),
+        interpretation: topLevelCategoryProperties.interpretation?.(score),
+        topLevelCategory,
         score,
         subCategories: subCategoryScoreResults
           .filter(
-            ({ toplevelCategoryScoreId }) => toplevelCategoryScoreId === id,
+            ({ topLevelCategoryScoreId }) => topLevelCategoryScoreId === id,
           )
           .map(({ id, subCategory, score }) => {
             const subCategoryProperties =

@@ -4,7 +4,7 @@ import {
   scores,
   subCategoryScores,
   topicScores,
-  toplevelCategoryScores,
+  topLevelCategoryScores,
 } from "~/db/schema/app";
 import {
   type SubCategory,
@@ -13,11 +13,11 @@ import {
   topLevelCategoryList,
 } from "~~/src/a11yscore/config/categories";
 import type { TopicId } from "~~/src/a11yscore/config/topics";
-import { calculateScoreByAdminArea } from "~~/src/a11yscore/queries/calculateScoreByAdminArea";
+import { calculateScoreByAdminArea } from "~~/src/a11yscore/queries/calculate-score-by-admin-area";
 import { getChildCategories } from "~~/src/a11yscore/utils/categories";
 import {
-  getCombinedScoreAlias,
   getCriterionScoreAlias,
+  getScoreAlias,
   getSubCategoryScoreAlias,
   getTopicScoreAlias,
   getTopLevelCategoryScoreAlias,
@@ -34,7 +34,7 @@ calculate()
   .then(() => console.info("Score calculation task completed."));
 
 async function calculate() {
-  const batchSize = 4;
+  const batchSize = 1;
 
   for (let i = 0; i < allowedAdminAreas.length; i += batchSize) {
     await Promise.all(
@@ -70,7 +70,7 @@ async function persistScore(
 ) {
   const [{ scoreId }] = await tx
     .insert(scores)
-    .values({ adminAreaId, score: results[getCombinedScoreAlias()] })
+    .values({ adminAreaId, score: results[getScoreAlias()] })
     .returning({ scoreId: scores.id });
 
   await persistTopLevelCategoryScores(tx, results, { scoreId });
@@ -81,21 +81,21 @@ async function persistTopLevelCategoryScores(
   results: ScoreQueryResults,
   { scoreId }: { scoreId: string },
 ) {
-  for (const toplevelCategory of topLevelCategoryList) {
-    const [{ toplevelCategoryScoreId }] = await tx
-      .insert(toplevelCategoryScores)
+  for (const topLevelCategory of topLevelCategoryList) {
+    const [{ topLevelCategoryScoreId }] = await tx
+      .insert(topLevelCategoryScores)
       .values({
         scoreId,
-        toplevelCategory,
-        score: results[getTopLevelCategoryScoreAlias(toplevelCategory)],
+        topLevelCategory,
+        score: results[getTopLevelCategoryScoreAlias(topLevelCategory)],
       })
       .returning({
-        toplevelCategoryScoreId: toplevelCategoryScores.id,
+        topLevelCategoryScoreId: topLevelCategoryScores.id,
       });
 
     await persistSubCategoryScores(tx, results, {
-      toplevelCategory,
-      toplevelCategoryScoreId,
+      topLevelCategory,
+      topLevelCategoryScoreId,
     });
   }
 }
@@ -104,26 +104,27 @@ async function persistSubCategoryScores(
   tx: AppDbTransaction,
   results: ScoreQueryResults,
   {
-    toplevelCategory,
-    toplevelCategoryScoreId,
+    topLevelCategory,
+    topLevelCategoryScoreId,
   }: {
-    toplevelCategory: TopLevelCategoryId;
-    toplevelCategoryScoreId: string;
+    topLevelCategory: TopLevelCategoryId;
+    topLevelCategoryScoreId: string;
   },
 ) {
   for (const { id: subCategory, topics } of getChildCategories(
-    toplevelCategory,
+    topLevelCategory,
   )) {
     const [{ subCategoryScoreId }] = await tx
       .insert(subCategoryScores)
       .values({
-        toplevelCategoryScoreId,
+        topLevelCategoryScoreId,
         subCategory,
-        score: results[getSubCategoryScoreAlias(subCategory)],
+        score: results[getSubCategoryScoreAlias(topLevelCategory, subCategory)],
       })
       .returning({ subCategoryScoreId: subCategoryScores.id });
 
     await persistTopicScores(tx, results, {
+      topLevelCategory,
       subCategory,
       subCategoryScoreId,
       topics,
@@ -135,10 +136,12 @@ async function persistTopicScores(
   tx: AppDbTransaction,
   results: ScoreQueryResults,
   {
+    topLevelCategory,
     subCategory,
     subCategoryScoreId,
     topics,
   }: {
+    topLevelCategory: TopLevelCategoryId;
     subCategory: SubCategoryId;
     subCategoryScoreId: string;
     topics: SubCategory["topics"];
@@ -150,7 +153,8 @@ async function persistTopicScores(
       .values({
         subCategoryScoreId,
         topic,
-        score: results[getTopicScoreAlias(subCategory, topic)],
+        score:
+          results[getTopicScoreAlias(topLevelCategory, subCategory, topic)],
       })
       .returning({ topicScoreId: topicScores.id });
 
@@ -158,6 +162,7 @@ async function persistTopicScores(
       topic,
       topicScoreId,
       subCategory,
+      topLevelCategory,
       criteria,
     });
   }
@@ -170,11 +175,13 @@ async function persistCriterionScores(
     topic,
     topicScoreId,
     subCategory,
+    topLevelCategory,
     criteria,
   }: {
     topic: TopicId;
     topicScoreId: string;
     subCategory: SubCategoryId;
+    topLevelCategory: TopLevelCategoryId;
     criteria: SubCategory["topics"][number]["criteria"];
   },
 ) {
@@ -182,7 +189,15 @@ async function persistCriterionScores(
     await tx.insert(criterionScores).values({
       topicScoreId,
       criterion,
-      score: results[getCriterionScoreAlias(subCategory, topic, criterion)],
+      score:
+        results[
+          getCriterionScoreAlias(
+            topLevelCategory,
+            subCategory,
+            topic,
+            criterion,
+          )
+        ],
     });
   }
 }
