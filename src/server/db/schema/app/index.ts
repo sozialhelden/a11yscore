@@ -14,20 +14,20 @@ export const scores = pgTable("scores", {
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
 });
 
-export const toplevelCategoryScores = pgTable("toplevel_category_scores", {
+export const topLevelCategoryScores = pgTable("toplevel_category_scores", {
   id: uuid("id").primaryKey().defaultRandom(),
   scoreId: uuid("score_id")
     .references(() => scores.id, { onDelete: "cascade" })
     .notNull(),
-  toplevelCategory: varchar("toplevel_category").notNull(),
+  topLevelCategory: varchar("toplevel_category").notNull(),
   score: integer("score"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
 });
 
 export const subCategoryScores = pgTable("sub_category_scores", {
   id: uuid("id").primaryKey().defaultRandom(),
-  toplevelCategoryScoreId: uuid("toplevel_category_score_id")
-    .references(() => toplevelCategoryScores.id, { onDelete: "cascade" })
+  topLevelCategoryScoreId: uuid("toplevel_category_score_id")
+    .references(() => topLevelCategoryScores.id, { onDelete: "cascade" })
     .notNull(),
   subCategory: varchar("sub_category").notNull(),
   score: integer("score"),
@@ -55,11 +55,11 @@ export const criterionScores = pgTable("criterion_scores", {
 });
 
 export const scoresRelations = relations(scores, ({ many }) => ({
-  toplevelCategoryScores: many(toplevelCategoryScores),
+  topLevelCategoryScores: many(topLevelCategoryScores),
 }));
 
-export const toplevelCategoryScoresRelations = relations(
-  toplevelCategoryScores,
+export const topLevelCategoryScoresRelations = relations(
+  topLevelCategoryScores,
   ({ one, many }) => ({
     score: one(scores),
     subCategoryScores: many(subCategoryScores),
@@ -69,7 +69,7 @@ export const toplevelCategoryScoresRelations = relations(
 export const subCategoryScoresRelations = relations(
   subCategoryScores,
   ({ one, many }) => ({
-    toplevelCategoryScore: one(toplevelCategoryScores),
+    topLevelCategoryScore: one(topLevelCategoryScores),
     topicScores: many(topicScores),
   }),
 );
