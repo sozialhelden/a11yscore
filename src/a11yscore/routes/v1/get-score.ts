@@ -1,3 +1,4 @@
+import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
 import {
   type SubCategoryId,
   subCategories,
@@ -7,12 +8,14 @@ import {
 import { type CriterionId, criteria } from "~~/src/a11yscore/config/criteria";
 import { type TopicId, topics } from "~~/src/a11yscore/config/topics";
 import { queryScoreResultsByAdminArea } from "~~/src/a11yscore/queries/query-score-results-by-admin-area";
-import { allowedAdminAreas } from "~~/src/config";
 
 export default defineEventHandler(async (event) => {
-  const adminAreaId = parseInt(getRouterParam(event, "adminArea"));
+  const adminArea = getRouterParam(event, "adminArea");
+  const adminAreaId = allowedAdminAreas.find(
+    ({ slug }) => slug === adminArea,
+  )?.id;
 
-  if (!allowedAdminAreas.some(({ id }) => adminAreaId === id)) {
+  if (!adminAreaId) {
     throw createError({
       status: 404,
       statusMessage: "Not found",

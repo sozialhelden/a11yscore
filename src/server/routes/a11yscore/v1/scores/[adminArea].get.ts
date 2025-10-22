@@ -12,16 +12,16 @@ defineRouteMeta({
         in: "path",
         name: "adminArea",
         schema: {
-          type: "integer",
-          example: "-62422",
+          type: "string",
+          example: "berlin",
         },
-        description: "OSM id of the admin area to get the score for",
+        description: "Slug of the admin area to get the score for",
       },
       langQueryParameter,
     ],
     responses: {
       "200": {
-        description: "Latest calculated score",
+        description: "Successful response",
         content: {
           "application/json": {
             schema: {
@@ -185,7 +185,7 @@ defineRouteMeta({
         },
       },
       "404": {
-        description: "Admin are not found",
+        description: "Not found",
       },
     },
   },

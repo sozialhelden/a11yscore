@@ -10,8 +10,7 @@ defineRouteMeta({
     parameters: [langQueryParameter],
     responses: {
       "200": {
-        description:
-          "List of osm-tags used for categories and criteria in the a11y-Score algorithm.",
+        description: "Successful response",
         content: {
           "application/json": {
             schema: {
