@@ -5,7 +5,7 @@ import {
   scores,
   subCategoryScores,
   topicScores,
-  toplevelCategoryScores,
+  topLevelCategoryScores,
 } from "~/db/schema/app";
 
 export async function queryScoreResultsByAdminArea(adminAreaId: number) {
@@ -21,10 +21,10 @@ export async function queryScoreResultsByAdminArea(adminAreaId: number) {
     return { scoreResults: undefined };
   }
 
-  const toplevelCategoryScoreResults = await appDb
+  const topLevelCategoryScoreResults = await appDb
     .select()
-    .from(toplevelCategoryScores)
-    .where(eq(toplevelCategoryScores.scoreId, scoreResults.id))
+    .from(topLevelCategoryScores)
+    .where(eq(topLevelCategoryScores.scoreId, scoreResults.id))
     .execute();
 
   const subCategoryScoreResults = await appDb
@@ -32,8 +32,8 @@ export async function queryScoreResultsByAdminArea(adminAreaId: number) {
     .from(subCategoryScores)
     .where(
       inArray(
-        subCategoryScores.toplevelCategoryScoreId,
-        toplevelCategoryScoreResults.map(({ id }) => id),
+        subCategoryScores.topLevelCategoryScoreId,
+        topLevelCategoryScoreResults.map(({ id }) => id),
       ),
     )
     .execute();
@@ -62,7 +62,7 @@ export async function queryScoreResultsByAdminArea(adminAreaId: number) {
 
   return {
     scoreResults,
-    toplevelCategoryScoreResults,
+    topLevelCategoryScoreResults,
     subCategoryScoreResults,
     topicScoreResults,
     criterionScoreResults,
