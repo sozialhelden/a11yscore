@@ -22,7 +22,7 @@ import {
   getTopicScoreAlias,
   getTopLevelCategoryScoreAlias,
 } from "~~/src/a11yscore/utils/sql-aliases";
-import { allowedAdminAreas } from "~~/src/config";
+import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
 
 type AppDbTransaction = Parameters<Parameters<typeof appDb.transaction>[0]>[0];
 type ScoreQueryResults = Record<string, number>;
