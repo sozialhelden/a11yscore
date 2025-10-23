@@ -3,7 +3,7 @@
   "workspaces": {
     "": {
       "dependencies": {
-        "@sozialhelden/core": "2.2.3",
+        "@sozialhelden/core": "2.3.0",
         "@transifex/native": "7.1.4",
         "dotenv": "17.2.3",
         "drizzle-kit": "0.31.5",
@@ -284,7 +284,7 @@
 
     "@sindresorhus/merge-streams": ["@sindresorhus/merge-streams@4.0.0", "", {}, "sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ=="],
 
-    "@sozialhelden/core": ["@sozialhelden/core@2.2.3", "", { "dependencies": { "@mapbox/maki": "8.2.0", "@sozialhelden/ietf-language-tags": "5.4.2" }, "peerDependencies": { "react": "^18.3.0 || ^19.1.0", "typescript": "^5.9.0" } }, "sha512-QMppLs7e4UvMSmH7eGFPuoEH4TEX8oQXdx3qEmTbcIZUirlMbbU8nnDw/5cRNfg1t/Va98Px04fgwPrXFT28Fw=="],
+    "@sozialhelden/core": ["@sozialhelden/core@2.3.0", "", { "dependencies": { "@mapbox/maki": "8.2.0", "@sozialhelden/ietf-language-tags": "5.4.2" }, "peerDependencies": { "react": "^18.3.0 || ^19.1.0", "typescript": "^5.9.0" } }, "sha512-GPmmlJhCTIOtNQdUjHFUY26L191XtnP/gPzzquYTckvLUUooGJK97Fn1jmee+1sAC/ji4xcMZ21vEURTKIu6tQ=="],
 
     "@sozialhelden/ietf-language-tags": ["@sozialhelden/ietf-language-tags@5.4.2", "", { "dependencies": { "lodash.compact": "^3.0.1", "typescript": "^4.9.3" } }, "sha512-aCN7bVOfX9sBN0EHyWJT14H8bx+VYBo8tdcynai35wgoxKMfVtgEECkQ1gs8nEL6GHGes8lPIfo6AjIch44N3w=="],
 
