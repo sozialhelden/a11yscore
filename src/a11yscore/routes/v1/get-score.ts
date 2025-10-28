@@ -1,3 +1,4 @@
+import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
 import {
   type SubCategoryId,
   subCategories,
@@ -6,13 +7,15 @@ import {
 } from "~~/src/a11yscore/config/categories";
 import { type CriterionId, criteria } from "~~/src/a11yscore/config/criteria";
 import { type TopicId, topics } from "~~/src/a11yscore/config/topics";
-import { queryScoreResultsByAdminArea } from "~~/src/a11yscore/queries/queryScoreResultsByAdminArea";
-import { allowedAdminAreas } from "~~/src/config";
+import { queryScoreResultsByAdminArea } from "~~/src/a11yscore/queries/query-score-results-by-admin-area";
 
 export default defineEventHandler(async (event) => {
-  const adminAreaId = parseInt(getRouterParam(event, "adminArea"));
+  const adminArea = getRouterParam(event, "adminArea");
+  const adminAreaId = allowedAdminAreas.find(
+    ({ slug }) => slug === adminArea,
+  )?.id;
 
-  if (!allowedAdminAreas.some(({ id }) => adminAreaId === id)) {
+  if (!adminAreaId) {
     throw createError({
       status: 404,
       statusMessage: "Not found",
@@ -22,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
   const {
     scoreResults,
-    toplevelCategoryScoreResults,
+    topLevelCategoryScoreResults,
     subCategoryScoreResults,
     topicScoreResults,
     criterionScoreResults,
@@ -37,18 +40,18 @@ export default defineEventHandler(async (event) => {
   }
 
   // TODO: refactor this
-  const result = toplevelCategoryScoreResults.map(
-    ({ id, toplevelCategory, score }) => {
-      const toplevelCategoryProperties =
-        topLevelCategories[toplevelCategory as TopLevelCategoryId];
+  const result = topLevelCategoryScoreResults.map(
+    ({ id, topLevelCategory, score }) => {
+      const topLevelCategoryProperties =
+        topLevelCategories[topLevelCategory as TopLevelCategoryId];
       return {
-        name: toplevelCategoryProperties.name(),
-        interpretation: toplevelCategoryProperties.interpretation?.(score),
-        toplevelCategory,
+        name: topLevelCategoryProperties.name(),
+        interpretation: topLevelCategoryProperties.interpretation?.(score),
+        topLevelCategory,
         score,
         subCategories: subCategoryScoreResults
           .filter(
-            ({ toplevelCategoryScoreId }) => toplevelCategoryScoreId === id,
+            ({ topLevelCategoryScoreId }) => topLevelCategoryScoreId === id,
           )
           .map(({ id, subCategory, score }) => {
             const subCategoryProperties =
@@ -56,6 +59,7 @@ export default defineEventHandler(async (event) => {
             return {
               name: subCategoryProperties.name(),
               description: subCategoryProperties.description?.(),
+              osmTags: subCategoryProperties.osmTags,
               subCategory,
               score,
               topics: topicScoreResults
@@ -66,11 +70,16 @@ export default defineEventHandler(async (event) => {
                   score,
                   criteria: criterionScoreResults
                     .filter(({ topicScoreId }) => topicScoreId === id)
-                    .map(({ criterion, score }) => ({
-                      name: criteria[criterion as CriterionId].name(),
-                      criterion,
-                      score,
-                    })),
+                    .map(({ criterion, score }) => {
+                      const criterionProperties =
+                        criteria[criterion as CriterionId];
+                      return {
+                        name: criterionProperties.name(),
+                        osmTags: criterionProperties.osmTags,
+                        criterion,
+                        score,
+                      };
+                    }),
                 })),
             };
           }),

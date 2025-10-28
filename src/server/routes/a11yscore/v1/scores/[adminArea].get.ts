@@ -12,16 +12,16 @@ defineRouteMeta({
         in: "path",
         name: "adminArea",
         schema: {
-          type: "integer",
-          example: "-62422",
+          type: "string",
+          example: "berlin",
         },
-        description: "OSM id of the admin area to get the score for",
+        description: "Slug of the admin area to get the score for",
       },
       langQueryParameter,
     ],
     responses: {
       "200": {
-        description: "Latest calculated score",
+        description: "Successful response",
         content: {
           "application/json": {
             schema: {
@@ -118,6 +118,24 @@ defineRouteMeta({
                                   nullable: true,
                                   description: "Score for this sub-category",
                                 },
+                                osmTags: {
+                                  type: "array",
+                                  items: {
+                                    type: "object",
+                                    description:
+                                      "An OSM tag key/value pair relevant to the sub-category.",
+                                    properties: {
+                                      key: {
+                                        type: "string",
+                                        example: "amenity",
+                                      },
+                                      value: {
+                                        type: "string",
+                                        example: "restaurant",
+                                      },
+                                    },
+                                  },
+                                },
                                 topics: {
                                   type: "array",
                                   items: {
@@ -165,6 +183,24 @@ defineRouteMeta({
                                               description:
                                                 "Score for this criterion",
                                             },
+                                            osmTags: {
+                                              type: "array",
+                                              items: {
+                                                type: "object",
+                                                description:
+                                                  "An OSM tag key/value pair relevant to the criterion.",
+                                                properties: {
+                                                  key: {
+                                                    type: "string",
+                                                    example: "wheelchair",
+                                                  },
+                                                  value: {
+                                                    type: "string",
+                                                    example: "yes",
+                                                  },
+                                                },
+                                              },
+                                            },
                                           },
                                         },
                                       },
@@ -185,7 +221,7 @@ defineRouteMeta({
         },
       },
       "404": {
-        description: "Admin are not found",
+        description: "Not found",
       },
     },
   },
