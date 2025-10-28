@@ -59,6 +59,7 @@ export default defineEventHandler(async (event) => {
             return {
               name: subCategoryProperties.name(),
               description: subCategoryProperties.description?.(),
+              osmTags: subCategoryProperties.osmTags,
               subCategory,
               score,
               topics: topicScoreResults
@@ -69,11 +70,16 @@ export default defineEventHandler(async (event) => {
                   score,
                   criteria: criterionScoreResults
                     .filter(({ topicScoreId }) => topicScoreId === id)
-                    .map(({ criterion, score }) => ({
-                      name: criteria[criterion as CriterionId].name(),
-                      criterion,
-                      score,
-                    })),
+                    .map(({ criterion, score }) => {
+                      const criterionProperties =
+                        criteria[criterion as CriterionId];
+                      return {
+                        name: criterionProperties.name(),
+                        osmTags: criterionProperties.osmTags,
+                        criterion,
+                        score,
+                      };
+                    }),
                 })),
             };
           }),
