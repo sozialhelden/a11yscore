@@ -6,6 +6,7 @@ import {
   topicScores,
   topLevelCategoryScores,
 } from "~/db/schema/app";
+import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
 import {
   type SubCategory,
   type SubCategoryId,
@@ -22,7 +23,6 @@ import {
   getTopicScoreAlias,
   getTopLevelCategoryScoreAlias,
 } from "~~/src/a11yscore/utils/sql-aliases";
-import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
 
 type AppDbTransaction = Parameters<Parameters<typeof appDb.transaction>[0]>[0];
 type ScoreQueryResults = Record<string, number>;
@@ -34,7 +34,7 @@ calculate()
   .then(() => console.info("Score calculation task completed."));
 
 async function calculate() {
-  const batchSize = 1;
+  const batchSize = 8;
 
   for (let i = 0; i < allowedAdminAreas.length; i += batchSize) {
     await Promise.all(
