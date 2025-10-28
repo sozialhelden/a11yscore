@@ -118,6 +118,24 @@ defineRouteMeta({
                                   nullable: true,
                                   description: "Score for this sub-category",
                                 },
+                                osmTags: {
+                                  type: "array",
+                                  items: {
+                                    type: "object",
+                                    description:
+                                      "An OSM tag key/value pair relevant to the sub-category.",
+                                    properties: {
+                                      key: {
+                                        type: "string",
+                                        example: "amenity",
+                                      },
+                                      value: {
+                                        type: "string",
+                                        example: "restaurant",
+                                      },
+                                    },
+                                  },
+                                },
                                 topics: {
                                   type: "array",
                                   items: {
@@ -164,6 +182,24 @@ defineRouteMeta({
                                               nullable: true,
                                               description:
                                                 "Score for this criterion",
+                                            },
+                                            osmTags: {
+                                              type: "array",
+                                              items: {
+                                                type: "object",
+                                                description:
+                                                  "An OSM tag key/value pair relevant to the criterion.",
+                                                properties: {
+                                                  key: {
+                                                    type: "string",
+                                                    example: "wheelchair",
+                                                  },
+                                                  value: {
+                                                    type: "string",
+                                                    example: "yes",
+                                                  },
+                                                },
+                                              },
                                             },
                                           },
                                         },
