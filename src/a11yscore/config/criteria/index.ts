@@ -76,6 +76,47 @@ export type CriterionProperties = {
    * ```
    */
   sql: (table: PgTableWithColumns<any>) => SQL;
+  /**
+   * A description why this criterion is generally relevant. This can be overridden on the
+   * category/topic level to provide a category/topic-specific reason.
+   * This will be used for display purposes in the frontend, so make sure to use the `t` function
+   * to translate the description. Markdown syntax is allowed!
+   * @example
+   * ```
+   * () => t("Wheelchair users **must** be able to enter and use the facilities without barriers.")
+   * ```
+   */
+  reason: () => string;
+  /**
+   * A list of recommendations on how to generally improve this criterion. This can be overridden
+   * on the category/topic level to provide a category/topic-specific recommendations.
+   * This will be used for display purposes in the frontend, so make sure to use the `t` function
+   * to translate the description. Markdown syntax is allowed!
+   * @example
+   * ```
+   * () => [
+   *     t("If the entrance has one or multiple steps, [consider getting a ramp](https://wheelramp.de) or installing a lift."),
+   * ]
+   * ```
+   */
+  recommendations: () => string[];
+  /**
+   * A list of links that provide more information about this criterion. Can be e.g. links to
+   * guides, norms, or other resources.
+   * This can be overridden on the category/topic level to provide a category/topic-specific
+   * links. This will be used for display purposes in the frontend, so make sure to use the `t`
+   * function to translate the label.
+   * @example
+   * ```
+   * () => [
+   *     {
+   *         label: t("DIN 18040 - Accessible building design"),
+   *         url: "https://www.din18040.de/wc-toiletten.htm"
+   *     }
+   * ]
+   * ```
+   */
+  links?: () => { url: string; label: string }[];
 };
 
 const configuredCriteria: Record<CriterionId, CriterionProperties> = {

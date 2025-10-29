@@ -72,16 +72,6 @@ export type TopLevelCategory = {
    */
   sustainableDevelopmentGoals: Readonly<SustainableDevelopmentGoalId[]>;
   /**
-   * An optional description of this top-level category, explaining its relevance.
-   * It should also be used to explain the reasoning behind the individual weight.
-   * Make sure to use the `t` function to translate the description.
-   * @example
-   * ```
-   * () => t("This sub-category is important because...")
-   * ```
-   */
-  reason?: () => string;
-  /**
    * A numeric weight that indicates the importance of this category in relation to
    * other top-level categories. Ideally, the weights of all top-level categories should
    * sum up to 1.
@@ -121,6 +111,14 @@ export type SubCategory = {
    */
   id: SubCategoryId;
   /**
+   * The ID of the parent category this sub-category belongs to.
+   * @example
+   * ```
+   * "food-and-drinks"
+   * ```
+   */
+  parent: TopLevelCategoryId;
+  /**
    * The name of the category, used for display purposes.
    * Make sure to use the `t` function to translate the name.
    * @example
@@ -129,14 +127,6 @@ export type SubCategory = {
    * ```
    */
   name: () => string;
-  /**
-   * The ID of the parent category this sub-category belongs to.
-   * @example
-   * ```
-   * "food-and-drinks"
-   * ```
-   */
-  parent: TopLevelCategoryId;
   /**
    * A numeric weight that indicates the importance of this sub-category inside
    * the parent category. Ideally, the weights of all sub-categories should
@@ -156,16 +146,6 @@ export type SubCategory = {
    * ```
    */
   description?: () => string;
-  /**
-   * An optional description of this sub-category, explaining its relevance.
-   * It should also be used to explain the reasoning behind the individual weight.
-   * Make sure to use the `t` function to translate the description.
-   * @example
-   * ```
-   * () => t("This sub-category is important because...")
-   * ```
-   */
-  reason?: () => string;
   /**
    * Some individual parts of SQL query that will be used to select the data for
    * this sub-category.
@@ -251,15 +231,46 @@ export type SubCategory = {
        */
       weight: number;
       /**
-       * An optional description why this criterion is relevant for this topic
-       * in this category. It should also be used to explain the reasoning
-       * behind the individual weight.
+       * A description why this criterion is relevant for this topic in this category. This will
+       * override the generic reason provided in the criterion configuration.
+       * This will be used for display purposes in the frontend, so make sure to use the `t` function
+       * to translate the description. Markdown syntax is allowed!
        * @example
        * ```
-       * () => t("This criterion is relevant because...")
+       * () => t("Wheelchair users **must** be able to enter and use the facilities without barriers.")
        * ```
        */
       reason?: () => string;
+      /**
+       * A list of recommendations on how to improve this criterion for this topic in this
+       * category. This will override the generic recommendations provided in the criterion configuration.
+       * This will be used for display purposes in the frontend, so make sure to use the `t` function
+       * to translate the description. Markdown syntax is allowed!
+       * @example
+       * ```
+       * () => [
+       *     t("If the entrance has one or multiple steps, [consider installing a ramp](https://wheelramp.de) or lift."),
+       * ]
+       * ```
+       */
+      recommendations?: () => string[];
+      /**
+       * A list of links that provide more information about this criterion. Can be e.g. links to
+       * guides, norms, or other resources.
+       * This will override the generic links provided in the criterion configuration. This will be
+       * used for display purposes in the frontend, so make sure to use the `t` function to translate
+       * the label.
+       * @example
+       * ```
+       * () => [
+       *     {
+       *         label: t("DIN 18040 - Accessible building design"),
+       *         url: "https://www.din18040.de/wc-toiletten.htm"
+       *     }
+       * ]
+       * ```
+       */
+      links?: () => { url: string; label: string }[];
     }>;
   }>;
 };
