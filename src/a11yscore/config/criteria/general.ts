@@ -23,5 +23,14 @@ export const generalCriteria: Record<GeneralCriterionId, CriterionProperties> =
 				ELSE 0
 			END)::bigint`;
       },
+      reason: () =>
+        t(
+          "Drinking straws can help people with limited hand or arm mobility to drink more easily.",
+        ),
+      recommendations: () => [
+        t(
+          "Consider providing drinking straws, including eco-friendly options like paper or metal straws.",
+        ),
+      ],
     },
   };
