@@ -48,12 +48,10 @@ const genericGastronomyTopics: SubCategory["topics"] = [
       {
         criterionId: "is-wheelchair-accessible",
         weight: 0.8,
-        reason: () => "",
       },
       {
         criterionId: "has-wheelchair-accessible-toilet",
         weight: 0.2,
-        reason: () => "",
       },
     ],
   },
@@ -63,12 +61,10 @@ const genericGastronomyTopics: SubCategory["topics"] = [
       {
         criterionId: "is-accessible-to-visually-impaired",
         weight: 0.8,
-        reason: () => "",
       },
       {
         criterionId: "has-menu-on-website",
         weight: 0.2,
-        reason: () => "",
       },
     ],
   },
@@ -78,7 +74,6 @@ const genericGastronomyTopics: SubCategory["topics"] = [
       {
         criterionId: "has-toilet",
         weight: 1,
-        reason: () => "",
       },
     ],
   },
@@ -88,7 +83,6 @@ const genericGastronomyTopics: SubCategory["topics"] = [
       {
         criterionId: "has-quiet-hours",
         weight: 1,
-        reason: () => "",
       },
     ],
   },
@@ -98,12 +92,10 @@ const genericGastronomyTopics: SubCategory["topics"] = [
       {
         criterionId: "smoking-is-prohibited",
         weight: 0.7,
-        reason: () => "",
       },
       {
         criterionId: "has-air-conditioning",
         weight: 0.3,
-        reason: () => "",
       },
     ],
   },
@@ -113,12 +105,10 @@ const genericGastronomyTopics: SubCategory["topics"] = [
       {
         criterionId: "is-accessible-to-hearing-impaired",
         weight: 0.7,
-        reason: () => "",
       },
       {
         criterionId: "reservation-via-website",
         weight: 0.3,
-        reason: () => "",
       },
     ],
   },
@@ -128,7 +118,6 @@ const genericGastronomyTopics: SubCategory["topics"] = [
       {
         criterionId: "has-drinking-straws",
         weight: 1,
-        reason: () => "",
       },
     ],
   },
@@ -141,7 +130,6 @@ const genericShopTopics: SubCategory["topics"] = [
       {
         criterionId: "is-wheelchair-accessible",
         weight: 1,
-        reason: () => "",
       },
     ],
   },
@@ -151,17 +139,14 @@ const genericShopTopics: SubCategory["topics"] = [
       {
         criterionId: "is-accessible-to-visually-impaired",
         weight: 0.6,
-        reason: () => "",
       },
       {
         criterionId: "has-menu-on-website",
         weight: 0.2,
-        reason: () => "",
       },
       {
         criterionId: "has-website",
         weight: 0.2,
-        reason: () => "",
       },
     ],
   },
@@ -171,7 +156,6 @@ const genericShopTopics: SubCategory["topics"] = [
       {
         criterionId: "has-air-conditioning",
         weight: 1,
-        reason: () => "",
       },
     ],
   },
@@ -181,7 +165,6 @@ const genericShopTopics: SubCategory["topics"] = [
       {
         criterionId: "is-accessible-to-hearing-impaired",
         weight: 1,
-        reason: () => "",
       },
     ],
   },
@@ -207,7 +190,6 @@ export const foodAndDrinksSubCategories: Record<
     name: () => t("Drinking water"),
     parent: "food-and-drinks",
     weight: 0.1,
-    reason: () => "",
     osmTags: [
       { key: "shop", value: "water" },
       { key: "fountain", value: "drinking" },
@@ -239,7 +221,6 @@ export const foodAndDrinksSubCategories: Record<
           {
             criterionId: "is-wheelchair-accessible",
             weight: 1,
-            reason: () => "",
           },
         ],
       },
@@ -249,7 +230,6 @@ export const foodAndDrinksSubCategories: Record<
           {
             criterionId: "is-accessible-to-visually-impaired",
             weight: 1,
-            reason: () => "",
           },
         ],
       },
@@ -259,7 +239,6 @@ export const foodAndDrinksSubCategories: Record<
           {
             criterionId: "is-accessible-to-hearing-impaired",
             weight: 1,
-            reason: () => "",
           },
         ],
       },
@@ -269,7 +248,6 @@ export const foodAndDrinksSubCategories: Record<
     name: () => t("Bars and pubs"),
     parent: "food-and-drinks",
     weight: 0.05,
-    reason: () => "",
     osmTags: [
       { key: "amenity", value: "bar" },
       { key: "amenity", value: "pub" },
@@ -292,7 +270,6 @@ export const foodAndDrinksSubCategories: Record<
     name: () => t("Food stores"),
     parent: "food-and-drinks",
     weight: 0.1,
-    reason: () => "",
     description: () =>
       t(
         "Includes butcher shops, cheese stores, dairy stores, chocolate shops, coffee shops, delis, farm stores, general food shops, greengrocers, health food stores, pasta shops, seafood markets, spice shops, tea shops, nut stores, tortilla shops, wine shops and liquor stores",
@@ -349,7 +326,6 @@ export const foodAndDrinksSubCategories: Record<
     name: () => t("Ice cream shops"),
     parent: "food-and-drinks",
     weight: 0.05,
-    reason: () => "",
     osmTags: [
       { key: "shop", value: "ice_cream" },
       { key: "amenity", value: "ice_cream" },
@@ -371,7 +347,6 @@ export const foodAndDrinksSubCategories: Record<
           {
             criterionId: "is-wheelchair-accessible",
             weight: 1,
-            reason: () => "",
           },
         ],
       },
@@ -381,12 +356,10 @@ export const foodAndDrinksSubCategories: Record<
           {
             criterionId: "is-accessible-to-visually-impaired",
             weight: 0.8,
-            reason: () => "",
           },
           {
             criterionId: "has-menu-on-website",
             weight: 0.2,
-            reason: () => "",
           },
         ],
       },
@@ -396,7 +369,6 @@ export const foodAndDrinksSubCategories: Record<
           {
             criterionId: "is-accessible-to-hearing-impaired",
             weight: 1,
-            reason: () => "",
           },
         ],
       },
@@ -406,7 +378,6 @@ export const foodAndDrinksSubCategories: Record<
           {
             criterionId: "has-drinking-straws",
             weight: 1,
-            reason: () => "",
           },
         ],
       },
@@ -416,7 +387,6 @@ export const foodAndDrinksSubCategories: Record<
     name: () => t("Bakeries"),
     parent: "food-and-drinks",
     weight: 0.1,
-    reason: () => "",
     osmTags: [
       { key: "shop", value: "bakery" },
       { key: "shop", value: "confectionery" },
@@ -440,7 +410,6 @@ export const foodAndDrinksSubCategories: Record<
           {
             criterionId: "is-wheelchair-accessible",
             weight: 1,
-            reason: () => "",
           },
         ],
       },
@@ -450,12 +419,10 @@ export const foodAndDrinksSubCategories: Record<
           {
             criterionId: "is-accessible-to-visually-impaired",
             weight: 0.8,
-            reason: () => "",
           },
           {
             criterionId: "has-menu-on-website",
             weight: 0.2,
-            reason: () => "",
           },
         ],
       },
@@ -465,7 +432,6 @@ export const foodAndDrinksSubCategories: Record<
           {
             criterionId: "has-air-conditioning",
             weight: 1,
-            reason: () => "",
           },
         ],
       },
@@ -475,7 +441,6 @@ export const foodAndDrinksSubCategories: Record<
           {
             criterionId: "is-accessible-to-hearing-impaired",
             weight: 1,
-            reason: () => "",
           },
         ],
       },
@@ -485,7 +450,6 @@ export const foodAndDrinksSubCategories: Record<
     name: () => t("Restaurants"),
     parent: "food-and-drinks",
     weight: 0.2,
-    reason: () => "",
     osmTags: [{ key: "amenity", value: "restaurant" }],
     sql: {
       from: osm_amenities,
@@ -497,7 +461,6 @@ export const foodAndDrinksSubCategories: Record<
     name: () => t("Cafes"),
     parent: "food-and-drinks",
     weight: 0.1,
-    reason: () => "",
     osmTags: [{ key: "amenity", value: "cafe" }],
     sql: {
       from: osm_amenities,
@@ -509,7 +472,6 @@ export const foodAndDrinksSubCategories: Record<
     name: () => t("Fast food"),
     parent: "food-and-drinks",
     weight: 0.1,
-    reason: () => "",
     osmTags: [{ key: "amenity", value: "fast_food" }],
     sql: {
       from: osm_amenities,
@@ -521,7 +483,6 @@ export const foodAndDrinksSubCategories: Record<
     name: () => t("Canteen"),
     parent: "food-and-drinks",
     weight: 0.1,
-    reason: () => "",
     osmTags: [
       { key: "amenity", value: "canteen" },
       { key: "fast_food", value: "cafeteria" },
@@ -536,7 +497,6 @@ export const foodAndDrinksSubCategories: Record<
     name: () => t("Food court"),
     parent: "food-and-drinks",
     weight: 0.1,
-    reason: () => "",
     osmTags: [{ key: "amenity", value: "food_court" }],
     sql: {
       from: osm_amenities,
