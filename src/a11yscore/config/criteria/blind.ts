@@ -22,5 +22,23 @@ export const blindCriteria: Record<BlindCriterionId, CriterionProperties> = {
 				ELSE 0
 			END)::bigint`;
     },
+    reason: () =>
+      t(
+        "People with visual impairments must be able to enter and use the most important areas of the facility without barriers.",
+      ),
+    recommendations: () => [
+      t(
+        "Provide tactile paving to guide visually impaired individuals to key areas such as entrances, exits, and service counters.",
+      ),
+      t(
+        "Install braille signage for important information, including room numbers, restrooms, and emergency exits.",
+      ),
+      t(
+        "Ensure that pathways are well-lit and free of obstacles to enhance safety and accessibility.",
+      ),
+      t(
+        "Ensure there are audible signals or announcements for important information in addition to visual ones.",
+      ),
+    ],
   },
 };

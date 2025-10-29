@@ -25,6 +25,25 @@ export const wheelchairCriteria: Record<
  				ELSE 0
 			END)::bigint`;
     },
+    reason: () =>
+      t(
+        "Wheelchair users should be able to enter and use the most important areas of the facility without barriers and assistance.",
+      ),
+    recommendations: () => [
+      t(
+        "If the entrance has one or two steps, consider [getting a removable ramp](https://wheelramp.de).",
+      ),
+      t(
+        "Consider installing automatic doors or ensuring that doors can be opened without assistance.",
+      ),
+      t("Consider widening narrow doorways to at least 90 cm (36 inches)."),
+    ],
+    links: () => [
+      {
+        label: t("Removable ramps for wheelchair accessibility"),
+        url: "https://wheelramp.de",
+      },
+    ],
   },
   "has-wheelchair-accessible-toilet": {
     name: () => t("Toilet is accessible with wheelchair"),
@@ -38,5 +57,20 @@ export const wheelchairCriteria: Record<
  				WHEN ${table["toilets:wheelchair"]} = 'no' THEN 10
  				ELSE 0
 			END)::bigint`,
+    reason: () => "Wheelchair users must be able to use the toilet.",
+    recommendations: () => [
+      t("Consider installing grab rails to existing toilets."),
+      t(
+        "Consider raising the toilet seat to a comfortable height (about 48 cm).",
+      ),
+    ],
+    links: () => [
+      {
+        label: t(
+          "DIN 18040-2 Standard for Accessible Design of Buildings - Bathrooms",
+        ),
+        url: "https://nullbarriere.de/din18040-2-bad.htm",
+      },
+    ],
   },
 };

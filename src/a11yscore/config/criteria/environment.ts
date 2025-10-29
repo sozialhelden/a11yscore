@@ -17,5 +17,12 @@ export const environmentCriteria: Record<
 				ELSE 0
 			END)::bigint`;
     },
+    reason: () =>
+      t("People with neurodivergent conditions may benefit from quiet hours."),
+    recommendations: () => [
+      t(
+        "Consider implementing quiet hours during specific times of the day. Limit loud music and announcements in these hours.",
+      ),
+    ],
   },
 };

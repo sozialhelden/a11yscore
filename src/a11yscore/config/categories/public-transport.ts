@@ -49,7 +49,6 @@ export const publicTransportSubCategories: Record<
     name: () => t("Train Stations"),
     parent: "public-transport",
     weight: 1,
-    reason: () => "",
     osmTags: [{ key: "railway", value: "station" }],
     sql: {
       from: osm_amenities,

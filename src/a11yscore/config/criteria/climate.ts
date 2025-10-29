@@ -27,6 +27,13 @@ export const climateCriteria: Record<ClimateCriterionId, CriterionProperties> =
 				ELSE 0
 			END)::bigint`;
       },
+      reason: () =>
+        t(
+          "A smoke-free environment improves air quality and comfort for all visitors, but is especially necessary for people with respiratory conditions.",
+        ),
+      recommendations: () => [
+        t("Restrict smoking areas to outdoor locations away from entrances."),
+      ],
     },
     "has-air-conditioning": {
       name: () => t("Has air conditioning"),
@@ -42,5 +49,14 @@ export const climateCriteria: Record<ClimateCriterionId, CriterionProperties> =
 				ELSE 0
 			END)::bigint`;
       },
+      reason: () =>
+        t(
+          "Air conditioning improves indoor temperature, air quality and comfort for all visitors, but is especially important for individuals with pre-existing conditions.",
+        ),
+      recommendations: () => [
+        t(
+          "Consider installing or upgrading air conditioning systems to ensure effective climate control.",
+        ),
+      ],
     },
   };
