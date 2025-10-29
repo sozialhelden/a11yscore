@@ -2,21 +2,6 @@ import { appDb, osmSyncDb } from "~/db";
 import { scores } from "~/db/schema/app";
 import { osm_amenities } from "~/db/schema/osm-sync";
 
-defineRouteMeta({
-  openAPI: {
-    tags: ["Internal"],
-    description: "Test whether the service is healthy or not.",
-    responses: {
-      "200": {
-        description: "Service is healthy",
-      },
-      "500": {
-        description: "Service is not healthy",
-      },
-    },
-  },
-});
-
 export default defineEventHandler(async (_event) => {
   try {
     // test the kv-storage
