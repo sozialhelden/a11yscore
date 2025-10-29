@@ -45,10 +45,10 @@ export default defineEventHandler(async (event) => {
       const topLevelCategoryProperties =
         topLevelCategories[topLevelCategory as TopLevelCategoryId];
       return {
+        id: topLevelCategory,
         name: topLevelCategoryProperties.name(),
-        interpretation: topLevelCategoryProperties.interpretation?.(score),
-        topLevelCategory,
         score,
+        interpretation: topLevelCategoryProperties.interpretation?.(score),
         subCategories: subCategoryScoreResults
           .filter(
             ({ topLevelCategoryScoreId }) => topLevelCategoryScoreId === id,
@@ -57,27 +57,45 @@ export default defineEventHandler(async (event) => {
             const subCategoryProperties =
               subCategories[subCategory as SubCategoryId];
             return {
+              id: subCategory,
               name: subCategoryProperties.name(),
+              score,
               description: subCategoryProperties.description?.(),
               osmTags: subCategoryProperties.osmTags,
-              subCategory,
-              score,
               topics: topicScoreResults
                 .filter(({ subCategoryScoreId }) => subCategoryScoreId === id)
                 .map(({ id, topic, score }) => ({
+                  id: topic,
                   name: topics[topic as TopicId].name(),
-                  topic,
                   score,
                   criteria: criterionScoreResults
                     .filter(({ topicScoreId }) => topicScoreId === id)
                     .map(({ criterion, score }) => {
+                      const criterionPivotProperties =
+                        subCategoryProperties.topics
+                          .find(({ topicId }) => topic === topicId)
+                          .criteria.find(
+                            ({ criterionId }) => criterionId === criterion,
+                          );
+
                       const criterionProperties =
                         criteria[criterion as CriterionId];
+
                       return {
+                        id: criterion,
                         name: criterionProperties.name(),
-                        osmTags: criterionProperties.osmTags,
-                        criterion,
                         score,
+                        reason:
+                          criterionPivotProperties?.reason?.() ||
+                          criterionProperties.reason(),
+                        recommendations:
+                          criterionPivotProperties?.recommendations?.() ||
+                          criterionProperties.recommendations(),
+                        links:
+                          criterionPivotProperties?.links?.() ||
+                          criterionProperties.links?.() ||
+                          [],
+                        osmTags: criterionProperties.osmTags,
                       };
                     }),
                 })),
@@ -87,10 +105,15 @@ export default defineEventHandler(async (event) => {
     },
   );
 
+  delete scoreResults.adminAreaId;
+
   return {
     score: {
       ...scoreResults,
-      name: allowedAdminAreas.find(({ id }) => id === adminAreaId)?.name,
+      adminArea: {
+        id: adminAreaId,
+        name: allowedAdminAreas.find(({ id }) => id === adminAreaId)?.name,
+      },
       toplevelCategories: result,
     },
   };

@@ -18,5 +18,12 @@ export const toiletCriteria: Record<ToiletCriterionId, CriterionProperties> = {
 				ELSE 0
 			END)::bigint`;
     },
+    reason: () =>
+      t(
+        "A toilet should be available for all visitors, but is especially important for people with certain medical conditions e.g. inflammatory bowel disease.",
+      ),
+    recommendations: () => [
+      t("Consider installing a toilet if there is none."),
+    ],
   },
 };

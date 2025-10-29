@@ -22,5 +22,15 @@ export const deafCriteria: Record<DeafCriterionId, CriterionProperties> = {
 				ELSE 0
 			END)::bigint`;
     },
+    reason: () =>
+      t(
+        "Hearing impaired people must be able to access and use the most important areas of the facility without barriers.",
+      ),
+    recommendations: () => [
+      t("Provide visual alarms and notifications for important information."),
+      t(
+        "Consider installing hearing loops or other assistive listening devices.",
+      ),
+    ],
   },
 };
