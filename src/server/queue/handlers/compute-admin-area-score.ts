@@ -6,7 +6,7 @@ import {
   topicScores,
   topLevelCategoryScores,
 } from "~/db/schema/app";
-import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
+import type { ComputeAdminAreaScoreJob } from "~/queue";
 import {
   type SubCategory,
   type SubCategoryId,
@@ -24,44 +24,17 @@ import {
   getTopLevelCategoryScoreAlias,
 } from "~~/src/a11yscore/utils/sql-aliases";
 
+export async function handle(job: ComputeAdminAreaScoreJob) {
+  const { adminArea } = job.data;
+  const results = await calculateScoreByAdminArea(adminArea.id);
+  await job.updateProgress(50);
+  await appDb.transaction(async (tx) => {
+    await persistScore(tx, results, { adminAreaId: adminArea.id });
+  });
+}
+
 type AppDbTransaction = Parameters<Parameters<typeof appDb.transaction>[0]>[0];
 type ScoreQueryResults = Record<string, number>;
-
-// TODO: replace this with a proper task management system like Bull or Bree
-//  that supports monitoring, retries, concurrency, etc.
-calculate()
-  .catch((error) => console.error(error))
-  .then(() => console.info("Score calculation task completed."));
-
-async function calculate() {
-  const batchSize = 8;
-
-  for (let i = 0; i < allowedAdminAreas.length; i += batchSize) {
-    await Promise.all(
-      allowedAdminAreas
-        .slice(i, i + batchSize)
-        .map(async ({ id: adminAreaId, name }) => {
-          const startCalculation = new Date();
-          console.info(
-            `[${name}] Started calculation for admin-area "${adminAreaId}"`,
-          );
-          const results = await calculateScoreByAdminArea(adminAreaId);
-          console.info(
-            `[${name}] Calculation finished, took ${Math.ceil((Date.now() - startCalculation.getTime()) / 1000)}s`,
-          );
-
-          const startPersisting = new Date();
-          console.info(`[${name}] Persisting scores...`);
-          await appDb.transaction(async (tx) => {
-            await persistScore(tx, results, { adminAreaId });
-          });
-          console.info(
-            `[${name}] Scores persisted, took ${Math.ceil((Date.now() - startPersisting.getTime()) / 1000)}s`,
-          );
-        }),
-    );
-  }
-}
 
 async function persistScore(
   tx: AppDbTransaction,
