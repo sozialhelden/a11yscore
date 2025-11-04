@@ -242,8 +242,9 @@ export type SubCategory = {
        */
       reason?: () => string;
       /**
-       * A list of recommendations on how to improve this criterion for this topic in this
-       * category. This will override the generic recommendations provided in the criterion configuration.
+       * A list of recommendations on how to improve this criterion for this topic in this category.
+       * This will override the generic recommendations provided in the criterion configuration, those
+       * are passed as parameter to the function, so you can still use them if you want.
        * This will be used for display purposes in the frontend, so make sure to use the `t` function
        * to translate the description. Markdown syntax is allowed!
        * @example
@@ -253,7 +254,7 @@ export type SubCategory = {
        * ]
        * ```
        */
-      recommendations?: () => string[];
+      recommendations?: (genericRecommendations: string[]) => string[];
       /**
        * A list of links that provide more information about this criterion. Can be e.g. links to
        * guides, norms, or other resources.
