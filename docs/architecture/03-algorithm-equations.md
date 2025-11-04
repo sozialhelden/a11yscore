@@ -1,5 +1,7 @@
 # Equations for Score Calculation
 
+The following equations describe how the different levels of scores are calculated in the a11y-Score algorithm.
+
 ## Scores
 
 ### Individual Place Score
@@ -99,7 +101,7 @@ Where:
 - $\alpha_c$ is the data quality adjusted weight of criterion $c$
 - $j$ is the index of the criterion to be normalized
 
-# Data Quality Criterion
+## Data Quality Criterion
 
 $$ DQC = (\sum_{c \in C} \hat{\alpha}_c) * 100 $$
 
