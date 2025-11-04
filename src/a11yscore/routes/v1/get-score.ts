@@ -81,6 +81,9 @@ export default defineEventHandler(async (event) => {
                       const criterionProperties =
                         criteria[criterion as CriterionId];
 
+                      const genericRecommendations =
+                        criterionProperties.recommendations();
+
                       return {
                         id: criterion,
                         name: criterionProperties.name(),
@@ -89,8 +92,9 @@ export default defineEventHandler(async (event) => {
                           criterionPivotProperties?.reason?.() ||
                           criterionProperties.reason(),
                         recommendations:
-                          criterionPivotProperties?.recommendations?.() ||
-                          criterionProperties.recommendations(),
+                          criterionPivotProperties?.recommendations?.(
+                            genericRecommendations,
+                          ) || genericRecommendations,
                         links:
                           criterionPivotProperties?.links?.() ||
                           criterionProperties.links?.() ||
