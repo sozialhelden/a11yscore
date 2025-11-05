@@ -8,7 +8,7 @@ import {
   topLevelCategoryScores,
 } from "~/db/schema/app";
 
-export async function queryScoreResultsByAdminArea(adminAreaId: number) {
+export async function queryScoreResultsByAdminArea(adminAreaId: string) {
   const [scoreResults] = await appDb
     .select()
     .from(scores)

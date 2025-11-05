@@ -27,6 +27,9 @@ defineRouteMeta({
             schema: {
               type: "object",
               properties: {
+                adminArea: {
+                  $ref: "#/components/schemas/AdminArea",
+                },
                 score: {
                   type: "object",
                   properties: {
@@ -34,23 +37,6 @@ defineRouteMeta({
                       type: "string",
                       example: "0b9b4c6a-0572-4876-99ce-2d2ca1dd0ef4",
                       description: "uuid of this score record",
-                    },
-                    adminArea: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "integer",
-                          example: "-62422",
-                          description:
-                            "OSM id of the admin area this score is calculated for",
-                        },
-                        name: {
-                          type: "string",
-                          example: "Berlin",
-                          description:
-                            "Name of the admin area this score is calculated for",
-                        },
-                      },
                     },
                     score: {
                       type: "number",
@@ -127,19 +113,7 @@ defineRouteMeta({
                                 osmTags: {
                                   type: "array",
                                   items: {
-                                    type: "object",
-                                    description:
-                                      "An OSM tag key/value pair relevant to the sub-category.",
-                                    properties: {
-                                      key: {
-                                        type: "string",
-                                        example: "amenity",
-                                      },
-                                      value: {
-                                        type: "string",
-                                        example: "restaurant",
-                                      },
-                                    },
+                                    $ref: "#/components/schemas/OsmTag",
                                   },
                                 },
                                 topics: {
@@ -231,22 +205,7 @@ defineRouteMeta({
                                               },
                                             },
                                             osmTags: {
-                                              type: "array",
-                                              items: {
-                                                type: "object",
-                                                description:
-                                                  "An OSM tag key/value pair relevant to the criterion.",
-                                                properties: {
-                                                  key: {
-                                                    type: "string",
-                                                    example: "wheelchair",
-                                                  },
-                                                  value: {
-                                                    type: "string",
-                                                    example: "yes",
-                                                  },
-                                                },
-                                              },
+                                              $ref: "#/components/schemas/OsmTag",
                                             },
                                           },
                                         },
