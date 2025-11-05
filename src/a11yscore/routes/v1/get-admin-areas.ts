@@ -1,15 +1,14 @@
 import { useIsDevelopment } from "~/utils/env";
 import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
+import {sql} from "drizzle-orm";
+import {osmSyncDb} from "~/db";
+import {osm_admin} from "~/db/schema/osm-sync";
 
-export default defineCachedEventHandler(
+export default defineEventHandler(
   async () => {
-    return {
-      adminAreas: allowedAdminAreas,
-    };
-  },
-  {
-    maxAge: 60 * 60 /* 1 hour */,
-    varies: ["accept-language", "Accept-Language"],
-    shouldBypassCache: useIsDevelopment,
+      const query = sql`SELECT * FROM ${osm_admin} LIMIT 5`;
+
+    //return osmSyncDb.execute(query);
+      return "hello world";
   },
 );
