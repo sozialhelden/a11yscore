@@ -2,12 +2,7 @@ import { sql } from "drizzle-orm";
 import slug from "slug";
 import { osmSyncDb } from "~/db";
 import { osm_admin, osm_admin_gen0 } from "~/db/schema/osm-sync";
-import { useIsDevelopment } from "~/utils/env";
-import {
-  AdminArea,
-  allowedAdminAreas,
-} from "~~/src/a11yscore/config/admin-areas";
-import Hashids from "hashids";
+import { decodeOsmId, encodeOsmId } from "~/utils/osmIds";
 
 export type AdminAreaResult = {
   osm_id: number;
@@ -16,21 +11,6 @@ export type AdminAreaResult = {
   wikidata: string;
 };
 slug.extend({ ü: "ue", ä: "ae", ö: "oe", ß: "ss" });
-
-
-function encodeId(osmId: number): string {
-  const salt = osmId < 0 ? 'r': 'w';
-  const hashids = new Hashids(salt, 0, 'abcdefghjkmnopqrstuvwxyz0123456789');
-  return salt + hashids.encode(Math.abs(osmId))
-}
-
-function decode(hash: string): number{
-  const cleanedHash = hash.slice(1);
-  const salt = hash.charAt(0);
-  const signFactor = salt === 'r' ? -1 : 1;
-  const hashids = new Hashids(salt, 0, 'abcdefghjkmnopqrstuvwxyz0123456789');
-  return Number(hashids.decode(cleanedHash)[0]) * signFactor;
-}
 
 export default defineEventHandler(async () => {
   const germany = -51477;
@@ -58,9 +38,13 @@ export default defineEventHandler(async () => {
   // scores/-51235-berlin
   // scores/berlin-s3hd
 
-
   return adminAreas.map((area) => {
-    const hash = encodeId(area.osm_id)
-    return { ...area, hash: encodeId(area.osm_id), slug: slug(area.name), decoded: decode(hash)};
+    const hash = encodeOsmId(area.osm_id);
+    return {
+      ...area,
+      hash: encodeOsmId(area.osm_id),
+      slug: slug(area.name),
+      decoded: decodeOsmId(hash),
+    };
   });
 });
