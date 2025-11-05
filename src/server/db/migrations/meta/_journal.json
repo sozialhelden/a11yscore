@@ -15,6 +15,13 @@
       "when": 1758556699514,
       "tag": "0001_little_omega_flight",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762354746386,
+      "tag": "0002_magenta_silver_samurai",
+      "breakpoints": true
     }
   ]
 }
