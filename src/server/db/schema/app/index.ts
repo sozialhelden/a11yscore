@@ -7,6 +7,15 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
+export const adminAreas = pgTable("admin_areas", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  osmId: integer("osm_id").unique().notNull(),
+  name: varchar("name").notNull(),
+  slug: varchar("slug").notNull(),
+  hash: varchar("hash").notNull(),
+  wikidata: varchar("wikidata"),
+});
+
 export const scores = pgTable("scores", {
   id: uuid("id").primaryKey().defaultRandom(),
   adminAreaId: integer("admin_area_id").notNull(),
