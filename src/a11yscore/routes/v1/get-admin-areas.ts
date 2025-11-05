@@ -2,7 +2,16 @@ import { sql } from "drizzle-orm";
 import { osmSyncDb } from "~/db";
 import { osm_admin, osm_admin_gen0 } from "~/db/schema/osm-sync";
 import { useIsDevelopment } from "~/utils/env";
-import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
+import {AdminArea, allowedAdminAreas} from "~~/src/a11yscore/config/admin-areas";
+import slug from "slug";
+
+export type AdminAreaResult = {
+    osm_id: number;
+    name: string;
+    admin_level: number;
+    wikidata: string;
+};
+slug.extend({'ü': 'ue', 'ä': 'ae', 'ö': 'oe', 'ß': 'ss'})
 
 export default defineEventHandler(async () => {
   const germany = -51477;
@@ -24,6 +33,8 @@ export default defineEventHandler(async () => {
         AND ${osm_admin.name} != ''
     LIMIT 20
   `;
-
-  return (await osmSyncDb.execute(query)).rows;
+    const adminAreas = (await osmSyncDb.execute<AdminAreaResult>(query)).rows;
+    return  adminAreas.map((area) => {
+        return {...area, hash: "hash", slug: slug(area.name)};
+    })
 });
