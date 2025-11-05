@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { BASE_URL } from "~/test/utils/setup";
+import { BASE_URL } from "~/test/setup";
 
 describe("e2e", () => {
   describe("i18n", () => {

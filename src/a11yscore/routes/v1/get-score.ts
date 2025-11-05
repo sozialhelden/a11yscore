@@ -1,5 +1,7 @@
+import { eq } from "drizzle-orm";
+import { appDb } from "~/db";
+import { adminAreas } from "~/db/schema/app";
 import { useIsDevelopment } from "~/utils/env";
-import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
 import {
   type SubCategoryId,
   subCategories,
@@ -12,22 +14,20 @@ import { queryScoreResultsByAdminArea } from "~~/src/a11yscore/queries/query-sco
 
 export default defineCachedEventHandler(
   async (event) => {
-    let adminAreaId: number;
     const compoundKey = getRouterParam(event, "id");
 
-    if (compoundKey.startsWith("osm:")) {
-      adminAreaId = allowedAdminAreas.find(
-        ({ id }) => id === parseInt(compoundKey.replace("osm:", "")),
-      )?.id;
-    }
+    const adminArea = (
+      await appDb
+        .select()
+        .from(adminAreas)
+        .where(
+          compoundKey.startsWith("osm:")
+            ? eq(adminAreas.osmId, parseInt(compoundKey.replace("osm:", "")))
+            : eq(adminAreas.id, compoundKey),
+        )
+    ).shift();
 
-    if (compoundKey.startsWith("slug:")) {
-      adminAreaId = allowedAdminAreas.find(
-        ({ slug }) => slug === compoundKey.replace("slug:", ""),
-      )?.id;
-    }
-
-    if (!adminAreaId) {
+    if (!adminArea) {
       throw createError({
         status: 404,
         statusMessage: "Not found",
@@ -41,7 +41,7 @@ export default defineCachedEventHandler(
       subCategoryScoreResults,
       topicScoreResults,
       criterionScoreResults,
-    } = await queryScoreResultsByAdminArea(adminAreaId);
+    } = await queryScoreResultsByAdminArea(adminArea.id);
 
     if (!scoreResults) {
       throw createError({
@@ -124,12 +124,9 @@ export default defineCachedEventHandler(
     delete scoreResults.adminAreaId;
 
     return {
+      adminArea,
       score: {
         ...scoreResults,
-        adminArea: {
-          id: adminAreaId,
-          name: allowedAdminAreas.find(({ id }) => id === adminAreaId)?.name,
-        },
         toplevelCategories: result,
       },
     };
