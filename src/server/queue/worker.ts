@@ -1,7 +1,5 @@
 import { Worker } from "bullmq";
 import { redisConnection } from "~/queue/env";
-import { handle as handleComputeAdminAreaScore } from "~/queue/handlers/compute-admin-area-score";
-import { handle as handleComputeScores } from "~/queue/handlers/compute-scores";
 import {
   type ComputeAdminAreaScoreJob,
   type ComputeScoresJob,
@@ -10,6 +8,8 @@ import {
   scoreQueue,
   scoreQueueId,
 } from "~/queue/index";
+import { handle as handleComputeScores } from "~/queue/jobs/compute-scores";
+import { handle as handleComputeAdminAreaScore } from "~~/src/a11yscore/jobs/compute-admin-area-score";
 
 await scoreQueue.setGlobalConcurrency(4);
 

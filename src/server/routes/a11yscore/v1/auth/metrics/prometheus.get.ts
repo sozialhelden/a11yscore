@@ -26,6 +26,9 @@ defineRouteMeta({
           },
         },
       },
+      "401": {
+        description: "Unauthorized",
+      },
     },
   },
 });
