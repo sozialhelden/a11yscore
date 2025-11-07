@@ -12,10 +12,20 @@ import { queryScoreResultsByAdminArea } from "~~/src/a11yscore/queries/query-sco
 
 export default defineCachedEventHandler(
   async (event) => {
-    const adminArea = getRouterParam(event, "adminArea");
-    const adminAreaId = allowedAdminAreas.find(
-      ({ slug }) => slug === adminArea,
-    )?.id;
+    let adminAreaId: number;
+    const compoundKey = getRouterParam(event, "id");
+
+    if (compoundKey.startsWith("osm:")) {
+      adminAreaId = allowedAdminAreas.find(
+        ({ id }) => id === parseInt(compoundKey.replace("osm:", "")),
+      )?.id;
+    }
+
+    if (compoundKey.startsWith("slug:")) {
+      adminAreaId = allowedAdminAreas.find(
+        ({ slug }) => slug === compoundKey.replace("slug:", ""),
+      )?.id;
+    }
 
     if (!adminAreaId) {
       throw createError({

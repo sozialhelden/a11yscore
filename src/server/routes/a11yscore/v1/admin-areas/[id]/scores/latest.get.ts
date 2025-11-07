@@ -10,12 +10,12 @@ defineRouteMeta({
     parameters: [
       {
         in: "path",
-        name: "adminArea",
+        name: "id",
         schema: {
           type: "string",
-          example: "berlin",
+          example: "osm:-62422",
         },
-        description: "Slug of the admin area to get the score for",
+        description: "Compound key, either osm:{osmId} or slug:{slug}",
       },
       langQueryParameter,
     ],
