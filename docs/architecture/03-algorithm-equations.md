@@ -6,15 +6,15 @@ The following equations describe how the different levels of scores are calculat
 
 ### Individual Place Score
 
-Below is an example of how individual place scores are calculated for a specific criterion based on OSM tag values.
-$$ S_{\mathrm{p}} =  
-\begin{cases}
-100, & \text{if } \text{wheelchair} = \text{yes} \\
-50, & \text{if } \text{wheelchair} = \text{limited} \\
-25, & \text{if } \text{wheelchair} = \text{no} \\
-0, & \text{if } \text{untagged}
-\end{cases}
-$$
+Below is an example of how individual Point of Interest (POI) scores are calculated for a criterion based on OSM tag values.
+
+If `wheelchair=yes`, $S_{\mathrm{p}}$ is 100;  
+If `wheelchair=limited`, $S_{\mathrm{p}}$ is 50;  
+If `wheelchair=no`, $S_{\mathrm{p}}$ is 25;  
+If untagged, $S_{\mathrm{p}}$ is 0.
+
+Note: This example is for POIs only. In case of features that have a more complex geometry like roads and surfaces, the scoring logic may differ.
+
 
 ### Criterion Score
 
@@ -30,7 +30,7 @@ where:
 
 The topic score is computed as the weighted average of the individual criterion scores within the topic, adjusted for data quality:
 
-$$ S_{\mathrm{topic}} = \frac{1}{2}\left[(1-\delta)\frac{1}{|C|} \sum_{c \in C} \hat{\gamma_c} S_{\mathrm{crit}_c} + \delta DQC\right] $$
+$$ S_{\mathrm{topic}} = \frac{1}{2}\left[(1-\delta) \sum_{c \in C} \hat{\gamma_c} S_{\mathrm{crit}_c} + \delta DQC\right] $$
 
 where:
 - $C$ is the set of criteria in the topic 
@@ -42,7 +42,7 @@ where:
 
 ### Sub-Category Score
 
-$$ S_{\mathrm{subcat}} = \frac{1}{|T|} \sum_{t \in T} S_{\mathrm{topic}_t} $$
+$$ S_{\mathrm{subcat}} = \sum_{t \in T} S_{\mathrm{topic}_t} $$
 
 where:
 - $T$ is the set of topics in the sub-category 
@@ -53,7 +53,7 @@ where:
 No weights are applied here.
 
 ### Category Score
-$$ S_{\mathrm{cat}} = \frac{1}{|K|} \sum_{k \in K} \beta_k S_{\mathrm{subcat}_k} $$
+$$ S_{\mathrm{cat}} = \sum_{k \in K} \beta_k S_{\mathrm{subcat}_k} $$
 
 where:
 - $K$ is the set of sub-categories in the category 
@@ -62,7 +62,7 @@ where:
 - $\beta_k$ is the weight of the sub-category $k$
 
 ### Region Score
-$$ S_{region} = \frac{1}{|N|} \sum_{n \in N} \alpha_n S_{\mathrm{cat}_n} $$
+$$ S_{region} = \sum_{n \in N} \alpha_n S_{\mathrm{cat}_n} $$
 
 Where:
 - $N$ is the set of categories in the region 
