@@ -18,6 +18,8 @@ Note: This example is for POIs only. In case of features that have a more comple
 
 ### Criterion Score
 
+The overall score for a criterion within a sub-category is computed as the average of the individual place scores within that criterion:
+
 $$ S_{\mathrm{crit}} = \frac{1}{|P|} \sum_{p \in P} S_p $$
 
 where:
@@ -42,6 +44,8 @@ where:
 
 ### Sub-Category Score
 
+The sub-category score is computed as the weighted average of the topic scores within the sub-category:
+
 $$ S_{\mathrm{subcat}} = \sum_{t \in T} S_{\mathrm{topic}_t} $$
 
 where:
@@ -53,6 +57,8 @@ where:
 No weights are applied here.
 
 ### Category Score
+The category score is computed as the weighted average of the sub-category scores within the category:
+
 $$ S_{\mathrm{cat}} = \sum_{k \in K} \beta_k S_{\mathrm{subcat}_k} $$
 
 where:
@@ -62,6 +68,8 @@ where:
 - $\beta_k$ is the weight of the sub-category $k$
 
 ### Region Score
+Finally the a1yy-Score for the entire region or city is computed as the weighted average of the category scores:
+
 $$ S_{region} = \sum_{n \in N} \alpha_n S_{\mathrm{cat}_n} $$
 
 Where:
@@ -75,6 +83,8 @@ Where:
 Adjusting the weights happens on the criterion level and within a given topic.
 
 ### Data Quality Factor
+
+The data quality factor reflects the proportion of tagged geometry for a given criterion within the region of interest. It is calculated as:
 
 $$q = \frac{\mathrm{geometry}_{\mathrm{tagged}}}{\mathrm{geometry}_{\mathrm{total}}} * (1-w) + w $$
 
