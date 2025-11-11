@@ -1,4 +1,4 @@
-FROM oven/bun:1.2.0-slim AS base
+FROM oven/bun:1.3.2-slim AS base
 WORKDIR /app
 
 RUN apt-get update && \
@@ -42,7 +42,7 @@ COPY --from=build --chown=bun:bun /app/.nitro/types ./.nitro/types
 # run the app
 USER bun
 EXPOSE 3000/tcp
-CMD [ "bun", "run", "./server/index.mjs" ]
+CMD [ "server" ]
 
 # check if the app is healthy
 HEALTHCHECK --interval=10s --timeout=3s --retries=1 --start-period=10s \
