@@ -32,12 +32,12 @@
     "nitropack": "2.12.9",
     "type-fest": "5.2.0",
     "typescript": "5.9.3",
-    "concurrently": "^9.2.1"
+    "concurrently": "9.2.1"
   },
   "dependencies": {
     "@sozialhelden/core": "2.3.0",
     "@transifex/native": "7.1.4",
-    "bullmq": "^5.63.0",
+    "bullmq": "5.63.0",
     "dotenv": "17.2.3",
     "drizzle-kit": "0.31.6",
     "drizzle-orm": "0.44.7",
