@@ -37,7 +37,7 @@
   "dependencies": {
     "@sozialhelden/core": "2.3.0",
     "@transifex/native": "7.1.4",
-    "bullmq": "5.63.0",
+    "bullmq": "5.63.2",
     "dotenv": "17.2.3",
     "drizzle-kit": "0.31.6",
     "drizzle-orm": "0.44.7",
