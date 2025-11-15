@@ -5,7 +5,7 @@
     "": {
       "dependencies": {
         "@sozialhelden/core": "2.3.0",
-        "@transifex/native": "7.1.4",
+        "@transifex/native": "7.1.5",
         "bullmq": "5.63.2",
         "dotenv": "17.2.3",
         "drizzle-kit": "0.31.6",
@@ -309,7 +309,7 @@
 
     "@transifex/cli": ["@transifex/cli@7.1.4", "", { "dependencies": { "@babel/parser": "^7.23.6", "@babel/traverse": "^7.23.7", "@colors/colors": "^1.6.0", "@oclif/core": "^1.26.2", "@transifex/native": "^7.1.4", "@vue/compiler-sfc": "^3.4.7", "angular-html-parser": "^1.8.0", "axios": "^1.6.5", "ejs": "^3.1.9", "glob": "^8.1.0", "lodash": "^4.17.21", "pug": "^3.0.2" }, "bin": { "txjs-cli": "bin/run" } }, "sha512-/qI/KXBf0rmgh5EyWJp4bV9H+NaQnph6Cxo0aswgA/KzGufbOcAg+eM9o2glHvkYYWYn9YHYlPOTA/sl7uwbXQ=="],
 
-    "@transifex/native": ["@transifex/native@7.1.4", "", { "dependencies": { "cross-fetch": "^4.0.0", "intl-messageformat": "^10.5.14", "md5": "^2.3.0" } }, "sha512-vWx3dkZ3S8Zhh0TgivIEIu8CkaXECmk81uPFkWcNq6AIkYCAAJrHIH7/iWqc12IxqTnTGBdyLwZ2kbJjfC0Udw=="],
+    "@transifex/native": ["@transifex/native@7.1.5", "", { "dependencies": { "cross-fetch": "^4.0.0", "intl-messageformat": "^10.5.14", "md5": "^2.3.0" } }, "sha512-W/5opTTjlVAgniiRz4cN+86VaUApbzCsCGzJVDPw2PBG594GFzx38s4L5OBwMDIM5Ns0xhxtrEfJWju7/jNzDA=="],
 
     "@types/acorn": ["@types/acorn@4.0.6", "", { "dependencies": { "@types/estree": "*" } }, "sha512-veQTnWP+1D/xbxVrPC3zHnCZRjSrKfhbMUlEA43iMZLu7EsnTtkJklIuwrCPbOi8YkvDQAiW05VQQFvvz9oieQ=="],
 
@@ -1760,6 +1760,8 @@
     "@rollup/pluginutils/picomatch": ["picomatch@4.0.3", "", {}, "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q=="],
 
     "@sozialhelden/ietf-language-tags/typescript": ["typescript@4.9.5", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g=="],
+
+    "@transifex/cli/@transifex/native": ["@transifex/native@7.1.4", "", { "dependencies": { "cross-fetch": "^4.0.0", "intl-messageformat": "^10.5.14", "md5": "^2.3.0" } }, "sha512-vWx3dkZ3S8Zhh0TgivIEIu8CkaXECmk81uPFkWcNq6AIkYCAAJrHIH7/iWqc12IxqTnTGBdyLwZ2kbJjfC0Udw=="],
 
     "@vercel/nft/glob": ["glob@10.4.5", "", { "dependencies": { "foreground-child": "^3.1.0", "jackspeak": "^3.1.2", "minimatch": "^9.0.4", "minipass": "^7.1.2", "package-json-from-dist": "^1.0.0", "path-scurry": "^1.11.1" }, "bin": { "glob": "dist/esm/bin.mjs" } }, "sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg=="],
 
