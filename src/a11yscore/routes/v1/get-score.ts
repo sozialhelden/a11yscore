@@ -1,3 +1,6 @@
+import { eq } from "drizzle-orm";
+import { appDb } from "~/db";
+import { adminAreas } from "~/db/schema/app";
 import { useIsDevelopment } from "~/utils/env";
 import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
 import {
@@ -12,24 +15,28 @@ import { queryScoreResultsByAdminArea } from "~~/src/a11yscore/queries/query-sco
 
 export default defineCachedEventHandler(
   async (event) => {
-    let adminAreaId: number;
+    // startet der compound key mit "osm:" ? wenn ja, dann gucke in der admin-area db nach der osm id
+    // wenn nein, gucke in der admin-area db nach der richtigen id
+
     const compoundKey = getRouterParam(event, "id");
+    const adminArea = (
+      await appDb
+        .select({
+          id: adminAreas.id,
+          name: adminAreas.name,
+          slug: adminAreas.slug,
+          osmId: adminAreas.osmId,
+          wikidata: adminAreas.wikidata,
+        })
+        .from(adminAreas)
+        .where(
+          compoundKey.startsWith("osm:")
+            ? eq(adminAreas.osmId, parseInt(compoundKey.replace("osm:", "")))
+            : eq(adminAreas.id, compoundKey),
+        )
+    ).shift();
 
-
-
-    if (compoundKey.startsWith("osm:")) {
-      adminAreaId = allowedAdminAreas.find(
-        ({ id }) => id === parseInt(compoundKey.replace("osm:", "")),
-      )?.id;
-    }
-
-    if (compoundKey.startsWith("slug:")) {
-      adminAreaId = allowedAdminAreas.find(
-        ({ slug }) => slug === compoundKey.replace("slug:", ""),
-      )?.id;
-    }
-
-    if (!adminAreaId) {
+    if (!adminArea) {
       throw createError({
         status: 404,
         statusMessage: "Not found",
@@ -43,7 +50,7 @@ export default defineCachedEventHandler(
       subCategoryScoreResults,
       topicScoreResults,
       criterionScoreResults,
-    } = await queryScoreResultsByAdminArea(adminAreaId);
+    } = await queryScoreResultsByAdminArea(adminArea.osmId);
 
     if (!scoreResults) {
       throw createError({
@@ -128,10 +135,7 @@ export default defineCachedEventHandler(
     return {
       score: {
         ...scoreResults,
-        adminArea: {
-          id: adminAreaId,
-          name: allowedAdminAreas.find(({ id }) => id === adminAreaId)?.name,
-        },
+        adminArea,
         toplevelCategories: result,
       },
     };
