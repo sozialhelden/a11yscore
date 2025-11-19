@@ -15,6 +15,17 @@ export default defineCachedEventHandler(
     let adminAreaId: number;
     const compoundKey = getRouterParam(event, "id");
 
+    // backend:
+    // /a11yscore/v1/admin-areas/{id}/scores/latest
+    // -> {id} === id spalte in der admin-areas table ist
+    // -> {id} === osm:-61003
+    // TODO: hash aus der datenbank löschen und hash logik ins frontend umziehen
+
+    // frontend:
+    // /scores/rjv0dd-berlin
+    // -> hash encoden und die osm-id nutzen, um die daten aus dem backend zu holen
+    // -> wir vergleichen den slug aus dem backend und den slug aus der url, falls ungleich redirecten wir
+
     if (compoundKey.startsWith("osm:")) {
       adminAreaId = allowedAdminAreas.find(
         ({ id }) => id === parseInt(compoundKey.replace("osm:", "")),
