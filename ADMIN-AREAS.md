@@ -15,5 +15,13 @@ Requirements
 
 Herangehensweise
 
-* wir erstellen eine eigene admin-areas tabelle in der app-db, in die wir die admin-areas reinkippen
-* wir erstellen ein sync-script für die admin-areas
+* wir wollen aus der osm sync datenbank alle admin-areas, die wir brauchen, in eine tabelle in der app db schreiben
+* die admin-areas bekommen eine eigene id und einen hash für die url
+
+---
+
+TODO
+
+* admin-areas in die db schreiben/kippen
+* aus dem temporären code einen sync job machen
+* den endpunkt umschreiben, so dass er admin areas aus der db bekommt
