@@ -6,7 +6,7 @@ import { osm_admin, osm_admin_gen0 } from "~/db/schema/osm-sync";
 import { encodeOsmId } from "~/utils/osmIds";
 
 const germany = -51477;
-const allowedAdminLevels = [4];
+const allowedAdminLevels = [4,5,6];
 
 // extend slug to handle German characters properly
 slug.extend({ ü: "ue", ä: "ae", ö: "oe", ß: "ss" });
@@ -33,7 +33,6 @@ export async function handle() {
         )
         AND ${osm_admin.admin_level} IN ${allowedAdminLevels}
         AND ${osm_admin.name} != ''
-    LIMIT 20
   `;
 
   const { rows } = await osmSyncDb.execute<AdminAreaResult>(query);

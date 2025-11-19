@@ -33,6 +33,23 @@ await scoreQueue.upsertJobScheduler(
   },
 );
 
+await scoreQueue.upsertJobScheduler(
+    syncAdminAreasJobId,
+    { pattern: "0 0 0 * * *" }, // once per day at 00:00
+    {
+      name: syncAdminAreasJobId,
+      opts: {
+        attempts: 1,
+        removeOnComplete: {
+          age: 60 * 60 * 24 * 30, // keep successful jobs for 30 days
+        },
+        removeOnFail: {
+          age: 60 * 60 * 24 * 90, // keep failed jobs for 90 days
+        },
+      },
+    },
+);
+
 const worker = new Worker(
   scoreQueueId,
   async (
