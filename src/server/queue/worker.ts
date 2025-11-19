@@ -5,10 +5,13 @@ import {
   type ComputeScoresJob,
   computeAdminAreaScoreJobId,
   computeScoresJobId,
+  type SyncAdminAreasJob,
   scoreQueue,
   scoreQueueId,
+  syncAdminAreasJobId,
 } from "~/queue/index";
 import { handle as handleComputeScores } from "~/queue/jobs/compute-scores";
+import { handle as handleSyncAdminAreas } from "~/queue/jobs/sync-admin-areas";
 import { handle as handleComputeAdminAreaScore } from "~~/src/a11yscore/jobs/compute-admin-area-score";
 
 await scoreQueue.setGlobalConcurrency(4);
@@ -32,12 +35,17 @@ await scoreQueue.upsertJobScheduler(
 
 const worker = new Worker(
   scoreQueueId,
-  async (job: ComputeScoresJob | ComputeAdminAreaScoreJob) => {
+  async (
+    job: ComputeScoresJob | ComputeAdminAreaScoreJob | SyncAdminAreasJob,
+  ) => {
     if (job.name === computeScoresJobId) {
       return handleComputeScores();
     }
     if (job.name === computeAdminAreaScoreJobId) {
       return handleComputeAdminAreaScore(job);
+    }
+    if (job.name === syncAdminAreasJobId) {
+      return handleSyncAdminAreas();
     }
   },
   {

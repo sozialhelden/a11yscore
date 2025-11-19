@@ -2,10 +2,16 @@ import {
   computeAdminAreaScoreJobId,
   computeScoresJobId,
   scoreQueue,
+  syncAdminAreasJobId,
 } from "~/queue";
 import { langQueryParameter } from "~/utils/openApi";
 
-const allowedJobs = [computeScoresJobId, computeAdminAreaScoreJobId];
+const allowedJobs = [
+  computeScoresJobId,
+  computeAdminAreaScoreJobId,
+  syncAdminAreasJobId,
+];
+
 export default defineEventHandler(async (event) => {
   const type = getRouterParam(event, "type");
   const body = await readBody(event);

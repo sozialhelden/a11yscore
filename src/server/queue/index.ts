@@ -20,3 +20,10 @@ export type ComputeAdminAreaScoreJob = Job<
   undefined,
   typeof computeAdminAreaScoreJobId
 >;
+
+export const syncAdminAreasJobId = "sync-admin-areas";
+export type SyncAdminAreasJob = Job<
+  undefined,
+  undefined,
+  typeof syncAdminAreasJobId
+>;
