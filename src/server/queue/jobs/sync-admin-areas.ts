@@ -3,7 +3,6 @@ import slug from "slug";
 import { appDb, osmSyncDb } from "~/db";
 import { adminAreas } from "~/db/schema/app";
 import { osm_admin, osm_admin_gen0 } from "~/db/schema/osm-sync";
-import { encodeOsmId } from "~/utils/osmIds";
 
 const germany = -51477;
 const allowedAdminLevels = [4,5,6];
@@ -42,7 +41,6 @@ export async function handle() {
       osmId: result.osm_id,
       name: result.name,
       adminLevel: result.admin_level,
-      hash: encodeOsmId(result.osm_id),
       slug: slug(result.name),
       wikidata: result.wikidata,
     };

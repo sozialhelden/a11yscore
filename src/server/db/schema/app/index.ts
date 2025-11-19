@@ -13,7 +13,6 @@ export const adminAreas = pgTable("admin_areas", {
   name: varchar("name").notNull(),
   adminLevel: integer("admin_level").notNull(),
   slug: varchar("slug").notNull(),
-  hash: varchar("hash").notNull(),
   wikidata: varchar("wikidata"),
 });
 

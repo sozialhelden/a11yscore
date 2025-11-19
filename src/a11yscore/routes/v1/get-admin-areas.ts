@@ -8,7 +8,6 @@ export default defineEventHandler(async () => {
         osmId: adminAreas.osmId,
         name: adminAreas.name,
         slug: adminAreas.slug,
-        hash: adminAreas.hash,
       })
       .from(adminAreas),
   };
