@@ -15,7 +15,7 @@ services:
       - 5432:5432
 
   redis:
-    image: redis:8.2-alpine
+    image: redis:8.4-alpine
     volumes:
       - redis-data:/data
     ports:
