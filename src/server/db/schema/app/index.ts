@@ -11,6 +11,7 @@ export const adminAreas = pgTable("admin_areas", {
   id: uuid("id").primaryKey().defaultRandom(),
   osmId: integer("osm_id").unique().notNull(),
   name: varchar("name").notNull(),
+  adminLevel: integer("admin_level").notNull(),
   slug: varchar("slug").notNull(),
   hash: varchar("hash").notNull(),
   wikidata: varchar("wikidata"),

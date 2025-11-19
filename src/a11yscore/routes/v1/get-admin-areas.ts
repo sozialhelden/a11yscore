@@ -1,8 +1,10 @@
 import { sql } from "drizzle-orm";
 import slug from "slug";
-import { osmSyncDb } from "~/db";
+import { osmSyncDb, appDb } from "~/db";
 import { osm_admin, osm_admin_gen0 } from "~/db/schema/osm-sync";
 import { decodeOsmId, encodeOsmId } from "~/utils/osmIds";
+import {integer, uuid, varchar} from "drizzle-orm/pg-core";
+import {adminAreas} from "~/db/schema/app";
 
 export type AdminAreaResult = {
   osm_id: number;
@@ -33,18 +35,21 @@ export default defineEventHandler(async () => {
     LIMIT 20
   `;
 
-  const adminAreas = (await osmSyncDb.execute<AdminAreaResult>(query)).rows;
+  const adminAreasResult = (await osmSyncDb.execute<AdminAreaResult>(query)).rows;
 
   // scores/-51235-berlin
   // scores/berlin-s3hd
-
-  return adminAreas.map((area) => {
-    const hash = encodeOsmId(area.osm_id);
+  const mappedAdminAreas = adminAreasResult.map((area) => {
     return {
-      ...area,
+      osmId: area.osm_id,
+      name: area.name,
+      adminLevel: area.admin_level,
       hash: encodeOsmId(area.osm_id),
       slug: slug(area.name),
-      decoded: decodeOsmId(hash),
+      wikidata: area.wikidata,
     };
   });
+  await appDb.insert(adminAreas).values(mappedAdminAreas);
+
+  return 0;
 });
