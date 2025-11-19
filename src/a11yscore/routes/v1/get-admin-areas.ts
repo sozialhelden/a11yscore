@@ -1,10 +1,10 @@
 import { sql } from "drizzle-orm";
+import { integer, uuid, varchar } from "drizzle-orm/pg-core";
 import slug from "slug";
-import { osmSyncDb, appDb } from "~/db";
+import { appDb, osmSyncDb } from "~/db";
+import { adminAreas } from "~/db/schema/app";
 import { osm_admin, osm_admin_gen0 } from "~/db/schema/osm-sync";
 import { decodeOsmId, encodeOsmId } from "~/utils/osmIds";
-import {integer, uuid, varchar} from "drizzle-orm/pg-core";
-import {adminAreas} from "~/db/schema/app";
 
 export type AdminAreaResult = {
   osm_id: number;
@@ -35,7 +35,8 @@ export default defineEventHandler(async () => {
     LIMIT 20
   `;
 
-  const adminAreasResult = (await osmSyncDb.execute<AdminAreaResult>(query)).rows;
+  const adminAreasResult = (await osmSyncDb.execute<AdminAreaResult>(query))
+    .rows;
 
   // scores/-51235-berlin
   // scores/berlin-s3hd
@@ -49,7 +50,13 @@ export default defineEventHandler(async () => {
       wikidata: area.wikidata,
     };
   });
-  await appDb.insert(adminAreas).values(mappedAdminAreas);
+
+  for (const area of mappedAdminAreas) {
+    await appDb.insert(adminAreas).values(area).onConflictDoUpdate({
+      target: adminAreas.osmId,
+      set: area,
+    });
+  }
 
   return 0;
 });
