@@ -22,22 +22,10 @@ Herangehensweise
 
 TODO
 
-* admin-areas in die db schreiben/kippen
-* aus dem temporären code einen sync job machen
-* den endpunkt umschreiben, so dass er admin areas aus der db bekommt
-
-* schema anpassen
-* decode/encode code rüber
-* test umziehen
-* frontend generiert hash aus der osm id, decoded osmid aus der url 
-
-backend:
-// /a11yscore/v1/admin-areas/{id}/scores/latest
-// -> {id} === id spalte in der admin-areas table ist
-// -> {id} === osm:-61003
-// TODO: hash aus der datenbank löschen und hash logik ins frontend umziehen
-
-frontend:
-* /scores/rjv0dd-berlin
-* hash encoden und die osm-id nutzen, um die daten aus dem backend zu holen
-* wir vergleichen den slug aus dem backend und den slug aus der url, falls ungleich redirecten wir
+* allowedAdminAreas ersetzen durch neue 
+* aufräumen
+* openApi docs anpassen (response types)
+* alten test für encode/decode umziehen
+* wikidata id benutzen um das bild zu holen (im backend statt frontend)
+* eventuell: job bauen der die bilder holt und in die db schreibt
+* oder: als teil des admin areas sync die bild-urls holen
