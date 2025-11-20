@@ -1,10 +1,11 @@
+import { appDb } from "~/db";
+import { adminAreas } from "~/db/schema/app";
 import { useIsDevelopment } from "~/utils/env";
-import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
 
 export default defineCachedEventHandler(
   async () => {
     return {
-      adminAreas: allowedAdminAreas,
+      adminAreas: await appDb.select().from(adminAreas),
     };
   },
   {

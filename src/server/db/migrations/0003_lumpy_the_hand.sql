@@ -1,0 +1,1 @@
+ALTER TABLE "admin_areas" ADD COLUMN "admin_level" integer NOT NULL;

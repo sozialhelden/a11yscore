@@ -8,6 +8,27 @@ defineRouteMeta({
     tags: ["a11y-Score v1"],
     description: "Get osm-tags used in the a11y-Score algorithm.",
     parameters: [langQueryParameter],
+    $global: {
+      components: {
+        schemas: {
+          OsmTag: {
+            type: "object",
+            description:
+              "An OSM tag key/value pair relevant to the sub-category.",
+            properties: {
+              key: {
+                type: "string",
+                example: "amenity",
+              },
+              value: {
+                type: "string",
+                example: "restaurant",
+              },
+            },
+          },
+        },
+      },
+    },
     responses: {
       "200": {
         description: "Successful response",
@@ -60,19 +81,7 @@ defineRouteMeta({
                             osmTags: {
                               type: "array",
                               items: {
-                                type: "object",
-                                description:
-                                  "An OSM tag key/value pair relevant to the sub-category.",
-                                properties: {
-                                  key: {
-                                    type: "string",
-                                    example: "amenity",
-                                  },
-                                  value: {
-                                    type: "string",
-                                    example: "restaurant",
-                                  },
-                                },
+                                $ref: "#/components/schemas/OsmTag",
                               },
                             },
                           },
@@ -107,19 +116,7 @@ defineRouteMeta({
                       osmTags: {
                         type: "array",
                         items: {
-                          type: "object",
-                          description:
-                            "An OSM tag key/value pair relevant to the sub-category.",
-                          properties: {
-                            key: {
-                              type: "string",
-                              example: "wheelchair",
-                            },
-                            value: {
-                              type: "string",
-                              example: "*",
-                            },
-                          },
+                          $ref: "#/components/schemas/OsmTag",
                         },
                       },
                     },

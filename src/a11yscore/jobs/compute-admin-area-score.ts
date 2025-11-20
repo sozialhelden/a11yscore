@@ -26,7 +26,7 @@ import {
 
 export async function handle(job: ComputeAdminAreaScoreJob) {
   const { adminArea } = job.data;
-  const results = await calculateScoreByAdminArea(adminArea.id);
+  const results = await calculateScoreByAdminArea(adminArea.osmId);
   await job.updateProgress(50);
   await appDb.transaction(async (tx) => {
     await persistScore(tx, results, { adminAreaId: adminArea.id });
@@ -39,7 +39,7 @@ type ScoreQueryResults = Record<string, number>;
 async function persistScore(
   tx: AppDbTransaction,
   results: ScoreQueryResults,
-  { adminAreaId }: { adminAreaId: number },
+  { adminAreaId }: { adminAreaId: string },
 ) {
   const [{ scoreId }] = await tx
     .insert(scores)
