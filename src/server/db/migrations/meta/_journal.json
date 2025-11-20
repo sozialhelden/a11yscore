@@ -36,6 +36,27 @@
       "when": 1763571681274,
       "tag": "0004_messy_paper_doll",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1763643835576,
+      "tag": "0005_empty-scores",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1763643871439,
+      "tag": "0006_nice_punisher",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1763646221871,
+      "tag": "0007_sweet_snowbird",
+      "breakpoints": true
     }
   ]
 }

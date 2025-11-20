@@ -2,7 +2,6 @@ import { eq } from "drizzle-orm";
 import { appDb } from "~/db";
 import { adminAreas } from "~/db/schema/app";
 import { useIsDevelopment } from "~/utils/env";
-import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
 import {
   type SubCategoryId,
   subCategories,
@@ -15,19 +14,11 @@ import { queryScoreResultsByAdminArea } from "~~/src/a11yscore/queries/query-sco
 
 export default defineCachedEventHandler(
   async (event) => {
-    // startet der compound key mit "osm:" ? wenn ja, dann gucke in der admin-area db nach der osm id
-    // wenn nein, gucke in der admin-area db nach der richtigen id
-
     const compoundKey = getRouterParam(event, "id");
+
     const adminArea = (
       await appDb
-        .select({
-          id: adminAreas.id,
-          name: adminAreas.name,
-          slug: adminAreas.slug,
-          osmId: adminAreas.osmId,
-          wikidata: adminAreas.wikidata,
-        })
+        .select()
         .from(adminAreas)
         .where(
           compoundKey.startsWith("osm:")
@@ -50,7 +41,7 @@ export default defineCachedEventHandler(
       subCategoryScoreResults,
       topicScoreResults,
       criterionScoreResults,
-    } = await queryScoreResultsByAdminArea(adminArea.osmId);
+    } = await queryScoreResultsByAdminArea(adminArea.id);
 
     if (!scoreResults) {
       throw createError({
@@ -133,9 +124,9 @@ export default defineCachedEventHandler(
     delete scoreResults.adminAreaId;
 
     return {
+      adminArea,
       score: {
         ...scoreResults,
-        adminArea,
         toplevelCategories: result,
       },
     };

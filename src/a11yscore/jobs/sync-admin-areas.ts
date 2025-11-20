@@ -3,14 +3,16 @@ import slug from "slug";
 import { appDb, osmSyncDb } from "~/db";
 import { adminAreas } from "~/db/schema/app";
 import { osm_admin, osm_admin_gen0 } from "~/db/schema/osm-sync";
-
-const germany = -51477;
-const allowedAdminLevels = [4,5,6];
+import { scoreQueue, setAdminAreaImageJobId } from "~/queue";
+import {
+  allowedAdminLevels,
+  allowedCountries,
+} from "~~/src/a11yscore/config/admin-areas";
 
 // extend slug to handle German characters properly
 slug.extend({ ü: "ue", ä: "ae", ö: "oe", ß: "ss" });
 
-export type AdminAreaResult = {
+type AdminAreaResult = {
   osm_id: number;
   name: string;
   admin_level: number;
@@ -21,7 +23,7 @@ export async function handle() {
   const query = sql`
     SELECT ${osm_admin.osm_id}, ${osm_admin.name}, ${osm_admin.admin_level}, ${osm_admin.wikidata}
     FROM ${osm_admin}
-    JOIN ${osm_admin_gen0} ON ${osm_admin_gen0.osm_id} = ${germany}
+    JOIN ${osm_admin_gen0} ON ${osm_admin_gen0.osm_id} IN ${allowedCountries}
     WHERE 
         ST_Covers(
             ${osm_admin_gen0.geometry},
@@ -45,9 +47,26 @@ export async function handle() {
       wikidata: result.wikidata,
     };
 
-    await appDb.insert(adminAreas).values(adminArea).onConflictDoUpdate({
-      target: adminAreas.osmId,
-      set: adminArea,
-    });
+    const queryResult = await appDb
+      .insert(adminAreas)
+      .values(adminArea)
+      .onConflictDoUpdate({
+        target: adminAreas.osmId,
+        set: adminArea,
+      })
+      .returning();
+
+    await scoreQueue.add(
+      setAdminAreaImageJobId,
+      { adminArea: queryResult.shift() },
+      {
+        attempts: 4,
+        backoff: {
+          type: "exponential",
+          delay: 3000,
+          jitter: 0.5,
+        },
+      },
+    );
   }
 }

@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   integer,
+  json,
   pgTable,
   timestamp,
   uuid,
@@ -14,11 +15,14 @@ export const adminAreas = pgTable("admin_areas", {
   adminLevel: integer("admin_level").notNull(),
   slug: varchar("slug").notNull(),
   wikidata: varchar("wikidata"),
+  image: json("image"),
 });
 
 export const scores = pgTable("scores", {
   id: uuid("id").primaryKey().defaultRandom(),
-  adminAreaId: integer("admin_area_id").notNull(),
+  adminAreaId: uuid("admin_area_id")
+    .references(() => adminAreas.id, { onDelete: "no action" })
+    .notNull(),
   score: integer("score"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
 });

@@ -25,7 +25,9 @@ TODO
 * allowedAdminAreas ersetzen durch neue 
 * aufräumen
 * openApi docs anpassen (response types)
+
 * alten test für encode/decode umziehen
+
 * wikidata id benutzen um das bild zu holen (im backend statt frontend)
 * eventuell: job bauen der die bilder holt und in die db schreibt
 * oder: als teil des admin areas sync die bild-urls holen

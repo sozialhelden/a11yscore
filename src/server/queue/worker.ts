@@ -5,55 +5,58 @@ import {
   type ComputeScoresJob,
   computeAdminAreaScoreJobId,
   computeScoresJobId,
+  type SetAdminAreaImageJob,
   type SyncAdminAreasJob,
   scoreQueue,
   scoreQueueId,
+  setAdminAreaImageJobId,
   syncAdminAreasJobId,
 } from "~/queue/index";
 import { handle as handleComputeScores } from "~/queue/jobs/compute-scores";
-import { handle as handleSyncAdminAreas } from "~/queue/jobs/sync-admin-areas";
+import { handle as handleSetAdminAreaImage } from "~~/src/a11yscore/jobs/set-admin-area-image";
+import { handle as handleSyncAdminAreas } from "~~/src/a11yscore/jobs/sync-admin-areas";
 import { handle as handleComputeAdminAreaScore } from "~~/src/a11yscore/jobs/compute-admin-area-score";
 
 await scoreQueue.setGlobalConcurrency(4);
+
+const defaultJobOptions = {
+  attempts: 1,
+  removeOnComplete: {
+    age: 60 * 60 * 24 * 30, // keep successful jobs for 30 days
+  },
+  removeOnFail: {
+    age: 60 * 60 * 24 * 90, // keep failed jobs for 90 days
+  },
+};
 
 await scoreQueue.upsertJobScheduler(
   computeScoresJobId,
   { pattern: "0 0 1 * * *" }, // once per day at 1:00am
   {
     name: computeScoresJobId,
-    opts: {
-      attempts: 1,
-      removeOnComplete: {
-        age: 60 * 60 * 24 * 30, // keep successful jobs for 30 days
-      },
-      removeOnFail: {
-        age: 60 * 60 * 24 * 90, // keep failed jobs for 90 days
-      },
-    },
+    opts: defaultJobOptions,
   },
 );
 
 await scoreQueue.upsertJobScheduler(
-    syncAdminAreasJobId,
-    { pattern: "0 0 0 * * *" }, // once per day at 00:00
-    {
-      name: syncAdminAreasJobId,
-      opts: {
-        attempts: 1,
-        removeOnComplete: {
-          age: 60 * 60 * 24 * 30, // keep successful jobs for 30 days
-        },
-        removeOnFail: {
-          age: 60 * 60 * 24 * 90, // keep failed jobs for 90 days
-        },
-      },
-    },
+  syncAdminAreasJobId,
+  { pattern: "0 0 0 * * *" }, // once per day at 00:00
+  {
+    name: syncAdminAreasJobId,
+    opts: defaultJobOptions,
+  },
 );
 
+// this manual registration of handlers doesn't scale well. if you add
+// more jobs in the future, please refactor this.
 const worker = new Worker(
   scoreQueueId,
   async (
-    job: ComputeScoresJob | ComputeAdminAreaScoreJob | SyncAdminAreasJob,
+    job:
+      | ComputeScoresJob
+      | ComputeAdminAreaScoreJob
+      | SyncAdminAreasJob
+      | SetAdminAreaImageJob,
   ) => {
     if (job.name === computeScoresJobId) {
       return handleComputeScores();
@@ -63,6 +66,9 @@ const worker = new Worker(
     }
     if (job.name === syncAdminAreasJobId) {
       return handleSyncAdminAreas();
+    }
+    if (job.name === setAdminAreaImageJobId) {
+      return handleSetAdminAreaImage(job);
     }
   },
   {

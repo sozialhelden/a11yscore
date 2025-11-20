@@ -16,8 +16,8 @@
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "score:calculate": "curl 'http://localhost:3000/a11yscore/v1/auth/queue/jobs/compute-scores' --request POST --header 'Authorization: Basic YWRtaW46cGFzc3dvcmQ='",
-    "admin-areas:sync": "curl 'http://localhost:3000/a11yscore/v1/auth/queue/jobs/sync-admin-areas' --request POST --header 'Authorization: Basic YWRtaW46cGFzc3dvcmQ='",
+    "job:compute-score": "curl 'http://localhost:3000/a11yscore/v1/auth/queue/jobs/compute-scores' --request POST --header 'Authorization: Basic YWRtaW46cGFzc3dvcmQ='",
+    "job:sync-admin-areas": "curl 'http://localhost:3000/a11yscore/v1/auth/queue/jobs/sync-admin-areas' --request POST --header 'Authorization: Basic YWRtaW46cGFzc3dvcmQ='",
     "transifex:sync": "env-cmd --use-shell -- txjs-cli push src/ --token=\\$NITRO_TRANSIFEX_TOKEN --secret=\\$NITRO_TRANSIFEX_SECRET",
     "postinstall": "nitro prepare && husky"
   },
