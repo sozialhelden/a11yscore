@@ -1,9 +1,10 @@
+import { appDb } from "~/db";
+import { adminAreas } from "~/db/schema/app";
 import { computeAdminAreaScoreJobId, scoreQueue } from "~/queue";
-import { allowedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
 
 export async function handle() {
   await scoreQueue.addBulk(
-    allowedAdminAreas.map((adminArea) => {
+    (await appDb.select().from(adminAreas)).map((adminArea) => {
       return {
         name: computeAdminAreaScoreJobId,
         data: { adminArea },

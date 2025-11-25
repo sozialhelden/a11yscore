@@ -1,0 +1,1 @@
+ALTER TABLE "admin_areas" ADD COLUMN "image" json;

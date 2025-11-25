@@ -1,6 +1,6 @@
 import { type Job, Queue } from "bullmq";
+import type { adminAreas } from "~/db/schema/app";
 import { redisConnection } from "~/queue/env";
-import type { AdminArea } from "~~/src/a11yscore/config/admin-areas";
 
 export const scoreQueueId = "score";
 export const scoreQueue = new Queue(scoreQueueId, {
@@ -16,7 +16,21 @@ export type ComputeScoresJob = Job<
 
 export const computeAdminAreaScoreJobId = "compute-admin-area-score";
 export type ComputeAdminAreaScoreJob = Job<
-  { adminArea: AdminArea },
+  { adminArea: typeof adminAreas.$inferSelect },
   undefined,
   typeof computeAdminAreaScoreJobId
+>;
+
+export const syncAdminAreasJobId = "sync-admin-areas";
+export type SyncAdminAreasJob = Job<
+  undefined,
+  undefined,
+  typeof syncAdminAreasJobId
+>;
+
+export const setAdminAreaImageJobId = "set-admin-area-image";
+export type SetAdminAreaImageJob = Job<
+  { adminArea: typeof adminAreas.$inferSelect },
+  undefined,
+  typeof setAdminAreaImageJobId
 >;
