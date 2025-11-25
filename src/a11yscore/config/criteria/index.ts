@@ -2,8 +2,8 @@ import type { SQL } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 import type { OSMTag } from "~~/src/a11yscore/config/categories";
 import {
-  type BlindCriterionId,
-  blindCriteria,
+  type VisionCriterionId,
+  visionCriteria,
 } from "~~/src/a11yscore/config/criteria/blind";
 import {
   type ClimateCriterionId,
@@ -36,7 +36,7 @@ import {
 import { addIdToConfigEntries } from "~~/src/a11yscore/utils/config";
 
 export type CriterionId =
-  | BlindCriterionId
+  | VisionCriterionId
   | ClimateCriterionId
   | DeafCriterionId
   | EnvironmentCriterionId
@@ -121,7 +121,7 @@ export type CriterionProperties = {
 
 const configuredCriteria: Record<CriterionId, CriterionProperties> = {
   ...generalCriteria,
-  ...blindCriteria,
+  ...visionCriteria,
   ...climateCriteria,
   ...deafCriteria,
   ...environmentCriteria,

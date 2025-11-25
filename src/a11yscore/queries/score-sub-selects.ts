@@ -23,6 +23,7 @@ import {
   getTopLevelCategorySubSelectAlias,
   getTopLevelCategoryWeightNormalizationFactorAlias,
 } from "~~/src/a11yscore/utils/sql-aliases";
+import { osm_admin, osm_amenities } from "~/db/schema/osm-sync";
 
 /**
  * Get a SQL sub-select that retrieves all criteria scores for a given subcategory.
@@ -61,10 +62,15 @@ export function getCriteriaSubSelect({
   const wheres = [...where, subCategory.sql.where].filter(Boolean);
   const groupBys = [...groupBy, subCategory.sql.groupBy].filter(Boolean);
 
+  const table = subCategory.sql.from;
+  const spatialJoin = [
+    sql`JOIN ${osm_admin} ON ST_Intersects(${table.geometry}, ${osm_admin.geometry})`,
+  ];
+
   return sql`
 		SELECT ${sql.join(selects, sql`, `)} 
 		FROM ${subCategory.sql.from} 
-		${sql.join(joins, sql`\n`)}
+        ${sql.join(spatialJoin, sql`\n`)}    
 		${wheres.length ? sql`WHERE ${sql.join(wheres, sql` AND `)}` : sql.empty()}
 		${groupBys.length ? sql`GROUP BY ${sql.join(groupBys, sql` AND `)}` : sql.empty()}
 	`;

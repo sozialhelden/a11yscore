@@ -6,12 +6,9 @@ import { getCombinedScoreQuery } from "~~/src/a11yscore/queries/score-sub-select
 export async function calculateScoreByAdminArea(
   adminAreaId: string | number,
 ): Promise<Record<string, number>> {
-  const join = [
-    sql`JOIN ${osm_admin} ON ST_Intersects(${osm_amenities.geometry}, ${osm_admin.geometry})`,
-  ];
   const where = [sql`${osm_admin.osm_id} = ${adminAreaId}`];
 
-  const sqlClause = getCombinedScoreQuery({ join, where });
+  const sqlClause = getCombinedScoreQuery({ where: where });
   const result = await osmSyncDb.execute(sqlClause);
 
   return result.rows.shift() as Record<string, number>;
