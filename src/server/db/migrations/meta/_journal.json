@@ -71,6 +71,20 @@
       "when": 1764156281720,
       "tag": "0009_needy_tinkerer",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1764175213749,
+      "tag": "0010_cultured_random",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1764175494772,
+      "tag": "0011_lame_scream",
+      "breakpoints": true
     }
   ]
 }

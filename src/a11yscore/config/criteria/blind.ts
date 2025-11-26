@@ -1,7 +1,6 @@
 import { sql } from "drizzle-orm";
 import { t } from "~/utils/i18n";
 import type { CriterionProperties } from "~~/src/a11yscore/config/criteria/index";
-import { getDataQualityFactorSql } from "~~/src/a11yscore/queries/data-quality";
 
 export type BlindCriterionId = "is-accessible-to-visually-impaired";
 
