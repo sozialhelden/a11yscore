@@ -1,5 +1,7 @@
+import { eq } from "drizzle-orm";
 import { appDb } from "~/db";
 import {
+  adminAreas,
   criterionScores,
   scores,
   subCategoryScores,
@@ -26,10 +28,21 @@ import {
 
 export async function handle(job: ComputeAdminAreaScoreJob) {
   const { adminArea } = job.data;
-  const results = await calculateScoreByAdminArea(adminArea.osmId);
+  let adminAreaFromDatabase: ComputeAdminAreaScoreJob["data"]["adminArea"];
+  try {
+    adminAreaFromDatabase = (
+      await appDb
+        .select()
+        .from(adminAreas)
+        .where(eq(adminAreas.id, adminArea?.id))
+    ).shift();
+  } catch (_error) {
+    throw new Error(`Admin area with id ${adminArea.id} not found`);
+  }
+  const results = await calculateScoreByAdminArea(adminAreaFromDatabase.osmId);
   await job.updateProgress(50);
   await appDb.transaction(async (tx) => {
-    await persistScore(tx, results, { adminAreaId: adminArea.id });
+    await persistScore(tx, results, { adminAreaId: adminAreaFromDatabase.id });
   });
 }
 
