@@ -13,6 +13,7 @@ import {
   topLevelCategories,
 } from "~~/src/a11yscore/config/categories";
 import {
+  minDataQualityFactor,
   querySubCategoryScores,
   type ScoreQueryResults,
   type SQLSelectParams,
@@ -79,7 +80,7 @@ async function calculateTopLevelCategoryScore(
 
   let topLevelCategoryScore = 0;
   let topLevelCategoryDataQualityFactor = 0;
-  let weightsUsedInCalculation = 0;
+  let sumOfWeights = 0;
 
   for (const subCategory of getChildCategories(topLevelCategory.id)) {
     const { subCategoryScore, subCategoryDataQualityFactor } =
@@ -91,19 +92,19 @@ async function calculateTopLevelCategoryScore(
     const { weight } = subCategory;
     topLevelCategoryDataQualityFactor = weight * subCategoryDataQualityFactor;
 
-    // if dqf is 0, there is no data available for this sub-category, this means
-    // there are no matching places/geometry in the given admin area. so we don't
-    // include it in the score computation
-    if (subCategoryDataQualityFactor !== 0) {
+    // if dqf is at its minimum, there is no data available for this sub-category,
+    // this means there are no matching places/geometry in the given admin area. so
+    // we don't include it in the score computation
+    if (subCategoryDataQualityFactor !== minDataQualityFactor) {
       topLevelCategoryScore += weight * subCategoryScore;
-      weightsUsedInCalculation += weight;
+      sumOfWeights += weight;
     }
   }
 
   // We normalize the score by accounting for the weights of the sub-categories
   // that were not included because of missing geometry.
   const normalizedTopLevelCategoryScore = Math.ceil(
-    (1 / weightsUsedInCalculation) * topLevelCategoryScore,
+    sumOfWeights === 0 ? 0 : (1 / sumOfWeights) * topLevelCategoryScore,
   );
 
   await tx
@@ -136,7 +137,8 @@ async function calculateSubCategoryScore(
     .values({ topLevelCategoryScoreId, subCategory: subCategory.id })
     .returning({ subCategoryScoreId: subCategoryScores.id });
 
-  // this actually queries scores from the database
+  // this actually queries scores from the database. this is done on the sub-category
+  // level in order to reduce the number of queries made to the database
   const results = await querySubCategoryScores(subCategory, params);
 
   let subCategoryScore = 0;
@@ -188,6 +190,7 @@ async function calculateTopicScore(
 
   let topicScore = 0;
   let topicDataQualityFactor = 0;
+  let sumOfWeights = 0;
 
   for (const criterion of topic.criteria) {
     const { criterionScore, criterionDataQualityFactor } =
@@ -198,22 +201,42 @@ async function calculateTopicScore(
       });
 
     const { weight } = criterion;
-    topicScore += weight * criterionScore;
+
+    // we adjust the overall weight of a single criterion by its data quality factor
+    // in order to reduce the impact of low-quality data on the overall topic score
+    // also see: https://github.com/sozialhelden/a11yscore/blob/main/docs/architecture/02.scoring-algorithm.md#data-quality-adjusted-weights
+    const dataQualityAdjustedWeight = weight * criterionDataQualityFactor;
+
+    sumOfWeights += dataQualityAdjustedWeight;
+    topicScore += dataQualityAdjustedWeight * criterionScore;
     topicDataQualityFactor += weight * criterionDataQualityFactor;
   }
 
-  const normalizedTopicScore = Math.ceil(topicScore);
+  // We normalize the score by accounting for the data-quality adjusted weights which
+  // don't sum up to 1 anymore
+  const normalizedTopicScore = Math.ceil(
+    sumOfWeights === 0 ? 0 : topicScore * (1 / sumOfWeights),
+  );
+
+  // we add a "virtual" score component that is based solely on the data quality factor.
+  // this ensures to offset negative impacts when new data with a low score is added.
+  // also see: https://github.com/sozialhelden/a11yscore/blob/main/docs/architecture/02.scoring-algorithm.md#data-quality-criterion-score
+  const dataQualityCriterionScore = 100 * topicDataQualityFactor;
+  const finalTopicScore = Math.ceil(
+    normalizedTopicScore * 0.8 + 0.2 * dataQualityCriterionScore,
+  );
 
   await tx
     .update(topicScores)
     .set({
-      score: normalizedTopicScore,
+      score: finalTopicScore,
+      unadjustedScore: Math.ceil(topicScore),
       dataQualityFactor: topicDataQualityFactor,
     })
     .where(eq(topicScores.id, topicScoreId));
 
   return {
-    topicScore: normalizedTopicScore,
+    topicScore: finalTopicScore,
     topicDataQualityFactor,
   };
 }
@@ -231,6 +254,8 @@ async function calculateCriterionScore(
     criterion: SubCategory["topics"][number]["criteria"][number];
   },
 ) {
+  // we query the database once per sub-category and pass down the results multiple levels,
+  // in order to minimize the number of queries made to the database
   const criterionScore =
     result[getCriterionScoreAlias(topic.topicId, criterion.criterionId)];
   const criterionDataQualityFactor =

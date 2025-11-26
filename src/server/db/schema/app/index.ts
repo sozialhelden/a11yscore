@@ -25,6 +25,7 @@ export const scores = pgTable("scores", {
     .references(() => adminAreas.id, { onDelete: "no action" })
     .notNull(),
   score: integer("score"),
+  unadjustedScore: integer("unadjusted_score"),
   dataQualityFactor: doublePrecision("data_quality_factor"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
 });
@@ -36,6 +37,7 @@ export const topLevelCategoryScores = pgTable("toplevel_category_scores", {
     .notNull(),
   topLevelCategory: varchar("toplevel_category").notNull(),
   score: integer("score"),
+  unadjustedScore: integer("unadjusted_score"),
   dataQualityFactor: doublePrecision("data_quality_factor"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
 });
@@ -47,6 +49,7 @@ export const subCategoryScores = pgTable("sub_category_scores", {
     .notNull(),
   subCategory: varchar("sub_category").notNull(),
   score: integer("score"),
+  unadjustedScore: integer("unadjusted_score"),
   dataQualityFactor: doublePrecision("data_quality_factor"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
 });
@@ -58,6 +61,7 @@ export const topicScores = pgTable("topic_scores", {
     .notNull(),
   topic: varchar("topic").notNull(),
   score: integer("score"),
+  unadjustedScore: integer("unadjusted_score"),
   dataQualityFactor: doublePrecision("data_quality_factor"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
 });
@@ -69,6 +73,7 @@ export const criterionScores = pgTable("criterion_scores", {
     .notNull(),
   criterion: varchar("criterion").notNull(),
   score: integer("score"),
+  unadjustedScore: integer("unadjusted_score"),
   dataQualityFactor: doublePrecision("data_quality_factor"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
 });

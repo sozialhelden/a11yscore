@@ -16,31 +16,32 @@ export type SQLSelectParams = {
   groupBy?: SQL[];
 };
 
+export const minDataQualityFactor = 0.2;
+
 /**
  * Queries scores for all criteria in a given subcategory. Use the SQL select parameters
  * to filter or group the results as needed.
  */
 export async function querySubCategoryScores(
   subCategory: SubCategory,
-  sqlSelectParameters: SQLSelectParams,
+  sqlSelectParams: SQLSelectParams,
 ): Promise<ScoreQueryResults> {
-  const joins = [
-    ...(sqlSelectParameters.join || []),
-    subCategory.sql.join,
-  ].filter(Boolean);
+  const joins = [...(sqlSelectParams.join || []), subCategory.sql.join].filter(
+    Boolean,
+  );
 
   const wheres = [
-    ...(sqlSelectParameters.where || []),
+    ...(sqlSelectParams.where || []),
     subCategory.sql.where,
   ].filter(Boolean);
 
   const groupBys = [
-    ...(sqlSelectParameters.groupBy || []),
+    ...(sqlSelectParams.groupBy || []),
     subCategory.sql.groupBy,
   ].filter(Boolean);
 
   const selects = [
-    ...(sqlSelectParameters.groupBy || []),
+    ...(sqlSelectParams.groupBy || []),
     ...getCriteriaSelectClauses(subCategory),
     subCategory.sql.groupBy,
   ].filter(Boolean);
@@ -116,7 +117,7 @@ export function getDataQualityFactorSql(
 ) {
   return sql<number>`
       -- Coalesce takes care to zero it, even if the math operation returns null (e.g. no rows)
-      COALESCE(
+      (COALESCE(
         (
             SUM(CASE ${sql.join(
               osmTags.map(
@@ -128,6 +129,6 @@ export function getDataQualityFactorSql(
             / COUNT(*)::float
         ), 
         0
-      )
+      ) * ${sql.raw(String(1 - minDataQualityFactor))} + ${sql.raw(String(minDataQualityFactor))})
   `;
 }
