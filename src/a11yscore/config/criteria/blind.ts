@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { t } from "~/utils/i18n";
 import type { CriterionProperties } from "~~/src/a11yscore/config/criteria/index";
+import { getDataQualityFactorSql } from "~~/src/a11yscore/queries/data-quality";
 
 export type BlindCriterionId = "is-accessible-to-visually-impaired";
 
@@ -15,12 +16,12 @@ export const blindCriteria: Record<BlindCriterionId, CriterionProperties> = {
     ],
     sql: (table) => {
       return sql<number>`AVG(CASE 
-				WHEN ${table.tags}->'blind' IN ('yes', 'designated') THEN 100
-				WHEN ${table.tags}->'blind' = 'limited' THEN 50
-				WHEN ${table.tags}->'blind' = 'no' THEN 10
-				WHEN ${table.tags}->'blind' != '' AND ${table.tags}->'blind' IS NOT NULL THEN 10
-				ELSE 0
-			END)::bigint`;
+            WHEN ${table.tags}->'blind' IN ('yes', 'designated') THEN 100
+            WHEN ${table.tags}->'blind' = 'limited' THEN 50
+            WHEN ${table.tags}->'blind' = 'no' THEN 10
+            WHEN ${table.tags}->'blind' != '' AND ${table.tags}->'blind' IS NOT NULL THEN 10
+            ELSE 0
+        END)::bigint`;
     },
     reason: () =>
       t(

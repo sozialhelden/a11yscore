@@ -1,0 +1,1 @@
+ALTER TABLE "criterion_scores" ADD COLUMN "data_quality_factor" double precision;
