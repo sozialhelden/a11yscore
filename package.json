@@ -16,9 +16,10 @@
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "job:compute-score": "curl 'http://localhost:3000/a11yscore/v1/auth/queue/jobs/compute-scores' --request POST --header 'Authorization: Basic YWRtaW46cGFzc3dvcmQ='",
-    "job:sync-admin-areas": "curl 'http://localhost:3000/a11yscore/v1/auth/queue/jobs/sync-admin-areas' --request POST --header 'Authorization: Basic YWRtaW46cGFzc3dvcmQ='",
-    "transifex:sync": "env-cmd --use-shell -- txjs-cli push src/ --token=\\$NITRO_TRANSIFEX_TOKEN --secret=\\$NITRO_TRANSIFEX_SECRET",
+    "job:compute-scores": "env-cmd -- bash -c 'curl \"http://localhost:3000/a11yscore/v1/auth/queue/jobs/compute-scores\" --request POST --header \"Authorization: Basic $(echo -n $NITRO_INTERNAL_AUTH_USER:$NITRO_INTERNAL_AUTH_PASSWORD | base64)\"'",
+    "job:compute-admin-area-score": "env-cmd -- bash -c 'curl \"http://localhost:3000/a11yscore/v1/auth/queue/jobs/compute-admin-area-score\" --request POST --header \"Authorization: Basic $(echo -n $NITRO_INTERNAL_AUTH_USER:$NITRO_INTERNAL_AUTH_PASSWORD | base64)\" --header \"Content-Type: application/json\" --data \"{\\\"adminArea\\\":{\\\"id\\\":\\\"$1\\\"}}\"' _ ",
+    "job:sync-admin-areas": "env-cmd -- bash -c 'curl \"http://localhost:3000/a11yscore/v1/auth/queue/jobs/sync-admin-areas\" --request POST --header \"Authorization: Basic $(echo -n $NITRO_INTERNAL_AUTH_USER:$NITRO_INTERNAL_AUTH_PASSWORD | base64)\"'",
+    "transifex:sync": "env-cmd -- txjs-cli push src/ --token=\\$NITRO_TRANSIFEX_TOKEN --secret=\\$NITRO_TRANSIFEX_SECRET",
     "postinstall": "nitro prepare && husky"
   },
   "devDependencies": {
