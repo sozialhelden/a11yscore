@@ -14,6 +14,7 @@ export const osm_amenities = pgTable("osm_amenities", {
   smoking: varchar(),
   tags: jsonb().notNull(),
   wheelchair: varchar(),
+  healthcare: varchar(),
   "toilets:wheelchair": varchar(),
 });
 

@@ -6,7 +6,8 @@ export type GeneralCriterionId =
   | "has-drinking-straws"
   | "is-lit"
   | "has-shelter"
-  | "has-bench";
+  | "has-bench"
+  | "has-website";
 export const generalCriteria: Record<GeneralCriterionId, CriterionProperties> =
   {
     "has-drinking-straws": {
@@ -119,6 +120,25 @@ export const generalCriteria: Record<GeneralCriterionId, CriterionProperties> =
       recommendations: () => [
         t(
           "Consider providing benches at public transport stops to offer seating for waiting passengers.",
+        ),
+      ],
+    },
+    "has-website": {
+      name: () => t("Information about the facility is available on a website"),
+      osmTags: [{ key: "website", value: "any" }],
+      sql: (table) => {
+        return sql<number>`AVG(CASE 
+				WHEN ${table.tags}->'website' IS NOT NULL THEN 100
+				ELSE 0
+			END)::bigint`;
+      },
+      reason: () =>
+        t(
+          "Having information about the facility available on a website allows users to access important details such as contact details, opening hours, and services offered before visiting.",
+        ),
+      recommendations: () => [
+        t(
+          "Consider adding the link to the website for the facilities on Open Street Map using the 'website' tag where missing.",
         ),
       ],
     },
