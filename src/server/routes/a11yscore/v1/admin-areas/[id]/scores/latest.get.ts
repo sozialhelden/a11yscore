@@ -19,6 +19,36 @@ defineRouteMeta({
       },
       langQueryParameter,
     ],
+    $global: {
+      components: {
+        schemas: {
+          Score: {
+            type: "object",
+            properties: {
+              score: {
+                type: "number",
+                example: 75,
+                nullable: true,
+                description: "Calculated accessibility score",
+              },
+              dataQualityFactor: {
+                type: "number",
+                example: 0.67,
+                description:
+                  "Data quality factor for the score, between 0.2 and 1",
+                nullable: true,
+              },
+              dataIsUnavailable: {
+                type: "boolean",
+                example: false,
+                description:
+                  "Indicates if there is not enough data to calculate a reliable score",
+              },
+            },
+          },
+        },
+      },
+    },
     responses: {
       "200": {
         description: "Successful response",
@@ -39,11 +69,7 @@ defineRouteMeta({
                       description: "uuid of this score record",
                     },
                     score: {
-                      type: "number",
-                      example: "75",
-                      nullable: true,
-                      description:
-                        "Overall a11y-score for the given admin area",
+                      $ref: "#/components/schemas/Score",
                     },
                     createdAt: {
                       type: "string",
@@ -69,10 +95,7 @@ defineRouteMeta({
                             description: "Name of the top-level category",
                           },
                           score: {
-                            type: "integer",
-                            example: 80,
-                            nullable: true,
-                            description: "Score for this top-level category",
+                            $ref: "#/components/schemas/Score",
                           },
                           interpretation: {
                             type: "string",
@@ -97,10 +120,7 @@ defineRouteMeta({
                                   description: "Name of the sub-category",
                                 },
                                 score: {
-                                  type: "integer",
-                                  example: 70,
-                                  nullable: true,
-                                  description: "Score for this sub-category",
+                                  $ref: "#/components/schemas/Score",
                                 },
                                 description: {
                                   type: "string",
@@ -132,10 +152,7 @@ defineRouteMeta({
                                         description: "Name of the topic",
                                       },
                                       score: {
-                                        type: "integer",
-                                        example: 60,
-                                        nullable: true,
-                                        description: "Score for this topic",
+                                        $ref: "#/components/schemas/Score",
                                       },
                                       criteria: {
                                         type: "array",
@@ -157,11 +174,7 @@ defineRouteMeta({
                                                 "Name of the criterion",
                                             },
                                             score: {
-                                              type: "integer",
-                                              example: 50,
-                                              nullable: true,
-                                              description:
-                                                "Score for this criterion",
+                                              $ref: "#/components/schemas/Score",
                                             },
                                             reason: {
                                               type: "string",
