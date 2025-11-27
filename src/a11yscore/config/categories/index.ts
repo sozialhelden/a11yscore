@@ -16,14 +16,30 @@ import type { CriterionId } from "~~/src/a11yscore/config/criteria";
 import type { SustainableDevelopmentGoalId } from "~~/src/a11yscore/config/sdgs";
 import type { TopicId } from "~~/src/a11yscore/config/topics";
 import { addIdToConfigEntries } from "~~/src/a11yscore/utils/config";
+import {
+  healthCareSubCategories,
+  type HealthCareSubCategoryId,
+  healthCareTopLevelCategory,
+  type HealthCareTopLevelCategoryId,
+} from "~~/src/a11yscore/config/categories/health-care";
+import {
+  socialCareSubCategories,
+  type SocialCareSubCategoryId,
+  socialCareTopLevelCategory,
+  type SocialCareTopLevelCategoryId,
+} from "~~/src/a11yscore/config/categories/social-care";
 
 export type TopLevelCategoryId =
   | FoodAndDrinksTopLevelCategoryId
-  | PublicTransportTopLevelCategoryId;
+  | PublicTransportTopLevelCategoryId
+  | HealthCareTopLevelCategoryId
+  | SocialCareTopLevelCategoryId;
 
 export type SubCategoryId =
   | FoodAndDrinksSubCategoryId
-  | PublicTransportSubCategoryId;
+  | PublicTransportSubCategoryId
+  | HealthCareSubCategoryId
+  | SocialCareSubCategoryId;
 
 export type OSMTag = {
   /**
@@ -280,8 +296,10 @@ const configuredTopLevelCategories: Record<
   TopLevelCategoryId,
   Omit<TopLevelCategory, "id">
 > = {
-  ...foodAndDrinksTopLevelCategory({ weight: 0.6 }),
-  ...publicTransportTopLevelCategory({ weight: 0.4 }),
+  ...foodAndDrinksTopLevelCategory({ weight: 0.1 }),
+  ...publicTransportTopLevelCategory({ weight: 0.3 }),
+  ...healthCareTopLevelCategory({ weight: 0.3 }),
+  ...socialCareTopLevelCategory({ weight: 0.3 }),
 };
 
 const configuredSubCategories: Record<
@@ -290,6 +308,8 @@ const configuredSubCategories: Record<
 > = {
   ...foodAndDrinksSubCategories,
   ...publicTransportSubCategories,
+  ...healthCareSubCategories,
+  ...socialCareSubCategories,
 };
 
 export const topLevelCategories: Record<TopLevelCategoryId, TopLevelCategory> =
