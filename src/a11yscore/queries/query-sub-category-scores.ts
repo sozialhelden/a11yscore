@@ -3,6 +3,7 @@ import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 import { osmSyncDb } from "~/db";
 import type { OSMTag, SubCategory } from "~~/src/a11yscore/config/categories";
 import { criteria } from "~~/src/a11yscore/config/criteria";
+import { minDataQualityFactor } from "~~/src/a11yscore/config/data-quality";
 import {
   alias,
   getCriterionDataQualityFactorAlias,
@@ -15,8 +16,6 @@ export type SQLSelectParams = {
   where?: SQL[];
   groupBy?: SQL[];
 };
-
-export const minDataQualityFactor = 0.2;
 
 /**
  * Queries scores for all criteria in a given subcategory. Use the SQL select parameters

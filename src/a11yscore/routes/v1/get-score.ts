@@ -11,6 +11,7 @@ import {
 import { type CriterionId, criteria } from "~~/src/a11yscore/config/criteria";
 import { type TopicId, topics } from "~~/src/a11yscore/config/topics";
 import { queryScoreResultsByAdminArea } from "~~/src/a11yscore/queries/query-score-results-by-admin-area";
+import { dataIsUnavailable } from "~~/src/a11yscore/utils/data-quality";
 
 export default defineCachedEventHandler(
   async (event) => {
@@ -51,38 +52,50 @@ export default defineCachedEventHandler(
       });
     }
 
-    // TODO: refactor this
+    // TODO: this whole file is a mess, please refactor
     const result = topLevelCategoryScoreResults.map(
-      ({ id, topLevelCategory, score }) => {
+      ({ id, topLevelCategory, score, dataQualityFactor }) => {
         const topLevelCategoryProperties =
           topLevelCategories[topLevelCategory as TopLevelCategoryId];
         return {
           id: topLevelCategory,
           name: topLevelCategoryProperties.name(),
-          score,
+          score: {
+            score,
+            dataQualityFactor,
+            dataIsUnavailable: dataIsUnavailable(dataQualityFactor),
+          },
           interpretation: topLevelCategoryProperties.interpretation?.(score),
           subCategories: subCategoryScoreResults
             .filter(
               ({ topLevelCategoryScoreId }) => topLevelCategoryScoreId === id,
             )
-            .map(({ id, subCategory, score }) => {
+            .map(({ id, subCategory, score, dataQualityFactor }) => {
               const subCategoryProperties =
                 subCategories[subCategory as SubCategoryId];
               return {
                 id: subCategory,
                 name: subCategoryProperties.name(),
-                score,
+                score: {
+                  score,
+                  dataQualityFactor,
+                  dataIsUnavailable: dataIsUnavailable(dataQualityFactor),
+                },
                 description: subCategoryProperties.description?.(),
                 osmTags: subCategoryProperties.osmTags,
                 topics: topicScoreResults
                   .filter(({ subCategoryScoreId }) => subCategoryScoreId === id)
-                  .map(({ id, topic, score }) => ({
+                  .map(({ id, topic, score, dataQualityFactor }) => ({
                     id: topic,
                     name: topics[topic as TopicId].name(),
-                    score,
+                    score: {
+                      score,
+                      dataQualityFactor,
+                      dataIsUnavailable: dataIsUnavailable(dataQualityFactor),
+                    },
                     criteria: criterionScoreResults
                       .filter(({ topicScoreId }) => topicScoreId === id)
-                      .map(({ criterion, score }) => {
+                      .map(({ criterion, score, dataQualityFactor }) => {
                         const criterionPivotProperties =
                           subCategoryProperties.topics
                             .find(({ topicId }) => topic === topicId)
@@ -99,7 +112,12 @@ export default defineCachedEventHandler(
                         return {
                           id: criterion,
                           name: criterionProperties.name(),
-                          score,
+                          score: {
+                            score,
+                            dataQualityFactor,
+                            dataIsUnavailable:
+                              dataIsUnavailable(dataQualityFactor),
+                          },
                           reason:
                             criterionPivotProperties?.reason?.() ||
                             criterionProperties.reason(),
@@ -121,12 +139,21 @@ export default defineCachedEventHandler(
       },
     );
 
+    const score = {
+      score: scoreResults.score,
+      dataQualityFactor: scoreResults.dataQualityFactor,
+      dataIsUnavailable: dataIsUnavailable(scoreResults.dataQualityFactor),
+    };
+
     delete scoreResults.adminAreaId;
+    delete scoreResults.score;
+    delete scoreResults.dataQualityFactor;
 
     return {
       adminArea,
       score: {
         ...scoreResults,
+        score,
         toplevelCategories: result,
       },
     };

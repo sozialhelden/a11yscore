@@ -12,13 +12,14 @@ import {
   type TopLevelCategory,
   topLevelCategories,
 } from "~~/src/a11yscore/config/categories";
+import { minDataQualityFactor } from "~~/src/a11yscore/config/data-quality";
 import {
-  minDataQualityFactor,
   querySubCategoryScores,
   type ScoreQueryResults,
   type SQLSelectParams,
 } from "~~/src/a11yscore/queries/query-sub-category-scores";
 import { getChildCategories } from "~~/src/a11yscore/utils/categories";
+import { roundDataQualityFactor } from "~~/src/a11yscore/utils/data-quality";
 import {
   getCriterionDataQualityFactorAlias,
   getCriterionScoreAlias,
@@ -52,10 +53,15 @@ export async function calculateScoresForAdminArea(
     }
 
     const normalizedScore = Math.ceil(score);
+    const normalizedDataQualityFactor =
+      roundDataQualityFactor(dataQualityFactor);
 
     await tx
       .update(scores)
-      .set({ score: normalizedScore, dataQualityFactor })
+      .set({
+        score: normalizedScore,
+        dataQualityFactor: normalizedDataQualityFactor,
+      })
       .where(eq(scores.id, scoreId));
   });
 }
@@ -90,7 +96,7 @@ async function calculateTopLevelCategoryScore(
       });
 
     const { weight } = subCategory;
-    topLevelCategoryDataQualityFactor = weight * subCategoryDataQualityFactor;
+    topLevelCategoryDataQualityFactor += weight * subCategoryDataQualityFactor;
 
     // if dqf is at its minimum, there is no data available for this sub-category,
     // this means there are no matching places/geometry in the given admin area. so
@@ -107,17 +113,22 @@ async function calculateTopLevelCategoryScore(
     sumOfWeights === 0 ? 0 : (1 / sumOfWeights) * topLevelCategoryScore,
   );
 
+  const normalizedTopLevelCategoryDataQualityFactor = roundDataQualityFactor(
+    topLevelCategoryDataQualityFactor,
+  );
+
   await tx
     .update(topLevelCategoryScores)
     .set({
       score: normalizedTopLevelCategoryScore,
-      dataQualityFactor: topLevelCategoryDataQualityFactor,
+      dataQualityFactor: normalizedTopLevelCategoryDataQualityFactor,
     })
     .where(eq(topLevelCategoryScores.id, topLevelCategoryScoreId));
 
   return {
     topLevelCategoryScore: normalizedTopLevelCategoryScore,
-    topLevelCategoryDataQualityFactor,
+    topLevelCategoryDataQualityFactor:
+      normalizedTopLevelCategoryDataQualityFactor,
   };
 }
 
@@ -160,18 +171,21 @@ async function calculateSubCategoryScore(
   }
 
   const normalizedSubCategoryScore = Math.ceil(subCategoryScore);
+  const normalizedSubCategoryDataQualityFactor = roundDataQualityFactor(
+    subCategoryDataQualityFactor,
+  );
 
   await tx
     .update(subCategoryScores)
     .set({
       score: normalizedSubCategoryScore,
-      dataQualityFactor: subCategoryDataQualityFactor,
+      dataQualityFactor: normalizedSubCategoryDataQualityFactor,
     })
     .where(eq(subCategoryScores.id, subCategoryScoreId));
 
   return {
     subCategoryScore: normalizedSubCategoryScore,
-    subCategoryDataQualityFactor,
+    subCategoryDataQualityFactor: normalizedSubCategoryDataQualityFactor,
   };
 }
 
@@ -226,18 +240,22 @@ async function calculateTopicScore(
     normalizedTopicScore * 0.8 + 0.2 * dataQualityCriterionScore,
   );
 
+  const normalizedTopicDataQualityFactor = roundDataQualityFactor(
+    topicDataQualityFactor,
+  );
+
   await tx
     .update(topicScores)
     .set({
       score: finalTopicScore,
       unadjustedScore: Math.ceil(topicScore),
-      dataQualityFactor: topicDataQualityFactor,
+      dataQualityFactor: normalizedTopicDataQualityFactor,
     })
     .where(eq(topicScores.id, topicScoreId));
 
   return {
     topicScore: finalTopicScore,
-    topicDataQualityFactor,
+    topicDataQualityFactor: normalizedTopicDataQualityFactor,
   };
 }
 
@@ -258,10 +276,11 @@ async function calculateCriterionScore(
   // in order to minimize the number of queries made to the database
   const criterionScore =
     result[getCriterionScoreAlias(topic.topicId, criterion.criterionId)];
-  const criterionDataQualityFactor =
+  const criterionDataQualityFactor = roundDataQualityFactor(
     result[
       getCriterionDataQualityFactorAlias(topic.topicId, criterion.criterionId)
-    ];
+    ],
+  );
 
   await tx.insert(criterionScores).values({
     topicScoreId,
