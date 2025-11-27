@@ -4,6 +4,7 @@ import { adminAreas } from "~/db/schema/app";
 import { osm_admin, osm_amenities } from "~/db/schema/osm-sync";
 import type { ComputeAdminAreaScoreJob } from "~/queue";
 import { calculateScoresForAdminArea } from "~~/src/a11yscore/queries/calculate-scores-for-admin-area";
+import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 
 export async function handle(job: ComputeAdminAreaScoreJob) {
   const adminAreaId = job.data.adminArea?.id;
@@ -11,9 +12,10 @@ export async function handle(job: ComputeAdminAreaScoreJob) {
 
   console.debug(`Starting score computation for admin area ${adminAreaId}...`);
 
-  const where = [sql`${osm_admin.osm_id} = ${adminArea.osmId}`];
+  const where = [() => sql`${osm_admin.osm_id} = ${adminArea.osmId}`];
   const join = [
-    sql`JOIN ${osm_admin} ON ST_Intersects(${osm_amenities.geometry}, ${osm_admin.geometry})`,
+    (table: PgTableWithColumns<any>) =>
+      sql`JOIN ${osm_admin} ON ST_Intersects(${table.geometry}, ${osm_admin.geometry})`,
   ];
 
   await calculateScoresForAdminArea(adminAreaId, { where, join });

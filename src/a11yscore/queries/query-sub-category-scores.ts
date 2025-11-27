@@ -12,9 +12,9 @@ import {
 
 export type ScoreQueryResults = Record<string, number>;
 export type SQLSelectParams = {
-  join?: SQL[];
-  where?: SQL[];
-  groupBy?: SQL[];
+  join?: Array<(table: PgTableWithColumns<any>) => SQL>;
+  where?: Array<(table: PgTableWithColumns<any>) => SQL>;
+  groupBy?: Array<(table: PgTableWithColumns<any>) => SQL>;
 };
 
 /**
@@ -25,29 +25,35 @@ export async function querySubCategoryScores(
   subCategory: SubCategory,
   sqlSelectParams: SQLSelectParams,
 ): Promise<ScoreQueryResults> {
-  const joins = [...(sqlSelectParams.join || []), subCategory.sql.join].filter(
-    Boolean,
+  const table = subCategory.sql.from;
+
+  const joins = (sqlSelectParams.join || [])
+    .map((sqlBuilder) => sqlBuilder(table))
+    .concat([subCategory.sql.join])
+    .filter(Boolean);
+
+  const wheres = (sqlSelectParams.where || [])
+    .map((sqlBuilder) => sqlBuilder(table))
+    .concat(subCategory.sql.where)
+    .filter(Boolean)
+    .map((where) => sql`(${where})`);
+
+  const groupByStatements = (sqlSelectParams.groupBy || []).map((sqlBuilder) =>
+    sqlBuilder(table),
   );
-
-  const wheres = [
-    ...(sqlSelectParams.where || []),
-    subCategory.sql.where,
-  ].filter(Boolean);
-
-  const groupBys = [
-    ...(sqlSelectParams.groupBy || []),
-    subCategory.sql.groupBy,
-  ].filter(Boolean);
+  const groupBys = groupByStatements
+    .concat(subCategory.sql.groupBy)
+    .filter(Boolean);
 
   const selects = [
-    ...(sqlSelectParams.groupBy || []),
+    ...groupByStatements,
     ...getCriteriaSelectClauses(subCategory),
     subCategory.sql.groupBy,
   ].filter(Boolean);
 
   const statement = sql`
     SELECT ${sql.join(selects, sql`, `)} 
-    FROM ${subCategory.sql.from} 
+    FROM ${table} 
     ${sql.join(joins, sql`\n`)}
     ${wheres.length ? sql`WHERE ${sql.join(wheres, sql` AND `)}` : sql.empty()}
     ${groupBys.length ? sql`GROUP BY ${sql.join(groupBys, sql` AND `)}` : sql.empty()}
