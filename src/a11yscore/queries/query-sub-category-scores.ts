@@ -59,13 +59,7 @@ export async function querySubCategoryScores(
     ${groupBys.length ? sql`GROUP BY ${sql.join(groupBys, sql` AND `)}` : sql.empty()}
   `;
 
-  try {
-    return (
-      await osmSyncDb.execute(statement)
-    ).rows.shift() as ScoreQueryResults;
-  } catch (error) {
-    console.error("Error querying sub category scores", error);
-  }
+  return (await osmSyncDb.execute(statement)).rows.shift() as ScoreQueryResults;
 }
 
 /**
