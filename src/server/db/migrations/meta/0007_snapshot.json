@@ -59,9 +59,7 @@
         "admin_areas_osm_id_unique": {
           "name": "admin_areas_osm_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "osm_id"
-          ]
+          "columns": ["osm_id"]
         }
       },
       "policies": {},
@@ -111,12 +109,8 @@
           "name": "criterion_scores_topic_score_id_topic_scores_id_fk",
           "tableFrom": "criterion_scores",
           "tableTo": "topic_scores",
-          "columnsFrom": [
-            "topic_score_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["topic_score_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -164,12 +158,8 @@
           "name": "scores_admin_area_id_admin_areas_id_fk",
           "tableFrom": "scores",
           "tableTo": "admin_areas",
-          "columnsFrom": [
-            "admin_area_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["admin_area_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -223,12 +213,8 @@
           "name": "sub_category_scores_toplevel_category_score_id_toplevel_category_scores_id_fk",
           "tableFrom": "sub_category_scores",
           "tableTo": "toplevel_category_scores",
-          "columnsFrom": [
-            "toplevel_category_score_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["toplevel_category_score_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -282,12 +268,8 @@
           "name": "toplevel_category_scores_score_id_scores_id_fk",
           "tableFrom": "toplevel_category_scores",
           "tableTo": "scores",
-          "columnsFrom": [
-            "score_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["score_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -341,12 +323,8 @@
           "name": "topic_scores_sub_category_score_id_sub_category_scores_id_fk",
           "tableFrom": "topic_scores",
           "tableTo": "sub_category_scores",
-          "columnsFrom": [
-            "sub_category_score_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["sub_category_score_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
