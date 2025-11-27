@@ -1,0 +1,49 @@
+services:
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["server"]
+    env_file: .env.ci
+    networks:
+      - default
+
+#  worker:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    command: ["worker"]
+#    env_file: .env.ci
+#    networks:
+#      - default
+
+  osm_database:
+    image: postgis/postgis:17-3.5
+    platform: linux/amd64
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: $NITRO_DATABASE_OSM_SYNC_USER
+      POSTGRES_PASSWORD: $NITRO_DATABASE_OSM_SYNC_PASSWORD
+      POSTGRES_DB: $NITRO_DATABASE_OSM_SYNC_DB
+    networks:
+      - default
+
+  database:
+    image: postgis/postgis:17-3.5
+    platform: linux/amd64
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: $NITRO_DATABASE_APP_USER
+      POSTGRES_PASSWORD: $NITRO_DATABASE_APP_PASSWORD
+      POSTGRES_DB: $NITRO_DATABASE_APP_DB
+    networks:
+      - default
+
+  redis:
+    image: redis:8.2-alpine
+    networks:
+      - default
+
+networks:
+  default:
