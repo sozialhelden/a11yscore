@@ -2,7 +2,7 @@
   "name": "a11yscore",
   "private": true,
   "scripts": {
-    "dev": "concurrently --kill-others \"nitro dev\" \"bun src/server/queue/worker.ts\"",
+    "dev": "concurrently --kill-others \"nitro dev\" \"bun --watch src/server/queue/worker.ts\"",
     "build": "nitro build",
     "preview": "bun .output/server/index.mjs",
     "lint": "biome lint && alex -w",
