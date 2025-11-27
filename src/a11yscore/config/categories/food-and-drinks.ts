@@ -182,6 +182,7 @@ export type FoodAndDrinksSubCategoryId =
   | "canteen"
   | "ice-cream";
 
+const weight = 1 / 10;
 export const foodAndDrinksSubCategories: Record<
   FoodAndDrinksSubCategoryId,
   Omit<SubCategory, "id">
@@ -189,7 +190,7 @@ export const foodAndDrinksSubCategories: Record<
   "drinking-water": {
     name: () => t("Drinking water"),
     parent: "food-and-drinks",
-    weight: 0.1,
+    weight: weight,
     osmTags: [
       { key: "shop", value: "water" },
       { key: "fountain", value: "drinking" },
@@ -269,7 +270,7 @@ export const foodAndDrinksSubCategories: Record<
   "food-stores": {
     name: () => t("Food stores"),
     parent: "food-and-drinks",
-    weight: 0.1,
+    weight: weight,
     description: () =>
       t(
         "Includes butcher shops, cheese stores, dairy stores, chocolate shops, coffee shops, delis, farm stores, general food shops, greengrocers, health food stores, pasta shops, seafood markets, spice shops, tea shops, nut stores, tortilla shops, wine shops and liquor stores",
@@ -386,7 +387,7 @@ export const foodAndDrinksSubCategories: Record<
   bakeries: {
     name: () => t("Bakeries"),
     parent: "food-and-drinks",
-    weight: 0.1,
+    weight: weight,
     osmTags: [
       { key: "shop", value: "bakery" },
       { key: "shop", value: "confectionery" },
@@ -460,7 +461,7 @@ export const foodAndDrinksSubCategories: Record<
   cafes: {
     name: () => t("Cafes"),
     parent: "food-and-drinks",
-    weight: 0.1,
+    weight: weight,
     osmTags: [{ key: "amenity", value: "cafe" }],
     sql: {
       from: osm_amenities,
@@ -471,7 +472,7 @@ export const foodAndDrinksSubCategories: Record<
   "fast-food": {
     name: () => t("Fast food"),
     parent: "food-and-drinks",
-    weight: 0.1,
+    weight: weight,
     osmTags: [{ key: "amenity", value: "fast_food" }],
     sql: {
       from: osm_amenities,
@@ -482,7 +483,7 @@ export const foodAndDrinksSubCategories: Record<
   canteen: {
     name: () => t("Canteen"),
     parent: "food-and-drinks",
-    weight: 0.1,
+    weight: weight,
     osmTags: [
       { key: "amenity", value: "canteen" },
       { key: "fast_food", value: "cafeteria" },
@@ -496,7 +497,7 @@ export const foodAndDrinksSubCategories: Record<
   "food-court": {
     name: () => t("Food court"),
     parent: "food-and-drinks",
-    weight: 0.1,
+    weight: weight,
     osmTags: [{ key: "amenity", value: "food_court" }],
     sql: {
       from: osm_amenities,
