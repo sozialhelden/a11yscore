@@ -57,7 +57,8 @@ export type CriterionProperties = {
   name: () => string;
   /**
    * A list of OSM tags that are used to select relevant objects for this category.
-   * This is used for display purposes only. For the actual selection of data,
+   * This is used for display purposes and to calculate the data quality factor unless
+   * you specify a custom `dataQualitySql` property. For the actual selection of data,
    * please use the `sql` property.
    */
   osmTags: OSMTag[];
@@ -76,6 +77,23 @@ export type CriterionProperties = {
    * ```
    */
   sql: (table: PgTableWithColumns<any>) => SQL;
+  /**
+   * SQL clause that calculates the data quality factor for this criterion. This
+   * will be embedded into a SELECT clause and aliased, so skip the `SELECT` and
+   * `AS` parts. The data quality factor is a value between 0 and 1 that indicates
+   * how good the data is for this criterion. A value of 1 means that the data is
+   * perfect, a value of 0 means that there is no data at all. If not set, it will
+   * use the osmTags to automatically calculate a data quality factor based on the
+   * presence of the relevant tags. The function gets the table from the current
+   * category sub-select as argument, so you can use the table's columns directly.
+   * If you need data from multiple tables, feel free to select stuff from multiple
+   * tables here.
+   * @example
+   * ```
+   * (table) => sql`()`
+   * ```
+   */
+  dataQualitySql?: (table: PgTableWithColumns<any>) => SQL;
   /**
    * A description why this criterion is generally relevant. This can be overridden on the
    * category/topic level to provide a category/topic-specific reason.
