@@ -52,9 +52,7 @@
       "uniqueConstraints": {
         "admin_areas_osm_id_unique": {
           "name": "admin_areas_osm_id_unique",
-          "columns": [
-            "osm_id"
-          ],
+          "columns": ["osm_id"],
           "nullsNotDistinct": false
         }
       },
@@ -104,13 +102,9 @@
         "criterion_scores_topic_score_id_topic_scores_id_fk": {
           "name": "criterion_scores_topic_score_id_topic_scores_id_fk",
           "tableFrom": "criterion_scores",
-          "columnsFrom": [
-            "topic_score_id"
-          ],
+          "columnsFrom": ["topic_score_id"],
           "tableTo": "topic_scores",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "cascade"
         }
@@ -202,13 +196,9 @@
         "sub_category_scores_toplevel_category_score_id_toplevel_category_scores_id_fk": {
           "name": "sub_category_scores_toplevel_category_score_id_toplevel_category_scores_id_fk",
           "tableFrom": "sub_category_scores",
-          "columnsFrom": [
-            "toplevel_category_score_id"
-          ],
+          "columnsFrom": ["toplevel_category_score_id"],
           "tableTo": "toplevel_category_scores",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "cascade"
         }
@@ -261,13 +251,9 @@
         "toplevel_category_scores_score_id_scores_id_fk": {
           "name": "toplevel_category_scores_score_id_scores_id_fk",
           "tableFrom": "toplevel_category_scores",
-          "columnsFrom": [
-            "score_id"
-          ],
+          "columnsFrom": ["score_id"],
           "tableTo": "scores",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "cascade"
         }
@@ -320,13 +306,9 @@
         "topic_scores_sub_category_score_id_sub_category_scores_id_fk": {
           "name": "topic_scores_sub_category_score_id_sub_category_scores_id_fk",
           "tableFrom": "topic_scores",
-          "columnsFrom": [
-            "sub_category_score_id"
-          ],
+          "columnsFrom": ["sub_category_score_id"],
           "tableTo": "sub_category_scores",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "cascade"
         }
