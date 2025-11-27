@@ -56,7 +56,7 @@ describe("unit", () => {
         (sum, { weight }) => sum + weight,
         0,
       );
-      expect(totalWeight).toBe(1);
+      expect(totalWeight).toBeCloseTo(1, 10);
     });
 
     for (const topLevelCategory of Object.keys(topLevelCategories)) {
@@ -69,7 +69,7 @@ describe("unit", () => {
           (sum, { weight }) => sum + weight,
           0,
         );
-        expect(totalWeight).toBe(1);
+        expect(totalWeight).toBeCloseTo(1, 10);
       });
 
       for (const { topics, id: subCategoryId } of subCategories) {
@@ -79,7 +79,7 @@ describe("unit", () => {
               (sum, { weight }) => sum + weight,
               0,
             );
-            expect(totalWeight).toBe(1);
+            expect(totalWeight).toBeCloseTo(1, 10);
           });
         }
       }
