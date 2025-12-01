@@ -163,6 +163,10 @@ export const publicTransportSubCategories: Record<
       { key: "public_transport", value: "platform" },
       { key: "bus", value: "yes" },
     ],
+    description: () =>
+      t(
+        "Includes bus platforms, the places where passengers board or alight from buses.",
+      ),
     sql: {
       from: osm_platforms,
       where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.bus} = 'yes'`,
@@ -177,6 +181,10 @@ export const publicTransportSubCategories: Record<
       { key: "public_transport", value: "platform" },
       { key: "tram", value: "yes" },
     ],
+    description: () =>
+      t(
+        "Includes tram platforms, the places where passengers board or alight from trams.",
+      ),
     sql: {
       from: osm_platforms,
       where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.tram} = 'yes'`,
@@ -191,6 +199,10 @@ export const publicTransportSubCategories: Record<
       { key: "public_transport", value: "platform" },
       { key: "subway", value: "yes" },
     ],
+    description: () =>
+      t(
+        "Includes subway platforms, the places where passengers board or alight from subways cars.",
+      ),
     sql: {
       from: osm_platforms,
       where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.subway} = 'yes'`,
@@ -205,6 +217,10 @@ export const publicTransportSubCategories: Record<
       { key: "public_transport", value: "platform" },
       { key: "train", value: "yes" },
     ],
+    description: () =>
+      t(
+        "Includes train platforms, the places where passengers board or alight from trains.",
+      ),
     sql: {
       from: osm_platforms,
       where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.train} = 'yes'`,
@@ -219,6 +235,10 @@ export const publicTransportSubCategories: Record<
       { key: "public_transport", value: "platform" },
       { key: "ferry", value: "yes" },
     ],
+    description: () =>
+      t(
+        "Includes ferry platforms, the places where passengers board or alight from ferries.",
+      ),
     sql: {
       from: osm_platforms,
       where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.ferry} = 'yes'`,
@@ -248,6 +268,10 @@ export const publicTransportSubCategories: Record<
       { key: "public_transport", value: "station" },
       { key: "bus", value: "yes" },
     ],
+    description: () =>
+      t(
+        "Bus stations are larger transport hubs where passengers can board or alight from buses, often featuring multiple platforms and additional amenities.",
+      ),
     sql: {
       from: osm_stations,
       where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.bus} = 'yes'`,
@@ -262,6 +286,10 @@ export const publicTransportSubCategories: Record<
       { key: "public_transport", value: "station" },
       { key: "tram", value: "yes" },
     ],
+    description: () =>
+      t(
+        "Tram stations are larger transport hubs where passengers can board or alight from trams, often featuring multiple platforms and additional amenities.",
+      ),
     sql: {
       from: osm_stations,
       where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.tram} = 'yes'`,
@@ -276,6 +304,10 @@ export const publicTransportSubCategories: Record<
       { key: "public_transport", value: "station" },
       { key: "subway", value: "yes" },
     ],
+    description: () =>
+      t(
+        "Subway stations are larger transport hubs where passengers can board or alight from subway cars, often featuring multiple platforms and additional amenities.",
+      ),
     sql: {
       from: osm_stations,
       where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.subway} = 'yes'`,
@@ -290,6 +322,10 @@ export const publicTransportSubCategories: Record<
       { key: "public_transport", value: "station" },
       { key: "train", value: "yes" },
     ],
+    description: () =>
+      t(
+        "Train stations are larger transport hubs where passengers can board or alight from trains, often featuring multiple platforms and additional amenities.",
+      ),
     sql: {
       from: osm_stations,
       where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.train} = 'yes'`,
@@ -304,6 +340,10 @@ export const publicTransportSubCategories: Record<
       { key: "public_transport", value: "station" },
       { key: "ferry", value: "yes" },
     ],
+    description: () =>
+      t(
+        "Ferry stations are larger transport hubs where passengers can board or alight from ferries, often featuring multiple platforms and additional amenities.",
+      ),
     sql: {
       from: osm_stations,
       where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.ferry} = 'yes'`,
