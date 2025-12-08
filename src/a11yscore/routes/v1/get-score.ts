@@ -23,7 +23,10 @@ export default defineCachedEventHandler(
         .from(adminAreas)
         .where(
           compoundKey.startsWith("osm:")
-            ? eq(adminAreas.osmId, parseInt(compoundKey.replace("osm:", "")))
+            ? eq(
+                adminAreas.osmId,
+                parseInt(compoundKey.replace("osm:", ""), 10),
+              )
             : eq(adminAreas.id, compoundKey),
         )
     ).shift();
@@ -66,6 +69,7 @@ export default defineCachedEventHandler(
             dataIsUnavailable: dataIsUnavailable(dataQualityFactor),
           },
           interpretation: topLevelCategoryProperties.interpretation?.(score),
+          description: topLevelCategoryProperties.description,
           subCategories: subCategoryScoreResults
             .filter(
               ({ topLevelCategoryScoreId }) => topLevelCategoryScoreId === id,
