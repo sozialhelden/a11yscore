@@ -20,7 +20,7 @@ export const socialCareTopLevelCategory: ({
 }) => ({
   "social-care": {
     name: () => t("Social Care"),
-    sustainableDevelopmentGoals: [2, 12, 13, 14],
+    sustainableDevelopmentGoals: [1, 2, 3, 5, 10, 11, 16],
     weight,
     interpretation: (score) => {
       if (score >= 75)

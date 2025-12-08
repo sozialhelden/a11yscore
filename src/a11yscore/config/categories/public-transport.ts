@@ -143,16 +143,16 @@ export type PublicTransportSubCategoryId =
   | "subway-platforms"
   | "train-platforms"
   | "ferry-platforms"
-  // | "light-rail-platforms"
+  | "light-rail-platforms"
   | "bus-stations"
   | "tram-stations"
   | "subway-stations"
   | "train-stations"
-  | "ferry-stations";
-//  | "light-rail-stations"
+  | "ferry-stations"
+  | "light-rail-stations";
 //  | "aerialway-stations";
 
-const weight = 0.1;
+const weight = 1 / 12;
 
 export const publicTransportSubCategories: Record<
   PublicTransportSubCategoryId,
@@ -248,20 +248,24 @@ export const publicTransportSubCategories: Record<
     },
     topics: genericPlatformTopics,
   },
-  // "light-rail-platforms": {
-  //   name: () => t("Light Rail platforms"),
-  //   parent: "public-transport",
-  //   weight: weight,
-  //   osmTags: [
-  //     { key: "public_transport", value: "platform" },
-  //     { key: "light_rail", value: "yes" },
-  //   ],
-  //   sql: {
-  //     from: osm_platforms,
-  //     where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.light_rail} = 'yes'`,
-  //   },
-  //   topics: genericPlatformTopics
-  // },
+  "light-rail-platforms": {
+    name: () => t("Light Rail platforms"),
+    parent: "public-transport",
+    weight: weight,
+    osmTags: [
+      { key: "public_transport", value: "platform" },
+      { key: "light_rail", value: "yes" },
+    ],
+    description: () =>
+      t(
+        "Includes light rail platforms, the places where passengers board or alight from light rail trains.",
+      ),
+    sql: {
+      from: osm_platforms,
+      where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.light_rail} = 'yes'`,
+    },
+    topics: genericPlatformTopics,
+  },
 
   "bus-stations": {
     name: () => t("Bus stations"),
@@ -353,17 +357,22 @@ export const publicTransportSubCategories: Record<
     },
     topics: genericPlatformTopics,
   },
-  // "light-rail-stations": {
-  //   name: () => t("Light Rail stations"),
-  //   parent: "public-transport",
-  //   weight: weight,
-  //   osmTags: [
-  //     { key: "public_transport", value: "station" }, { key: "light_rail", value: "yes" },
-  //   ],
-  //   sql: {
-  //     from: osm_stations,
-  //     where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.light_rail} = 'yes'`,
-  //   },
-  //   topics: genericPlatformTopics
-  // },
+  "light-rail-stations": {
+    name: () => t("Light Rail stations"),
+    parent: "public-transport",
+    weight: weight,
+    osmTags: [
+      { key: "public_transport", value: "station" },
+      { key: "light_rail", value: "yes" },
+    ],
+    description: () =>
+      t(
+        "Light rail stations are larger transport hubs where passengers can board or alight from light rail, often featuring multiple platforms and additional amenities.",
+      ),
+    sql: {
+      from: osm_stations,
+      where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.light_rail} = 'yes'`,
+    },
+    topics: genericPlatformTopics,
+  },
 };

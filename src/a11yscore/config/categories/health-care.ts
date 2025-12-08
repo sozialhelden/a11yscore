@@ -20,7 +20,7 @@ export const healthCareTopLevelCategory: ({
 }) => ({
   "health-care": {
     name: () => t("Health Care"),
-    sustainableDevelopmentGoals: [2, 12, 13, 14],
+    sustainableDevelopmentGoals: [3, 10, 5],
     weight,
     interpretation: (score) => {
       if (score >= 75)
