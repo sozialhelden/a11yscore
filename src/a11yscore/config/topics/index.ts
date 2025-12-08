@@ -28,13 +28,13 @@ const configuredTopics: Record<TopicId, TopicProperties> = {
     name: () => t("Toilet"),
   },
   neurodivergent: {
-    name: () => t("Neurodivergent"),
+    name: () => t("Neurodiversity"),
   },
   "air-and-climate": {
     name: () => t("Air and Climate"),
   },
   "general-assistance": {
-    name: () => t("General Assistance"),
+    name: () => t("Helpful Amenities"),
   },
 };
 

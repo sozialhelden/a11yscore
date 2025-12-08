@@ -32,7 +32,7 @@ where:
 
 The topic score is computed as the weighted average of the individual criterion scores within the topic, adjusted for data quality:
 
-$$ S_{\mathrm{topic}} = \frac{1}{2}\left[(1-\delta) \sum_{c \in C} \hat{\gamma_c} S_{\mathrm{crit}_c} + \delta DQC\right] $$
+$$ S_{\mathrm{topic}} = (1-\delta) \sum_{c \in C} \hat{\gamma_c} S_{\mathrm{crit}_c} + \delta DQC $$
 
 where:
 - $C$ is the set of criteria in the topic 
