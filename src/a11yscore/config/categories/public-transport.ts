@@ -33,6 +33,9 @@ export const publicTransportTopLevelCategory: ({
 
         return t("The score could not be determined due to missing data.");
       },
+      description: t(
+        "The overall score for public transport is calculated based on the scores of these subcategories:",
+      ),
     },
   });
 
