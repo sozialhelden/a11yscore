@@ -115,6 +115,7 @@ export type TopLevelCategory = {
    * ```
    */
   interpretation: (score: number) => string;
+  description?: string;
 };
 
 export type SubCategory = {
