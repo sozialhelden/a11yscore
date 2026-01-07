@@ -1,8 +1,8 @@
 import { appDb } from "~/db";
 import {
+  getTopLevelCategoryList,
   type SubCategory,
   type TopLevelCategory,
-  topLevelCategories,
 } from "~~/src/a11yscore/config/categories";
 import {
   type AppDbTransaction,
@@ -37,7 +37,7 @@ export async function calculateScoresForAdminArea(
     const scoreId = await createScoreResult(tx, { adminAreaId });
     const { add, aggregate } = createScoreAggregator();
 
-    for (const topLevelCategory of Object.values(topLevelCategories)) {
+    for (const topLevelCategory of getTopLevelCategoryList()) {
       const { topLevelCategoryScore, topLevelCategoryDataQualityFactor } =
         await calculateTopLevelCategoryScore(tx, params, {
           scoreId,

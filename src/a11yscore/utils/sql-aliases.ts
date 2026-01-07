@@ -36,3 +36,10 @@ export function getCriterionDataQualityFactorAlias(
 ): string {
   return truncate(`data-quality/${topicId}/${criterionId}`);
 }
+
+export function getCriterionTagCountAlias(
+  topicId: TopicId,
+  criterionId: CriterionId,
+): string {
+  return truncate(`tag-count/${topicId}/${criterionId}`);
+}

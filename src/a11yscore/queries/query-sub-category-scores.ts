@@ -8,6 +8,7 @@ import {
   alias,
   getCriterionDataQualityFactorAlias,
   getCriterionScoreAlias,
+  getCriterionTagCountAlias,
 } from "~~/src/a11yscore/utils/sql-aliases";
 
 export type ScoreQueryResults = Record<string, number>;
@@ -89,11 +90,15 @@ export function getCriteriaSelectClauses(subCategory: SubCategory): SQL[] {
       const dataQualityFactorAlias = alias(
         getCriterionDataQualityFactorAlias(topicId, criterionId),
       );
+      const tagCountAlias = alias(
+        getCriterionTagCountAlias(topicId, criterionId),
+      );
 
       const table = subCategory.sql.from;
       const criterionProperties = criteria[criterionId];
 
       selects.push(
+        sql`${getTagCountSql(table, criterionProperties.osmTags)} AS ${tagCountAlias}`,
         sql`CEIL(${criterionProperties.sql(table)}) AS ${criterionAlias}`,
         sql`${
           criterionProperties.dataQualitySql
@@ -107,6 +112,21 @@ export function getCriteriaSelectClauses(subCategory: SubCategory): SQL[] {
   return selects;
 }
 
+export function getTagCountSql(
+  table: PgTableWithColumns<any>,
+  osmTags: OSMTag[],
+) {
+  return sql<number>`
+        SUM(CASE ${sql.join(
+          osmTags.map(
+            ({ key, value }) =>
+              sql`WHEN ${table.tags}->'${sql.raw(key)}' = '${sql.raw(value)}' THEN 1`,
+          ),
+          sql` `,
+        )} ELSE 0 END)::float     
+  `;
+}
+
 /**
  * Generates SQL to calculate the data quality factor based on the presence of given OSM tags.
  */
@@ -118,13 +138,7 @@ export function getDataQualityFactorSql(
       -- Coalesce takes care to zero it, even if the math operation returns null (e.g. no rows)
       (COALESCE(
         (
-            SUM(CASE ${sql.join(
-              osmTags.map(
-                ({ key, value }) =>
-                  sql`WHEN ${table.tags}->'${sql.raw(key)}' = '${sql.raw(value)}' THEN 1`,
-              ),
-              sql` `,
-            )} ELSE 0 END)::float 
+            ${getTagCountSql(table, osmTags)}
             / COUNT(*)::float
         ), 
         0
