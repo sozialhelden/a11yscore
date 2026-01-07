@@ -3,10 +3,10 @@ import { appDb } from "~/db";
 import { adminAreas } from "~/db/schema/app";
 import { useIsDevelopment } from "~/utils/env";
 import {
+  getSubCategoryById,
+  getTopLevelCategoryById,
   type SubCategoryId,
-  subCategories,
   type TopLevelCategoryId,
-  topLevelCategories,
 } from "~~/src/a11yscore/config/categories";
 import { type CriterionId, criteria } from "~~/src/a11yscore/config/criteria";
 import { type TopicId, topics } from "~~/src/a11yscore/config/topics";
@@ -58,8 +58,9 @@ export default defineCachedEventHandler(
     // TODO: this whole file is a mess, please refactor
     const result = topLevelCategoryScoreResults.map(
       ({ id, topLevelCategory, score, dataQualityFactor }) => {
-        const topLevelCategoryProperties =
-          topLevelCategories[topLevelCategory as TopLevelCategoryId];
+        const topLevelCategoryProperties = getTopLevelCategoryById(
+          topLevelCategory as TopLevelCategoryId,
+        );
         return {
           id: topLevelCategory,
           name: topLevelCategoryProperties.name(),
@@ -75,8 +76,9 @@ export default defineCachedEventHandler(
               ({ topLevelCategoryScoreId }) => topLevelCategoryScoreId === id,
             )
             .map(({ id, subCategory, score, dataQualityFactor }) => {
-              const subCategoryProperties =
-                subCategories[subCategory as SubCategoryId];
+              const subCategoryProperties = getSubCategoryById(
+                subCategory as SubCategoryId,
+              );
               return {
                 id: subCategory,
                 name: subCategoryProperties.name(),

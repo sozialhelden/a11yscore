@@ -1,8 +1,9 @@
 import { describe, expect, it, mock, test } from "bun:test";
 import {
+  getTopLevelCategoryIds,
+  getTopLevelCategoryList,
   type SubCategory,
   type TopLevelCategoryId,
-  topLevelCategories,
 } from "~~/src/a11yscore/config/categories";
 import { getChildCategories } from "~~/src/a11yscore/utils/categories";
 
@@ -52,14 +53,14 @@ describe("unit", () => {
 
   describe("weights should add up to 1", () => {
     test("top-level categories", async () => {
-      const totalWeight = Object.values(topLevelCategories).reduce(
+      const totalWeight = getTopLevelCategoryList().reduce(
         (sum, { weight }) => sum + weight,
         0,
       );
       expect(totalWeight).toBeCloseTo(1, 10);
     });
 
-    for (const topLevelCategory of Object.keys(topLevelCategories)) {
+    for (const topLevelCategory of getTopLevelCategoryIds()) {
       const subCategories = Object.values(
         getChildCategories(topLevelCategory as TopLevelCategoryId),
       );
