@@ -8,30 +8,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-      - run: bun run lint
-      - run: bun run typecheck
-      - run: bun run format
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run format
 
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-      - run: bun run build
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
 
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
       - run: cp .env.ci .env
       - uses: hoverkraft-tech/compose-action@3846bcd61da338e9eaaf83e7ed0234a12b099b72 # v2.4.1
         with:
           compose-file: ./docker-compose.ci.yml
-      - run: docker compose exec server bun run test:unit --ci
-      - run: docker compose exec server bun run test:e2e --ci
+      # we don't ship dev node_modules in the image, so we need to install them here
+      - run: docker compose exec server npm ci
+      - run: docker compose exec server npm run test:unit
+      - run: docker compose exec server npm run test:e2e
 
 
