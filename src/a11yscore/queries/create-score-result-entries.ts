@@ -167,11 +167,13 @@ export async function createCriterionScoreResult(
     criterionId,
     score,
     dataQualityFactor,
+    tagCount,
   }: {
     topicScoreId: string;
     criterionId: string;
     score: number;
     dataQualityFactor: number;
+    tagCount: number;
   },
 ) {
   await tx.insert(criterionScores).values({
@@ -179,5 +181,6 @@ export async function createCriterionScoreResult(
     criterion: criterionId,
     score,
     dataQualityFactor,
+    tagCount,
   });
 }

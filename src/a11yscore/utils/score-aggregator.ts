@@ -1,4 +1,7 @@
-import { minDataQualityFactor } from "~~/src/a11yscore/config/data-quality";
+import {
+  minDataQualityFactor,
+  noDataThreshold,
+} from "~~/src/a11yscore/config/data-quality";
 import { roundDataQualityFactor } from "~~/src/a11yscore/utils/data-quality";
 
 /**
@@ -30,7 +33,7 @@ export function createScoreAggregator({
       weight = weight ?? 1;
       const dataQualityFactor = dataQualityFactors[index] ?? 1;
 
-      if (excludeUnavailable && dataQualityFactor <= minDataQualityFactor) {
+      if (excludeUnavailable && dataQualityFactor <= noDataThreshold) {
         return accumulator;
       }
       if (adjustWeights) {
@@ -59,7 +62,7 @@ export function createScoreAggregator({
       const weight = weights[index] ?? 1;
       const dataQualityFactor = dataQualityFactors[index] ?? 1;
 
-      if (excludeUnavailable && dataQualityFactor <= minDataQualityFactor) {
+      if (excludeUnavailable && dataQualityFactor <= noDataThreshold) {
         return accumulator;
       }
       if (adjustWeights) {
@@ -68,6 +71,10 @@ export function createScoreAggregator({
 
       return accumulator + value * weight;
     }, 0);
+  }
+
+  function allNull(values: (number | undefined | null)[]) {
+    return values.every((value) => value === null || value === undefined);
   }
 
   return {
@@ -91,6 +98,14 @@ export function createScoreAggregator({
      * Finalize and aggregate the scores and data quality factors
      */
     aggregate() {
+      if (allNull(scores)) {
+        return {
+          score: null,
+          unadjustedScore: null,
+          dataQualityFactor: minDataQualityFactor,
+        };
+      }
+
       // calculate adjusted score
       const scoreSum = weightedSum(scores, {
         excludeUnavailable: excludeFromScoreWhenDataIsNotAvailable,
