@@ -27,6 +27,7 @@ import { createScoreAggregator } from "~~/src/a11yscore/utils/score-aggregator";
 import {
   getCriterionDataQualityFactorAlias,
   getCriterionScoreAlias,
+  getCriterionTagCountAlias,
 } from "~~/src/a11yscore/utils/sql-aliases";
 
 export async function calculateScoresForAdminArea(
@@ -89,7 +90,7 @@ async function calculateTopLevelCategoryScore(
     });
   }
 
-  const { score, dataQualityFactor } = aggregate();
+  const { score, dataQualityFactor, unadjustedScore } = aggregate();
 
   await updateTopLevelCategoryScoreResult(tx, topLevelCategoryScoreId, {
     score,
@@ -99,6 +100,7 @@ async function calculateTopLevelCategoryScore(
   return {
     topLevelCategoryScore: score,
     topLevelCategoryDataQualityFactor: dataQualityFactor,
+    unadjustedScore,
   };
 }
 
@@ -141,7 +143,7 @@ async function calculateSubCategoryScore(
     });
   }
 
-  const { score, dataQualityFactor } = aggregate();
+  const { score, dataQualityFactor, unadjustedScore } = aggregate();
 
   await updateSubCategoryScoreResult(tx, subCategoryScoreId, {
     score,
@@ -151,6 +153,7 @@ async function calculateSubCategoryScore(
   return {
     subCategoryScore: score,
     subCategoryDataQualityFactor: dataQualityFactor,
+    unadjustedScore,
   };
 }
 
@@ -187,25 +190,32 @@ async function calculateTopicScore(
     });
   }
 
+  let score: number | null;
+
   const {
     score: preliminaryScore,
     dataQualityFactor,
     unadjustedScore,
   } = aggregate();
 
-  // we add a "virtual" score component that is based solely on the data quality factor.
-  // this ensures to offset negative impacts when a lot of new data with a low score is added.
-  // also see: https://github.com/sozialhelden/a11yscore/blob/main/docs/architecture/02.scoring-algorithm.md#data-quality-criterion-score
-  const additionalScoreComponents = createScoreAggregator();
-  additionalScoreComponents.add({
-    componentScore: preliminaryScore,
-    componentWeight: 0.8,
-  });
-  additionalScoreComponents.add({
-    componentScore: 100 * dataQualityFactor,
-    componentWeight: 0.2,
-  });
-  const { score } = additionalScoreComponents.aggregate();
+  score = preliminaryScore;
+
+  if (preliminaryScore !== null) {
+    // we add a "virtual" score component that is based solely on the data quality factor.
+    // this ensures to offset negative impacts when a lot of new data with a low score is added.
+    // also see: https://github.com/sozialhelden/a11yscore/blob/main/docs/architecture/02.scoring-algorithm.md#data-quality-criterion-score
+
+    const additionalScoreComponents = createScoreAggregator();
+    additionalScoreComponents.add({
+      componentScore: preliminaryScore,
+      componentWeight: 0.8,
+    });
+    additionalScoreComponents.add({
+      componentScore: 100 * dataQualityFactor,
+      componentWeight: 0.2,
+    });
+    score = additionalScoreComponents.aggregate().score;
+  }
 
   await updateTopicScoreResult(tx, topicScoreId, {
     score,
@@ -244,12 +254,15 @@ async function calculateCriterionScore(
       getCriterionDataQualityFactorAlias(topic.topicId, criterion.criterionId)
     ],
   );
+  const tagCount =
+    result[getCriterionTagCountAlias(topic.topicId, criterion.criterionId)];
 
   await createCriterionScoreResult(tx, {
     topicScoreId,
     criterionId: criterion.criterionId,
     score,
     dataQualityFactor,
+    tagCount,
   });
 
   return {
