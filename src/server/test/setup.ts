@@ -8,4 +8,5 @@ const baseUrl = new URL(
 baseUrl.hash = "";
 baseUrl.pathname = "/";
 
-export const BASE_URL = baseUrl.toString();
+// remove any trailing slashes
+export const BASE_URL = baseUrl.toString().replace(/\/+$/, "");

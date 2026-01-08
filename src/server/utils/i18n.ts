@@ -2,5 +2,5 @@
 // an es module ¯\_(ツ)_/¯
 import transifex from "@transifex/native";
 
-export const t = transifex.t;
-export const tx = transifex.tx;
+export const t = transifex?.t;
+export const tx = transifex?.tx;
