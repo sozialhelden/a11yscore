@@ -1,5 +1,5 @@
 import { useIsDevelopment } from "~/utils/env";
-import { topLevelCategories } from "~~/src/a11yscore/config/categories";
+import { getTopLevelCategoryList } from "~~/src/a11yscore/config/categories";
 import { criteria } from "~~/src/a11yscore/config/criteria";
 import { getChildCategories } from "~~/src/a11yscore/utils/categories";
 import { byName } from "~~/src/a11yscore/utils/sort";
@@ -12,7 +12,7 @@ import { criterionView } from "~~/src/a11yscore/views/criteria";
 export default defineCachedEventHandler(
   async () => {
     return {
-      topLevelCategories: Object.values(topLevelCategories)
+      topLevelCategories: getTopLevelCategoryList()
         .sort(byName)
         .map((topLevelCategory) => {
           return {

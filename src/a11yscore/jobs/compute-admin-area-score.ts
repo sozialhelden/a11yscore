@@ -1,10 +1,10 @@
 import { eq, sql } from "drizzle-orm";
+import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 import { appDb } from "~/db";
 import { adminAreas } from "~/db/schema/app";
-import { osm_admin, osm_amenities } from "~/db/schema/osm-sync";
+import { osm_admin } from "~/db/schema/osm-sync";
 import type { ComputeAdminAreaScoreJob } from "~/queue";
 import { calculateScoresForAdminArea } from "~~/src/a11yscore/queries/calculate-scores-for-admin-area";
-import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 
 export async function handle(job: ComputeAdminAreaScoreJob) {
   const adminAreaId = job.data.adminArea?.id;

@@ -4,7 +4,7 @@ import "dotenv/config";
 export default defineNitroConfig({
   compatibilityDate: "2025-07-22",
   srcDir: "src/server",
-  preset: "bun",
+  preset: "node-server",
   experimental: {
     openAPI: true,
   },

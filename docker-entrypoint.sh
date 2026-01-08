@@ -3,11 +3,11 @@
 COMMAND="${@:-0}"
 
 if [ "$COMMAND" == "worker" ]; then
-  bun run ./src/server/queue/worker.ts
+  npm run start:worker
 
 elif [ "$COMMAND" == "server" ]; then
-  bun run db:migrate
-  bun run ./server/index.mjs
+  npm run db:migrate
+  npm run start:server
 
 else
   echo "Wrong command specified. Use either 'worker' or 'server'"

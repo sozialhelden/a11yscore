@@ -1,0 +1,1 @@
+ALTER TABLE "criterion_scores" ADD COLUMN "tag_count" integer;

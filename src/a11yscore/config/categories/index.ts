@@ -313,13 +313,21 @@ const configuredSubCategories: Record<
   ...socialCareSubCategories,
 };
 
-export const topLevelCategories: Record<TopLevelCategoryId, TopLevelCategory> =
+const topLevelCategories: Record<TopLevelCategoryId, TopLevelCategory> =
   addIdToConfigEntries<TopLevelCategoryId, TopLevelCategory>(
     configuredTopLevelCategories,
   );
-export const topLevelCategoryList = Object.keys(
-  topLevelCategories,
-) as TopLevelCategoryId[];
+export const getTopLevelCategoryList = () => Object.values(topLevelCategories);
+export const getTopLevelCategoryIds = () =>
+  Object.keys(topLevelCategories) as TopLevelCategoryId[];
+export const getTopLevelCategoryById = (id: TopLevelCategoryId) =>
+  topLevelCategories[id];
 
-export const subCategories: Record<SubCategoryId, SubCategory> =
-  addIdToConfigEntries<SubCategoryId, SubCategory>(configuredSubCategories);
+const subCategories: Record<SubCategoryId, SubCategory> = addIdToConfigEntries<
+  SubCategoryId,
+  SubCategory
+>(configuredSubCategories);
+export const getSubCategoryList = () => Object.values(subCategories);
+export const getSubCategoryIds = () =>
+  Object.keys(subCategories) as SubCategoryId[];
+export const getSubCategoryById = (id: SubCategoryId) => subCategories[id];

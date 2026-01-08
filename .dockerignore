@@ -11,7 +11,7 @@ logs
 .env
 .env.*
 Dockerfile
-docker*
+docker-compose*
 README.md
 .dockerignore
 .gitignore

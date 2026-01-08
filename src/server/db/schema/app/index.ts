@@ -73,6 +73,7 @@ export const criterionScores = pgTable("criterion_scores", {
     .notNull(),
   criterion: varchar("criterion").notNull(),
   score: integer("score"),
+  tagCount: integer("tag_count"),
   unadjustedScore: integer("unadjusted_score"),
   dataQualityFactor: doublePrecision("data_quality_factor"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),

@@ -1,25 +1,22 @@
-FROM oven/bun:1.3.2-slim AS base
+FROM node:24.12.0-alpine AS base
 WORKDIR /app
 
-RUN apt-get update && \
-    apt-get install -y curl && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache curl bash
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+COPY ./docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 FROM base AS install
 
 # install all dependencies into tmp directory this will cache them and speed up future builds
 RUN mkdir -p /tmp/dev/
-COPY package.json bun.lock /tmp/dev/
-RUN cd /tmp/dev/ && bun install --frozen-lockfile
+COPY package.json package-lock.json /tmp/dev/
+RUN cd /tmp/dev/ && npm ci
 
 # install prod dependencies into different directory
 RUN mkdir -p /tmp/prod/
-COPY package.json bun.lock /tmp/prod/
-RUN cd /tmp/prod && bun install --ignore-scripts --frozen-lockfile --production
+COPY package.json package-lock.json /tmp/prod/
+RUN cd /tmp/prod && npm ci --omit=dev --ignore-scripts
 
 FROM base AS build
 
@@ -27,20 +24,22 @@ FROM base AS build
 ENV NODE_ENV=production
 COPY --from=install /tmp/dev/node_modules node_modules
 COPY . .
-RUN bun run build
+RUN npm run build
+
+FROM base AS release
 
 # copy production dependencies and source code into final image
-FROM base AS release
-COPY --from=install --chown=bun:bun /tmp/prod/node_modules node_modules
-COPY --from=build --chown=bun:bun /app/.output .
-COPY --from=build --chown=bun:bun /app/package.json .
-COPY --from=build --chown=bun:bun /app/drizzle.config.ts .
-COPY --from=build --chown=bun:bun /app/src ./src
-COPY --from=build --chown=bun:bun /app/tsconfig.json ./tsconfig.json
-COPY --from=build --chown=bun:bun /app/.nitro/types ./.nitro/types
+COPY --from=install /tmp/prod/node_modules node_modules
+COPY --from=build /app/.output ./.output
+COPY --from=build /app/package.json .
+COPY --from=build /app/package-lock.json .
+COPY --from=build /app/drizzle.config.ts .
+COPY --from=build /app/vitest.config.ts .
+COPY --from=build /app/src ./src
+COPY --from=build /app/tsconfig.json ./tsconfig.json
+COPY --from=build /app/.nitro/types ./.nitro/types
 
 # run the app
-USER bun
 EXPOSE 3000/tcp
 CMD [ "server" ]
 
@@ -48,4 +47,4 @@ CMD [ "server" ]
 HEALTHCHECK --interval=10s --timeout=3s --retries=1 --start-period=10s \
     CMD curl -f http://localhost:3000/health || exit 1
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

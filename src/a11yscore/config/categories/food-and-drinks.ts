@@ -34,9 +34,6 @@ export const foodAndDrinksTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
-    description: t(
-      "The overall score for food and drinks is calculated based on the scores of these subcategories:",
-    ),
   },
 });
 

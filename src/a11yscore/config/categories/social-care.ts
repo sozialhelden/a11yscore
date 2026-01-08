@@ -34,9 +34,6 @@ export const socialCareTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
-    description: t(
-      "The overall score for social care facilities is calculated based on the scores of these subcategories:",
-    ),
   },
 });
 
