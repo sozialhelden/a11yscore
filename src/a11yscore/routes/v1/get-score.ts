@@ -5,6 +5,7 @@ import { useIsDevelopment } from "~/utils/env";
 import {
   getSubCategoryById,
   getTopLevelCategoryById,
+  getTopLevelCategoryList,
   type SubCategoryId,
   type TopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories";
@@ -54,6 +55,21 @@ export default defineCachedEventHandler(
         message: "Calculated score for admin area not found",
       });
     }
+    // there are no scores for planned categories in the database
+    // thus, we manually set the score to 0
+    const plannedCategories = getTopLevelCategoryList()
+      .filter((category) => category.planned)
+      .map(({ name, description, interpretation, ...category }) => ({
+        ...category,
+        name: name(),
+        description: description(),
+        interpretation: interpretation(),
+        score: {
+          score: 0,
+          dataQualityFactor: 0,
+          dataIsUnavailable: true,
+        },
+      }));
 
     // TODO: this whole file is a mess, please refactor
     const result = topLevelCategoryScoreResults.map(
@@ -70,7 +86,8 @@ export default defineCachedEventHandler(
             dataIsUnavailable: dataIsUnavailable(dataQualityFactor),
           },
           interpretation: topLevelCategoryProperties.interpretation?.(score),
-          description: topLevelCategoryProperties.description,
+          description: topLevelCategoryProperties.description?.(),
+          planned: topLevelCategoryProperties.planned,
           subCategories: subCategoryScoreResults
             .filter(
               ({ topLevelCategoryScoreId }) => topLevelCategoryScoreId === id,
@@ -145,6 +162,9 @@ export default defineCachedEventHandler(
       },
     );
 
+    // combining active and planned categories to serve both to the front-end
+    const allTopLevelCategories = [...result, ...plannedCategories];
+
     const score = {
       score: scoreResults.score,
       dataQualityFactor: scoreResults.dataQualityFactor,
@@ -160,7 +180,7 @@ export default defineCachedEventHandler(
       score: {
         ...scoreResults,
         score,
-        toplevelCategories: result,
+        toplevelCategories: allTopLevelCategories,
       },
     };
   },
