@@ -34,6 +34,10 @@ export const socialCareTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
+    description: () =>
+      t(
+        "This category includes essential support services, including community centers, counselling, shelters, and facilities for seniors, youth, and people with disabilities.",
+      ),
   },
 });
 

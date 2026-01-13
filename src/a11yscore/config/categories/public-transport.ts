@@ -33,6 +33,10 @@ export const publicTransportTopLevelCategory: ({
 
         return t("The score could not be determined due to missing data.");
       },
+      description: () =>
+        t(
+          "This category includes transit hubs and boarding points, including platforms and stations for buses, trains, trams, subways, light rail, and ferries.",
+        ),
     },
   });
 
