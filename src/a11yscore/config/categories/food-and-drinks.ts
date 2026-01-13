@@ -34,6 +34,10 @@ export const foodAndDrinksTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
+    description: () =>
+      t(
+        "This category includes various dining and shopping venues, including restaurants, cafes, bakeries, and food stores, as well as access to public drinking water.",
+      ),
   },
 });
 

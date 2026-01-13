@@ -34,6 +34,10 @@ export const healthCareTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
+    description: () =>
+      t(
+        "This category includes medical services and facilities, including hospitals, doctors' offices, pharmacies, clinics, and specialized therapy or counselling centers.",
+      ),
   },
 });
 
