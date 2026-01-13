@@ -103,6 +103,21 @@ defineRouteMeta({
                             nullable: true,
                             description: "Text interpretation of the score",
                           },
+                          description: {
+                            type: "string",
+                            example:
+                              "This category includes transit hubs and boarding points.",
+                            nullable: true,
+                            description:
+                              "Text description of the top level category.",
+                          },
+                          planned: {
+                            type: "boolean",
+                            example: false,
+                            nullable: true,
+                            description:
+                              "Boolean flag to indicate whether the top level category is planned and not yet fully implemented.",
+                          },
                           subCategories: {
                             type: "array",
                             items: {
