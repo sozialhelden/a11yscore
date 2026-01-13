@@ -28,18 +28,58 @@ import {
   socialCareTopLevelCategory,
   type SocialCareTopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories/social-care";
+import {
+  educationSubCategories,
+  type EducationSubCategoryId,
+  educationTopLevelCategory,
+  type EducationTopLevelCategoryId,
+} from "~~/src/a11yscore/config/categories/education";
+import {
+  governmentBuildingsSubCategories,
+  type GovernmentBuildingsSubCategoryId,
+  governmentBuildingsTopLevelCategory,
+  type GovernmentBuildingsTopLevelCategoryId,
+} from "~~/src/a11yscore/config/categories/government-buildings";
+import {
+  workSubCategories,
+  type WorkSubCategoryId,
+  workTopLevelCategory,
+  type WorkTopLevelCategoryId,
+} from "~~/src/a11yscore/config/categories/work";
+import {
+  cultureSubCategories,
+  type CultureSubCategoryId,
+  cultureTopLevelCategory,
+  type CultureTopLevelCategoryId,
+} from "~~/src/a11yscore/config/categories/culture";
+import {
+  waysCrossingsSubCategories,
+  type WaysCrossingsSubCategoryId,
+  waysCrossingsTopLevelCategory,
+  type WaysCrossingsTopLevelCategoryId,
+} from "~~/src/a11yscore/config/categories/ways-crossings";
 
 export type TopLevelCategoryId =
   | FoodAndDrinksTopLevelCategoryId
   | PublicTransportTopLevelCategoryId
   | HealthCareTopLevelCategoryId
-  | SocialCareTopLevelCategoryId;
+  | SocialCareTopLevelCategoryId
+  | EducationTopLevelCategoryId
+  | GovernmentBuildingsTopLevelCategoryId
+  | WorkTopLevelCategoryId
+  | CultureTopLevelCategoryId
+  | WaysCrossingsTopLevelCategoryId;
 
 export type SubCategoryId =
   | FoodAndDrinksSubCategoryId
   | PublicTransportSubCategoryId
   | HealthCareSubCategoryId
-  | SocialCareSubCategoryId;
+  | SocialCareSubCategoryId
+  | EducationSubCategoryId
+  | GovernmenrBuildingsSubCategoryId
+  | WorkSubCategoryId
+  | CultureSubCategoryId
+  | WaysCrossingsSubCategoryId;
 
 export type OSMTag = {
   /**
@@ -115,7 +155,8 @@ export type TopLevelCategory = {
    * ```
    */
   interpretation: (score: number) => string;
-  description?: string;
+  description?: () => string;
+  planned?: boolean;
 };
 
 export type SubCategory = {
@@ -301,6 +342,11 @@ const configuredTopLevelCategories: Record<
   ...publicTransportTopLevelCategory({ weight: 0.3 }),
   ...healthCareTopLevelCategory({ weight: 0.3 }),
   ...socialCareTopLevelCategory({ weight: 0.3 }),
+  ...educationTopLevelCategory({ weight: 0 }),
+  ...governmentBuildingsTopLevelCategory({ weight: 0 }),
+  ...workTopLevelCategory({ weight: 0 }),
+  ...cultureTopLevelCategory({ weight: 0 }),
+  ...waysCrossingsTopLevelCategory({ weight: 0 }),
 };
 
 const configuredSubCategories: Record<
@@ -311,6 +357,11 @@ const configuredSubCategories: Record<
   ...publicTransportSubCategories,
   ...healthCareSubCategories,
   ...socialCareSubCategories,
+  ...educationSubCategories,
+  ...governmentBuildingsSubCategories,
+  ...workSubCategories,
+  ...cultureSubCategories,
+  ...waysCrossingsSubCategories,
 };
 
 const topLevelCategories: Record<TopLevelCategoryId, TopLevelCategory> =
