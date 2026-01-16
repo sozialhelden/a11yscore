@@ -41,15 +41,3 @@ export const waysCrossingsTopLevelCategory: ({
     planned: true,
   },
 });
-
-/*
- * sub categories
- */
-
-export type WaysCrossingsSubCategoryId = None;
-
-const weight = 1;
-export const waysCrossingsSubCategories: Record<
-  WaysCrossingsSubCategoryId,
-  Omit<SubCategory, "id">
-> = {};

@@ -63,7 +63,7 @@ export default defineCachedEventHandler(
         ...category,
         name: name(),
         description: description(),
-        interpretation: interpretation(),
+        interpretation: interpretation(0),
         score: {
           score: 0,
           dataQualityFactor: 0,

@@ -41,15 +41,3 @@ export const cultureTopLevelCategory: ({
     planned: true,
   },
 });
-
-/*
- * sub categories
- */
-
-export type CultureSubCategoryId = None;
-
-const weight = 1;
-export const cultureSubCategories: Record<
-  CultureSubCategoryId,
-  Omit<SubCategory, "id">
-> = {};
