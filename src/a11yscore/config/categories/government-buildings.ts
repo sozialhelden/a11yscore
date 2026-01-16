@@ -42,15 +42,3 @@ export const governmentBuildingsTopLevelCategory: ({
     planned: true,
   },
 });
-
-/*
- * sub categories
- */
-
-export type GovernmentBuildingsSubCategoryId = None;
-
-const weight = 1;
-export const governmentBuildingsSubCategories: Record<
-  GovernmentBuildingsSubCategoryId,
-  Omit<SubCategory, "id">
-> = {};

@@ -1,5 +1,6 @@
 import { osm_amenities } from "~/db/schema/osm-sync";
 import { eq, inArray, sql, desc } from "drizzle-orm";
+import type * as categoryConfig from "~~/src/a11yscore/config/categories/index";
 
 export const activeCategory: categoryConfig.TopLevelCategory = {
   id: "food-and-drinks" as any,

@@ -1,4 +1,12 @@
-import { describe, expect, it, vi, afterEach, beforeEach } from "vitest";
+import {
+  describe,
+  expect,
+  it,
+  vi,
+  afterEach,
+  beforeEach,
+  type MockInstance,
+} from "vitest";
 import { eq, inArray, sql, desc } from "drizzle-orm";
 import { appDb } from "~/db";
 import { scores, adminAreas } from "~/db/schema/app";
@@ -8,11 +16,12 @@ import {
   subCategory,
   subCategory2,
   plannedCategory,
-} from "~~/src/a11yscore/test/mocks/categories.ts";
+} from "~~/src/a11yscore/test/mocks/categories";
 import { calculateScoresForAdminArea } from "~~/src/a11yscore/queries/calculate-scores-for-admin-area";
+import type { ComputeAdminAreaScoreJob } from "~/queue";
 import * as categoryConfig from "~~/src/a11yscore/config/categories/index";
 import * as categoryUtils from "~~/src/a11yscore/utils/categories";
-import { handle as computeScoreHandler } from "~~/src/a11yscore/jobs/compute-admin-area-score.ts";
+import { handle as computeScoreHandler } from "~~/src/a11yscore/jobs/compute-admin-area-score";
 import { osm_amenities } from "~/db/schema/osm-sync";
 import { getChildCategories } from "../utils/categories";
 

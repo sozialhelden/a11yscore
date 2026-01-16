@@ -37,15 +37,3 @@ export const workTopLevelCategory: ({
     planned: true,
   },
 });
-
-/*
- * sub categories
- */
-
-export type WorkSubCategoryId = None;
-
-const weight = 1;
-export const workSubCategories: Record<
-  WorkSubCategoryId,
-  Omit<SubCategory, "id">
-> = {};

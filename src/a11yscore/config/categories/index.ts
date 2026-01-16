@@ -29,32 +29,22 @@ import {
   type SocialCareTopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories/social-care";
 import {
-  educationSubCategories,
-  type EducationSubCategoryId,
   educationTopLevelCategory,
   type EducationTopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories/education";
 import {
-  governmentBuildingsSubCategories,
-  type GovernmentBuildingsSubCategoryId,
   governmentBuildingsTopLevelCategory,
   type GovernmentBuildingsTopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories/government-buildings";
 import {
-  workSubCategories,
-  type WorkSubCategoryId,
   workTopLevelCategory,
   type WorkTopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories/work";
 import {
-  cultureSubCategories,
-  type CultureSubCategoryId,
   cultureTopLevelCategory,
   type CultureTopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories/culture";
 import {
-  waysCrossingsSubCategories,
-  type WaysCrossingsSubCategoryId,
   waysCrossingsTopLevelCategory,
   type WaysCrossingsTopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories/ways-crossings";
@@ -74,12 +64,7 @@ export type SubCategoryId =
   | FoodAndDrinksSubCategoryId
   | PublicTransportSubCategoryId
   | HealthCareSubCategoryId
-  | SocialCareSubCategoryId
-  | EducationSubCategoryId
-  | GovernmenrBuildingsSubCategoryId
-  | WorkSubCategoryId
-  | CultureSubCategoryId
-  | WaysCrossingsSubCategoryId;
+  | SocialCareSubCategoryId;
 
 export type OSMTag = {
   /**
@@ -357,11 +342,11 @@ const configuredSubCategories: Record<
   ...publicTransportSubCategories,
   ...healthCareSubCategories,
   ...socialCareSubCategories,
-  ...educationSubCategories,
-  ...governmentBuildingsSubCategories,
-  ...workSubCategories,
-  ...cultureSubCategories,
-  ...waysCrossingsSubCategories,
+  // ...educationSubCategories,
+  // ...governmentBuildingsSubCategories,
+  // ...workSubCategories,
+  // ...cultureSubCategories,
+  // ...waysCrossingsSubCategories,
 };
 
 const topLevelCategories: Record<TopLevelCategoryId, TopLevelCategory> =

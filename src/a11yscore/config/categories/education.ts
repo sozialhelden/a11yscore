@@ -41,15 +41,3 @@ export const educationTopLevelCategory: ({
     planned: true,
   },
 });
-
-/*
- * sub categories
- */
-
-export type EducationSubCategoryId = None;
-
-const weight = 1;
-export const educationSubCategories: Record<
-  EducationSubCategoryId,
-  Omit<SubCategory, "id">
-> = {};
