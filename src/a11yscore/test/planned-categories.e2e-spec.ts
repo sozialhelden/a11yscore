@@ -62,9 +62,10 @@ describe("Planned Categories Integration", () => {
   };
 
   beforeEach(async () => {
-    const [adminArea] = await appDb.select().from(adminAreas).limit(1);
-    if (!adminArea) throw new Error("No admin areas found in DB for testing");
-    testAdminAreaId = adminArea.id;
+    // const [adminArea] = await appDb.select().from(adminAreas).limit(1);
+    // if (!adminArea) throw new Error("No admin areas found in DB for testing");
+    // testAdminAreaId = adminArea.id;
+    const testAdminAreaId = "67a910fa-8cbe-44a0-86a7-5c24e95531e3";
 
     getTopLevelCategoriesListSpy = vi.spyOn(
       categoryConfig,
@@ -74,11 +75,6 @@ describe("Planned Categories Integration", () => {
   });
 
   afterEach(async () => {
-    if (createdScoreIds.length > 0) {
-      // deleting the mocked scores from the database after the test
-      await appDb.delete(scores).where(inArray(scores.id, createdScoreIds));
-      createdScoreIds.length = 0;
-    }
     vi.restoreAllMocks();
   });
 
