@@ -1,5 +1,18 @@
 services:
 
+  osm_database:
+    image: postgis/postgis:17-3.5
+    platform: linux/amd64
+    volumes:
+      - ./imposm.sql:/docker-entrypoint-initdb.d/imposm.sql
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: $NITRO_DATABASE_OSM_SYNC_USER
+      POSTGRES_PASSWORD: $NITRO_DATABASE_OSM_SYNC_PASSWORD
+      POSTGRES_DB: $NITRO_DATABASE_OSM_SYNC_DB
+    ports:
+      - 5434:5432
+
   database:
     image: postgis/postgis:17-3.5
     platform: linux/amd64
