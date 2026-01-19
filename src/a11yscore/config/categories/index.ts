@@ -140,7 +140,28 @@ export type TopLevelCategory = {
    * ```
    */
   interpretation: (score: number) => string;
+  /**
+   * A description of the contents of the category, used for display purposes.
+   * Make sure to use the `t` function to translate the description.
+   * @example
+   * ```
+   * () =>
+   *       t(
+   *         "This category includes various dining and shopping venues, including restaurants, cafes,
+   *         bakeries, and food stores, as well as access to public drinking water.",
+   *       ),
+   *
+   * ```
+   */
   description?: () => string;
+  /**
+   * A boolean flag to mark upcoming categories. These will be handled differently by the front-end, are excluded from
+   * score computation, and contain no subcategories.
+   * @example
+   * ```
+   * true
+   * ```
+   */
   planned?: boolean;
 };
 
