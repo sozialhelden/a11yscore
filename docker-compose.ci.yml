@@ -21,6 +21,8 @@ services:
   osm_database:
     image: postgis/postgis:17-3.5
     platform: linux/amd64
+    volumes:
+      - ./test/osm_database-schema.sql:/docker-entrypoint-initdb.d/osm_database-schema.sql
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_USER: $NITRO_DATABASE_OSM_SYNC_USER
