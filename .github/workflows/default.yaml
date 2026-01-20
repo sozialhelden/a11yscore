@@ -41,12 +41,8 @@ jobs:
         with:
           compose-file: ./docker-compose.ci.yml
       # we don't ship dev node_modules in the image, so we need to install them here
-      - run: | 
-          until [ $(docker compose ps --filter "status=running" --filter "health=healthy" -q <service_name> | wc -l) -gt 0 ]; do
-            echo "Waiting for <service_name> to be healthy..."
-            sleep 2
-          done
       - run: docker compose exec server npm ci
+      - run: ./docker/wait-for-healthy-server-container.sh
       - run: docker compose exec server npm run test:unit
       - run: docker compose exec server npm run test:e2e
 
