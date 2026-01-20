@@ -7,6 +7,8 @@
 -- Generation Time: 2026-01-19 15:50:56.4380
 -- -------------------------------------------------------------
 
+-- This schema is used for testing only. The actual database is managed by imposm.
+
 CREATE EXTENSION hstore;
 
 DROP TABLE IF EXISTS "public"."internal_api_access_tokens";
