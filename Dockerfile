@@ -2,8 +2,10 @@ FROM node:24.12.0-alpine AS base
 WORKDIR /app
 
 RUN apk add --no-cache curl bash
+RUN curl -o /usr/local/bin/wait-for https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for \
+    && chmod +x /usr/local/bin/wait-for
 
-COPY ./docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY ./docker/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 FROM base AS install
