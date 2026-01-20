@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     command: ["server"]
-    env_file: .env.ci
+    env_file: .env
     networks:
       - default
 
@@ -24,7 +24,6 @@ services:
     volumes:
       - ./docker/osm_database-schema.sql:/docker-entrypoint-initdb.d/osm_database-schema.sql
     environment:
-      PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_USER: $NITRO_DATABASE_OSM_SYNC_USER
       POSTGRES_PASSWORD: $NITRO_DATABASE_OSM_SYNC_PASSWORD
       POSTGRES_DB: $NITRO_DATABASE_OSM_SYNC_DB
@@ -35,7 +34,6 @@ services:
     image: postgis/postgis:17-3.5
     platform: linux/amd64
     environment:
-      PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_USER: $NITRO_DATABASE_APP_USER
       POSTGRES_PASSWORD: $NITRO_DATABASE_APP_PASSWORD
       POSTGRES_DB: $NITRO_DATABASE_APP_DB

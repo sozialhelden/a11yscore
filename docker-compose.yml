@@ -1,18 +1,5 @@
 services:
 
-  osm_database:
-    image: postgis/postgis:17-3.5
-    platform: linux/amd64
-    volumes:
-      - ./docker/osm_database-schema.sql:/docker-entrypoint-initdb.d/osm_database-schema.sql
-    environment:
-      PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_USER: $NITRO_DATABASE_OSM_SYNC_USER
-      POSTGRES_PASSWORD: $NITRO_DATABASE_OSM_SYNC_PASSWORD
-      POSTGRES_DB: $NITRO_DATABASE_OSM_SYNC_DB
-    ports:
-      - 5434:5432
-
   database:
     image: postgis/postgis:17-3.5
     platform: linux/amd64
@@ -24,14 +11,44 @@ services:
       POSTGRES_PASSWORD: $NITRO_DATABASE_APP_PASSWORD
       POSTGRES_DB: $NITRO_DATABASE_APP_DB
     ports:
-      - 5432:5432
+      - $NITRO_DATABASE_APP_PORT:5432
 
   redis:
     image: redis:8.2-alpine
     volumes:
       - redis-data:/data
     ports:
-      - 6379:6379
+      - $NITRO_REDIS_PORT:6379
+
+  # we run e2e-tests against a separate set of databases & redis locally to allow us to
+  # write/delete freely in these databases without affecting our main development setup
+
+  database_test:
+    image: postgis/postgis:17-3.5
+    platform: linux/amd64
+    environment:
+      POSTGRES_USER: $NITRO_TEST_DATABASE_APP_USER
+      POSTGRES_PASSWORD: $NITRO_TEST_DATABASE_APP_PASSWORD
+      POSTGRES_DB: $NITRO_TEST_DATABASE_APP_DB
+    ports:
+      - $NITRO_TEST_DATABASE_APP_PORT:5432
+
+  osm_database_test:
+    image: postgis/postgis:17-3.5
+    platform: linux/amd64
+    volumes:
+      - ./docker/osm_database-schema.sql:/docker-entrypoint-initdb.d/osm_database-schema.sql
+    environment:
+      POSTGRES_USER: $NITRO_TEST_DATABASE_OSM_SYNC_USER
+      POSTGRES_PASSWORD: $NITRO_TEST_DATABASE_OSM_SYNC_PASSWORD
+      POSTGRES_DB: $NITRO_TEST_DATABASE_OSM_SYNC_DB
+    ports:
+      - $NITRO_TEST_DATABASE_OSM_SYNC_PORT:5432
+
+  redis_test:
+    image: redis:8.2-alpine
+    ports:
+      - $NITRO_TEST_REDIS_PORT:6379
 
 volumes:
   postgres-data:

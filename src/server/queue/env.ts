@@ -1,10 +1,12 @@
 import "dotenv/config";
 
-const { NITRO_REDIS_HOST, NITRO_REDIS_PORT, NITRO_REDIS_PASSWORD } =
-  process.env;
+function getEnv(name: string, defaultValue?: string): string {
+  const isTest = process.env.NODE_ENV === "test";
+  return process.env[`NITRO_${isTest ? "TEST_" : ""}${name}`] ?? defaultValue;
+}
 
 export const redisConnection = {
-  host: NITRO_REDIS_HOST || "redis",
-  port: NITRO_REDIS_PORT ? parseInt(NITRO_REDIS_PORT || "6379") : undefined,
-  password: NITRO_REDIS_PASSWORD,
+  host: getEnv("REDIS_HOST", "localhost"),
+  port: parseInt(getEnv("REDIS_PORT", "6379")),
+  password: getEnv("REDIS_PASSWORD"),
 };

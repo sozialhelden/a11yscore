@@ -1,42 +1,28 @@
 import "dotenv/config";
 
-const {
-  NITRO_DATABASE_APP_USER,
-  NITRO_DATABASE_APP_PASSWORD,
-  NITRO_DATABASE_APP_HOST,
-  NITRO_DATABASE_APP_PORT,
-  NITRO_DATABASE_APP_DB,
-  NITRO_DATABASE_APP_SSL,
-  NITRO_DATABASE_APP_ALLOW_SELF_SIGNED,
-  NITRO_DATABASE_OSM_SYNC_USER,
-  NITRO_DATABASE_OSM_SYNC_PASSWORD,
-  NITRO_DATABASE_OSM_SYNC_HOST,
-  NITRO_DATABASE_OSM_SYNC_PORT,
-  NITRO_DATABASE_OSM_SYNC_DB,
-  NITRO_DATABASE_OSM_SYNC_SSL,
-  NITRO_DATABASE_OSM_SYNC_ALLOW_SELF_SIGNED,
-} = process.env;
+function getEnv(name: string, defaultValue?: string): string {
+  const isTest = process.env.NODE_ENV === "test";
+  return process.env[`NITRO_${isTest ? "TEST_" : ""}${name}`] ?? defaultValue;
+}
 
 export const appDbConfig = {
-  user: NITRO_DATABASE_APP_USER || "a11yscore",
-  password: NITRO_DATABASE_APP_PASSWORD || "",
-  db: NITRO_DATABASE_APP_DB || "a11yscore",
-  host: NITRO_DATABASE_APP_HOST || "localhost",
-  port: NITRO_DATABASE_APP_PORT ? parseInt(NITRO_DATABASE_APP_PORT) : 5432,
-  ssl: NITRO_DATABASE_APP_SSL === "true" && {
-    rejectUnauthorized: !NITRO_DATABASE_APP_ALLOW_SELF_SIGNED,
+  user: getEnv("DATABASE_APP_USER", "a11yscore"),
+  password: getEnv("DATABASE_APP_PASSWORD", ""),
+  db: getEnv("DATABASE_APP_DB", "a11yscore"),
+  host: getEnv("DATABASE_APP_HOST", "localhost"),
+  port: parseInt(getEnv("DATABASE_APP_PORT", "5432")),
+  ssl: getEnv("DATABASE_APP_SSL") === "true" && {
+    rejectUnauthorized: !getEnv("DATABASE_APP_ALLOW_SELF_SIGNED"),
   },
 };
 
 export const osmSyncDbConfig = {
-  user: NITRO_DATABASE_OSM_SYNC_USER || "imposm",
-  password: NITRO_DATABASE_OSM_SYNC_PASSWORD || "",
-  db: NITRO_DATABASE_OSM_SYNC_DB || "imposm",
-  host: NITRO_DATABASE_OSM_SYNC_HOST || "localhost",
-  port: NITRO_DATABASE_OSM_SYNC_PORT
-    ? parseInt(NITRO_DATABASE_OSM_SYNC_PORT)
-    : 5433,
-  ssl: NITRO_DATABASE_OSM_SYNC_SSL === "true" && {
-    rejectUnauthorized: !NITRO_DATABASE_OSM_SYNC_ALLOW_SELF_SIGNED,
+  user: getEnv("DATABASE_OSM_SYNC_USER", "imposm"),
+  password: getEnv("DATABASE_OSM_SYNC_PASSWORD", ""),
+  db: getEnv("DATABASE_OSM_SYNC_DB", "imposm"),
+  host: getEnv("DATABASE_OSM_SYNC_HOST", "localhost"),
+  port: parseInt(getEnv("DATABASE_OSM_SYNC_PORT", "5433")),
+  ssl: getEnv("DATABASE_OSM_SYNC_SSL") === "true" && {
+    rejectUnauthorized: !getEnv("DATABASE_OSM_SYNC_ALLOW_SELF_SIGNED"),
   },
 };

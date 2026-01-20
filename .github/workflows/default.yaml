@@ -40,9 +40,9 @@ jobs:
       - uses: hoverkraft-tech/compose-action@3846bcd61da338e9eaaf83e7ed0234a12b099b72 # v2.4.1
         with:
           compose-file: ./docker-compose.ci.yml
+      - run: ./docker/wait-for-healthy-server-container.sh
       # we don't ship dev node_modules in the image, so we need to install them here
       - run: docker compose exec server npm ci
-      - run: ./docker/wait-for-healthy-server-container.sh
       - run: docker compose exec server npm run test:unit
       - run: docker compose exec server npm run test:e2e
 
