@@ -1,37 +1,38 @@
 import type { SQL } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
+import { dummyTranslate, type Translate } from "~/utils/i18n";
 import type { OSMTag } from "~~/src/a11yscore/config/categories";
 import {
+  getVisionCriteria,
   type VisionCriterionId,
-  visionCriteria,
 } from "~~/src/a11yscore/config/criteria/blind";
 import {
   type ClimateCriterionId,
-  climateCriteria,
+  getClimateCriteria,
 } from "~~/src/a11yscore/config/criteria/climate";
 import {
   type DeafCriterionId,
-  deafCriteria,
+  getDeafCriteria,
 } from "~~/src/a11yscore/config/criteria/deaf";
 import {
   type EnvironmentCriterionId,
-  environmentCriteria,
+  getEnvironmentCriteria,
 } from "~~/src/a11yscore/config/criteria/environment";
 import {
   type GeneralCriterionId,
-  generalCriteria,
+  getGeneralCriteria,
 } from "~~/src/a11yscore/config/criteria/general";
 import {
+  getToiletCriteria,
   type ToiletCriterionId,
-  toiletCriteria,
 } from "~~/src/a11yscore/config/criteria/toilets";
 import {
+  getWebsiteCriteria,
   type WebsiteCriterionId,
-  websiteCriteria,
 } from "~~/src/a11yscore/config/criteria/website";
 import {
+  getWheelchairCriteria,
   type WheelchairCriterionId,
-  wheelchairCriteria,
 } from "~~/src/a11yscore/config/criteria/wheelchair";
 import { addIdToConfigEntries } from "~~/src/a11yscore/utils/config";
 
@@ -47,14 +48,14 @@ export type CriterionId =
 
 export type CriterionProperties = {
   /**
-   * The name of the criterion, used for display purposes.
-   * Make sure to use the `t` function to translate it.
+   * The name of the criterion, used for display purposes. Make sure to use the given `t`
+   * function to translate it.
    * @example
    * ```
-   * () => t("Is accessible for wheelchair users")
+   * t("Is accessible for wheelchair users")
    * ```
    */
-  name: () => string;
+  name: string;
   /**
    * A list of OSM tags that are used to select relevant objects for this category.
    * This is used for display purposes and to calculate the data quality factor unless
@@ -97,27 +98,27 @@ export type CriterionProperties = {
   /**
    * A description why this criterion is generally relevant. This can be overridden on the
    * category/topic level to provide a category/topic-specific reason.
-   * This will be used for display purposes in the frontend, so make sure to use the `t` function
-   * to translate the description. Markdown syntax is allowed!
+   * This will be used for display purposes in the frontend, so make sure to use the given `t`
+   * function to translate the description. Markdown syntax is allowed!
    * @example
    * ```
-   * () => t("Wheelchair users **must** be able to enter and use the facilities without barriers.")
+   * t("Wheelchair users **must** be able to enter and use the facilities without barriers.")
    * ```
    */
-  reason: () => string;
+  reason: string;
   /**
    * A list of recommendations on how to generally improve this criterion. This can be overridden
    * on the category/topic level to provide a category/topic-specific recommendations.
-   * This will be used for display purposes in the frontend, so make sure to use the `t` function
-   * to translate the description. Markdown syntax is allowed!
+   * This will be used for display purposes in the frontend, so make sure to use the given `t`
+   * function to translate the description. Markdown syntax is allowed!
    * @example
    * ```
-   * () => [
+   * [
    *     t("If the entrance has one or multiple steps, [consider getting a ramp](https://wheelramp.de) or installing a lift."),
    * ]
    * ```
    */
-  recommendations: () => string[];
+  recommendations: string[];
   /**
    * A list of links that provide more information about this criterion. Can be e.g. links to
    * guides, norms, or other resources.
@@ -126,7 +127,7 @@ export type CriterionProperties = {
    * function to translate the label.
    * @example
    * ```
-   * () => [
+   * [
    *     {
    *         label: t("DIN 18040 - Accessible building design"),
    *         url: "https://www.din18040.de/wc-toiletten.htm"
@@ -134,24 +135,28 @@ export type CriterionProperties = {
    * ]
    * ```
    */
-  links?: () => { url: string; label: string }[];
-};
-
-const configuredCriteria: Record<CriterionId, CriterionProperties> = {
-  ...generalCriteria,
-  ...visionCriteria,
-  ...climateCriteria,
-  ...deafCriteria,
-  ...environmentCriteria,
-  ...toiletCriteria,
-  ...websiteCriteria,
-  ...wheelchairCriteria,
+  links?: { url: string; label: string }[];
 };
 
 export type Criterion = CriterionProperties & {
   id: CriterionId;
 };
-export const criteria: Record<CriterionId, Criterion> = addIdToConfigEntries<
-  CriterionId,
-  CriterionProperties
->(configuredCriteria);
+
+const getCriteria = (t: Translate): Record<CriterionId, Criterion> =>
+  addIdToConfigEntries<CriterionId, CriterionProperties>({
+    ...getGeneralCriteria(t),
+    ...getVisionCriteria(t),
+    ...getClimateCriteria(t),
+    ...getDeafCriteria(t),
+    ...getEnvironmentCriteria(t),
+    ...getToiletCriteria(t),
+    ...getWebsiteCriteria(t),
+    ...getWheelchairCriteria(t),
+  });
+
+export const getCriterionList = (t?: Translate): Criterion[] =>
+  Object.values(getCriteria(t ?? dummyTranslate));
+
+export const getCriterionById = (id: CriterionId, t?: Translate): Criterion => {
+  return getCriteria(t ?? dummyTranslate)[id];
+};

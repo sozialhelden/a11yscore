@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { t } from "~/utils/i18n";
+import type { Translate } from "~/utils/i18n";
 import type { CriterionProperties } from "~~/src/a11yscore/config/criteria/index";
 
 export type VisionCriterionId =
@@ -8,9 +8,11 @@ export type VisionCriterionId =
   | "has-information-board-with-speech-output"
   | "has-tactile-writing";
 
-export const visionCriteria: Record<VisionCriterionId, CriterionProperties> = {
+export const getVisionCriteria = (
+  t: Translate,
+): Record<VisionCriterionId, CriterionProperties> => ({
   "is-accessible-to-visually-impaired": {
-    name: () => t("Accessible to visually impaired people"),
+    name: t("Accessible to visually impaired people"),
     osmTags: [
       { key: "blind", value: "yes" },
       { key: "blind", value: "designated" },
@@ -26,11 +28,7 @@ export const visionCriteria: Record<VisionCriterionId, CriterionProperties> = {
                               ELSE 0
                               END)::bigint`;
     },
-    reason: () =>
-      t(
-        "People with visual impairments must be able to enter and use the most important areas of the facility without barriers.",
-      ),
-    recommendations: () => [
+    recommendations: [
       t(
         "Provide tactile paving to guide visually impaired individuals to key areas such as entrances, exits, and service counters.",
       ),
@@ -44,9 +42,12 @@ export const visionCriteria: Record<VisionCriterionId, CriterionProperties> = {
         "Ensure there are audible signals or announcements for important information in addition to visual ones.",
       ),
     ],
+    reason: t(
+      "People with visual impairments must be able to enter and use the most important areas of the facility without barriers.",
+    ),
   },
   "has-tactile-paving": {
-    name: () => t("Tactile paving for visually impaired people"),
+    name: t("Tactile paving for visually impaired people"),
     osmTags: [
       { key: "tactile_paving", value: "yes" },
       { key: "tactile_paving", value: "partial" },
@@ -61,15 +62,13 @@ export const visionCriteria: Record<VisionCriterionId, CriterionProperties> = {
 				ELSE 0
 			END)::bigint`;
     },
-    reason: () =>
-      t(
-        "People with visual impairments must be able to use tactile information to navigate.",
-      ),
-    recommendations: () => [],
+    recommendations: [],
+    reason: t(
+      "People with visual impairments must be able to use tactile information to navigate.",
+    ),
   },
   "has-information-board-with-speech-output": {
-    name: () =>
-      t("Departure board with speech output for visually impaired people"),
+    name: t("Departure board with speech output for visually impaired people"),
     osmTags: [
       { key: "departures_board:speech_output", value: "yes" },
       { key: "departures_board:speech_output", value: "no" },
@@ -96,14 +95,13 @@ export const visionCriteria: Record<VisionCriterionId, CriterionProperties> = {
         ELSE 0
       END)::bigint`;
     },
-    reason: () =>
-      t(
-        "People with visual impairments must be able to obtain passenger information.",
-      ),
-    recommendations: () => [],
+    recommendations: [],
+    reason: t(
+      "People with visual impairments must be able to obtain passenger information.",
+    ),
   },
   "has-tactile-writing": {
-    name: () => t("Tactile writing for visually impaired people"),
+    name: t("Tactile writing for visually impaired people"),
     osmTags: [
       { key: "tactile_writing", value: "yes" },
       { key: "tactile_writing", value: "no" },
@@ -123,10 +121,9 @@ export const visionCriteria: Record<VisionCriterionId, CriterionProperties> = {
         ELSE 0
       END)::bigint`;
     },
-    reason: () =>
-      t(
-        "People with visual impairments must be able to find tactile information about the facility.",
-      ),
-    recommendations: () => [],
+    recommendations: [],
+    reason: t(
+      "People with visual impairments must be able to find tactile information about the facility.",
+    ),
   },
-};
+});

@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { osm_platforms, osm_stations } from "~/db/schema/osm-sync";
-import { t } from "~/utils/i18n";
+import type { Translate } from "~/utils/i18n";
 import type {
   SubCategory,
   TopLevelCategory,
@@ -11,34 +11,34 @@ import type {
  */
 
 export type PublicTransportTopLevelCategoryId = "public-transport";
-export const publicTransportTopLevelCategory: ({
+export const getPublicTransportTopLevelCategory = ({
+  t,
   weight,
 }: {
+  t: Translate;
   weight: number;
-}) => Record<PublicTransportTopLevelCategoryId, Omit<TopLevelCategory, "id">> =
-  ({ weight }) => ({
-    "public-transport": {
-      name: () => t("Public Transport"),
-      sustainableDevelopmentGoals: [9, 13, 15, 16],
-      weight,
-      interpretation: (score) => {
-        if (score >= 75)
-          return t("Most of the transport stops are accessible.");
-        if (score >= 50)
-          return t("Many of the transport stops are accessible.");
-        if (score >= 30)
-          return t("Some of the transport stops are accessible.");
-        if (score > 0)
-          return t("Only a few of the transport stops are accessible.");
+}): Record<
+  PublicTransportTopLevelCategoryId,
+  Omit<TopLevelCategory, "id">
+> => ({
+  "public-transport": {
+    name: t("Public Transport"),
+    sustainableDevelopmentGoals: [9, 13, 15, 16],
+    weight,
+    interpretation: (score) => {
+      if (score >= 75) return t("Most of the transport stops are accessible.");
+      if (score >= 50) return t("Many of the transport stops are accessible.");
+      if (score >= 30) return t("Some of the transport stops are accessible.");
+      if (score > 0)
+        return t("Only a few of the transport stops are accessible.");
 
-        return t("The score could not be determined due to missing data.");
-      },
-      description: () =>
-        t(
-          "This category includes transit hubs and boarding points, including platforms and stations for buses, trains, trams, subways, light rail, and ferries.",
-        ),
+      return t("The score could not be determined due to missing data.");
     },
-  });
+    description: t(
+      "This category includes transit hubs and boarding points, including platforms and stations for buses, trains, trams, subways, light rail, and ferries.",
+    ),
+  },
+});
 
 /*
  * sub categories
@@ -62,7 +62,6 @@ const genericPlatformTopics: SubCategory["topics"] = [
       {
         criterionId: "is-wheelchair-accessible",
         weight: 1,
-        reason: () => "",
       },
     ],
   },
@@ -72,7 +71,6 @@ const genericPlatformTopics: SubCategory["topics"] = [
       {
         criterionId: "is-accessible-to-hearing-impaired",
         weight: 1,
-        reason: () => "",
       },
     ],
   },
@@ -82,22 +80,18 @@ const genericPlatformTopics: SubCategory["topics"] = [
       {
         criterionId: "is-accessible-to-visually-impaired",
         weight: 0.1,
-        reason: () => "",
       },
       {
         criterionId: "has-tactile-paving",
         weight: 0.35,
-        reason: () => "",
       },
       {
         criterionId: "has-information-board-with-speech-output",
         weight: 0.35,
-        reason: () => "",
       },
       {
         criterionId: "has-tactile-writing",
         weight: 0.2,
-        reason: () => "",
       },
     ],
   },
@@ -107,17 +101,14 @@ const genericPlatformTopics: SubCategory["topics"] = [
       {
         criterionId: "has-bench",
         weight: 1 / 3,
-        reason: () => "",
       },
       {
         criterionId: "is-lit",
         weight: 1 / 3,
-        reason: () => "",
       },
       {
         criterionId: "has-shelter",
         weight: 1 / 3,
-        reason: () => "",
       },
     ],
   },
@@ -132,7 +123,6 @@ const subwayTopics: SubCategory["topics"] = [
       {
         criterionId: "has-bench",
         weight: 1,
-        reason: () => "",
       },
     ],
   },
@@ -155,22 +145,20 @@ export type PublicTransportSubCategoryId =
 
 const weight = 1 / 12;
 
-export const publicTransportSubCategories: Record<
-  PublicTransportSubCategoryId,
-  Omit<SubCategory, "id">
-> = {
+export const getPublicTransportSubCategories = (
+  t: Translate,
+): Record<PublicTransportSubCategoryId, Omit<SubCategory, "id">> => ({
   "bus-platforms": {
-    name: () => t("Bus Platforms"),
+    name: t("Bus Platforms"),
     parent: "public-transport",
     weight: weight,
     osmTags: [
       { key: "public_transport", value: "platform" },
       { key: "bus", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Includes bus platforms, the places where passengers board or alight from buses.",
-      ),
+    description: t(
+      "Includes bus platforms, the places where passengers board or alight from buses.",
+    ),
     sql: {
       from: osm_platforms,
       where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.bus} = 'yes'`,
@@ -178,17 +166,16 @@ export const publicTransportSubCategories: Record<
     topics: genericPlatformTopics,
   },
   "tram-platforms": {
-    name: () => t("Tram Platforms"),
+    name: t("Tram Platforms"),
     parent: "public-transport",
     weight: weight,
     osmTags: [
       { key: "public_transport", value: "platform" },
       { key: "tram", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Includes tram platforms, the places where passengers board or alight from trams.",
-      ),
+    description: t(
+      "Includes tram platforms, the places where passengers board or alight from trams.",
+    ),
     sql: {
       from: osm_platforms,
       where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.tram} = 'yes'`,
@@ -196,17 +183,16 @@ export const publicTransportSubCategories: Record<
     topics: genericPlatformTopics,
   },
   "subway-platforms": {
-    name: () => t("Subway Platforms"),
+    name: t("Subway Platforms"),
     parent: "public-transport",
     weight: weight,
     osmTags: [
       { key: "public_transport", value: "platform" },
       { key: "subway", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Includes subway platforms, the places where passengers board or alight from subways cars.",
-      ),
+    description: t(
+      "Includes subway platforms, the places where passengers board or alight from subways cars.",
+    ),
     sql: {
       from: osm_platforms,
       where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.subway} = 'yes'`,
@@ -214,17 +200,16 @@ export const publicTransportSubCategories: Record<
     topics: subwayTopics,
   },
   "train-platforms": {
-    name: () => t("Train platforms"),
+    name: t("Train platforms"),
     parent: "public-transport",
     weight: weight,
     osmTags: [
       { key: "public_transport", value: "platform" },
       { key: "train", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Includes train platforms, the places where passengers board or alight from trains.",
-      ),
+    description: t(
+      "Includes train platforms, the places where passengers board or alight from trains.",
+    ),
     sql: {
       from: osm_platforms,
       where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.train} = 'yes'`,
@@ -232,17 +217,16 @@ export const publicTransportSubCategories: Record<
     topics: genericPlatformTopics,
   },
   "ferry-platforms": {
-    name: () => t("Ferry platforms"),
+    name: t("Ferry platforms"),
     parent: "public-transport",
     weight: weight,
     osmTags: [
       { key: "public_transport", value: "platform" },
       { key: "ferry", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Includes ferry platforms, the places where passengers board or alight from ferries.",
-      ),
+    description: t(
+      "Includes ferry platforms, the places where passengers board or alight from ferries.",
+    ),
     sql: {
       from: osm_platforms,
       where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.ferry} = 'yes'`,
@@ -250,36 +234,33 @@ export const publicTransportSubCategories: Record<
     topics: genericPlatformTopics,
   },
   "light-rail-platforms": {
-    name: () => t("Light Rail platforms"),
+    name: t("Light Rail platforms"),
     parent: "public-transport",
     weight: weight,
     osmTags: [
       { key: "public_transport", value: "platform" },
       { key: "light_rail", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Includes light rail platforms, the places where passengers board or alight from light rail trains.",
-      ),
+    description: t(
+      "Includes light rail platforms, the places where passengers board or alight from light rail trains.",
+    ),
     sql: {
       from: osm_platforms,
       where: sql`${osm_platforms.public_transport} = 'platform' and ${osm_platforms.light_rail} = 'yes'`,
     },
     topics: genericPlatformTopics,
   },
-
   "bus-stations": {
-    name: () => t("Bus stations"),
+    name: t("Bus stations"),
     parent: "public-transport",
     weight: weight,
     osmTags: [
       { key: "public_transport", value: "station" },
       { key: "bus", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Bus stations are larger transport hubs where passengers can board or alight from buses, often featuring multiple platforms and additional amenities.",
-      ),
+    description: t(
+      "Bus stations are larger transport hubs where passengers can board or alight from buses, often featuring multiple platforms and additional amenities.",
+    ),
     sql: {
       from: osm_stations,
       where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.bus} = 'yes'`,
@@ -287,17 +268,16 @@ export const publicTransportSubCategories: Record<
     topics: genericPlatformTopics,
   },
   "tram-stations": {
-    name: () => t("Tram stations"),
+    name: t("Tram stations"),
     parent: "public-transport",
     weight: weight,
     osmTags: [
       { key: "public_transport", value: "station" },
       { key: "tram", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Tram stations are larger transport hubs where passengers can board or alight from trams, often featuring multiple platforms and additional amenities.",
-      ),
+    description: t(
+      "Tram stations are larger transport hubs where passengers can board or alight from trams, often featuring multiple platforms and additional amenities.",
+    ),
     sql: {
       from: osm_stations,
       where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.tram} = 'yes'`,
@@ -305,17 +285,16 @@ export const publicTransportSubCategories: Record<
     topics: genericPlatformTopics,
   },
   "subway-stations": {
-    name: () => t("Subway stations"),
+    name: t("Subway stations"),
     parent: "public-transport",
     weight: weight,
     osmTags: [
       { key: "public_transport", value: "station" },
       { key: "subway", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Subway stations are larger transport hubs where passengers can board or alight from subway cars, often featuring multiple platforms and additional amenities.",
-      ),
+    description: t(
+      "Subway stations are larger transport hubs where passengers can board or alight from subway cars, often featuring multiple platforms and additional amenities.",
+    ),
     sql: {
       from: osm_stations,
       where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.subway} = 'yes'`,
@@ -323,17 +302,16 @@ export const publicTransportSubCategories: Record<
     topics: subwayTopics,
   },
   "train-stations": {
-    name: () => t("Train stations"),
+    name: t("Train stations"),
     parent: "public-transport",
     weight: weight,
     osmTags: [
       { key: "public_transport", value: "station" },
       { key: "train", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Train stations are larger transport hubs where passengers can board or alight from trains, often featuring multiple platforms and additional amenities.",
-      ),
+    description: t(
+      "Train stations are larger transport hubs where passengers can board or alight from trains, often featuring multiple platforms and additional amenities.",
+    ),
     sql: {
       from: osm_stations,
       where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.train} = 'yes'`,
@@ -341,17 +319,16 @@ export const publicTransportSubCategories: Record<
     topics: genericPlatformTopics,
   },
   "ferry-stations": {
-    name: () => t("Ferry stations"),
+    name: t("Ferry stations"),
     parent: "public-transport",
     weight: weight,
     osmTags: [
       { key: "public_transport", value: "station" },
       { key: "ferry", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Ferry stations are larger transport hubs where passengers can board or alight from ferries, often featuring multiple platforms and additional amenities.",
-      ),
+    description: t(
+      "Ferry stations are larger transport hubs where passengers can board or alight from ferries, often featuring multiple platforms and additional amenities.",
+    ),
     sql: {
       from: osm_stations,
       where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.ferry} = 'yes'`,
@@ -359,21 +336,20 @@ export const publicTransportSubCategories: Record<
     topics: genericPlatformTopics,
   },
   "light-rail-stations": {
-    name: () => t("Light Rail stations"),
+    name: t("Light Rail stations"),
     parent: "public-transport",
     weight: weight,
     osmTags: [
       { key: "public_transport", value: "station" },
       { key: "light_rail", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Light rail stations are larger transport hubs where passengers can board or alight from light rail, often featuring multiple platforms and additional amenities.",
-      ),
+    description: t(
+      "Light rail stations are larger transport hubs where passengers can board or alight from light rail, often featuring multiple platforms and additional amenities.",
+    ),
     sql: {
       from: osm_stations,
       where: sql`${osm_stations.public_transport} = 'station' and ${osm_stations.light_rail} = 'yes'`,
     },
     topics: genericPlatformTopics,
   },
-};
+});

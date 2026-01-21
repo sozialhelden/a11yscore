@@ -1,15 +1,14 @@
 import { sql } from "drizzle-orm";
-import { t } from "~/utils/i18n";
+import type { Translate } from "~/utils/i18n";
 import type { CriterionProperties } from "~~/src/a11yscore/config/criteria/index";
 
 export type EnvironmentCriterionId = "has-quiet-hours";
 
-export const environmentCriteria: Record<
-  EnvironmentCriterionId,
-  CriterionProperties
-> = {
+export const getEnvironmentCriteria = (
+  t: Translate,
+): Record<EnvironmentCriterionId, CriterionProperties> => ({
   "has-quiet-hours": {
-    name: () => t("Has quiet hours"),
+    name: t("Has quiet hours"),
     osmTags: [{ key: "quiet_hours", value: "*" }],
     sql: (table) => {
       return sql<number>`AVG(CASE 
@@ -17,12 +16,13 @@ export const environmentCriteria: Record<
 				ELSE 0
 			END)::bigint`;
     },
-    reason: () =>
-      t("People with neurodivergent conditions may benefit from quiet hours."),
-    recommendations: () => [
+    reason: t(
+      "People with neurodivergent conditions may benefit from quiet hours.",
+    ),
+    recommendations: [
       t(
         "Consider implementing quiet hours during specific times of the day. Limit loud music and announcements in these hours.",
       ),
     ],
   },
-};
+});

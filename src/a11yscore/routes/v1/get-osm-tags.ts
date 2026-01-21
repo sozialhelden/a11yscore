@@ -1,6 +1,6 @@
 import { useIsDevelopment } from "~/utils/env";
 import { getTopLevelCategoryList } from "~~/src/a11yscore/config/categories";
-import { criteria } from "~~/src/a11yscore/config/criteria";
+import { getCriterionList } from "~~/src/a11yscore/config/criteria";
 import { getChildCategories } from "~~/src/a11yscore/utils/categories";
 import { byName } from "~~/src/a11yscore/utils/sort";
 import {
@@ -10,19 +10,21 @@ import {
 import { criterionView } from "~~/src/a11yscore/views/criteria";
 
 export default defineCachedEventHandler(
-  async () => {
+  async (event) => {
+    const t = event.context.t;
+
     return {
-      topLevelCategories: getTopLevelCategoryList()
+      topLevelCategories: getTopLevelCategoryList(t)
         .sort(byName)
         .map((topLevelCategory) => {
           return {
             ...topLevelCategoryView(topLevelCategory),
-            subCategories: getChildCategories(topLevelCategory.id)
+            subCategories: getChildCategories(topLevelCategory.id, t)
               .sort(byName)
               .map(subCategoryView),
           };
         }),
-      criteria: Object.values(criteria).sort(byName).map(criterionView),
+      criteria: getCriterionList(t).sort(byName).map(criterionView),
     };
   },
   {

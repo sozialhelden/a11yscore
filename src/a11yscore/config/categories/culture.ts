@@ -1,25 +1,20 @@
-import { sql } from "drizzle-orm";
-import { osm_amenities } from "~/db/schema/osm-sync";
-import { t } from "~/utils/i18n";
-import type {
-  SubCategory,
-  TopLevelCategory,
-} from "~~/src/a11yscore/config/categories/index";
+import type { Translate } from "~/utils/i18n";
+import type { TopLevelCategory } from "~~/src/a11yscore/config/categories/index";
 
 /*
  * top-level category
  */
 
 export type CultureTopLevelCategoryId = "culture";
-export const cultureTopLevelCategory: ({
+export const getCultureTopLevelCategory = ({
+  t,
   weight,
 }: {
+  t: Translate;
   weight: number;
-}) => Record<CultureTopLevelCategoryId, Omit<TopLevelCategory, "id">> = ({
-  weight,
-}) => ({
+}): Record<CultureTopLevelCategoryId, Omit<TopLevelCategory, "id">> => ({
   culture: {
-    name: () => t("Culture"),
+    name: t("Culture"),
     sustainableDevelopmentGoals: [3, 4, 10],
     weight,
     interpretation: (score) => {
@@ -34,10 +29,9 @@ export const cultureTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
-    description: () =>
-      t(
-        "This category will evaluate the accessibility of cultural amenities, including theaters, opera houses, museums and cinemas.",
-      ),
+    description: t(
+      "This category will evaluate the accessibility of cultural amenities, including theaters, opera houses, museums and cinemas.",
+    ),
     planned: true,
   },
 });
