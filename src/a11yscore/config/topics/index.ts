@@ -1,4 +1,4 @@
-import { t } from "~/utils/i18n";
+import { dummyTranslate, type Translate } from "~/utils/i18n";
 import { addIdToConfigEntries } from "~~/src/a11yscore/utils/config";
 
 export type TopicId =
@@ -11,37 +11,41 @@ export type TopicId =
   | "vision";
 
 type TopicProperties = {
-  name: () => string;
-};
-
-const configuredTopics: Record<TopicId, TopicProperties> = {
-  mobility: {
-    name: () => t("Mobility"),
-  },
-  vision: {
-    name: () => t("Vision"),
-  },
-  hearing: {
-    name: () => t("Hearing"),
-  },
-  toilet: {
-    name: () => t("Toilet"),
-  },
-  neurodivergent: {
-    name: () => t("Neurodiversity"),
-  },
-  "air-and-climate": {
-    name: () => t("Air and Climate"),
-  },
-  "general-assistance": {
-    name: () => t("Helpful Amenities"),
-  },
+  name: string;
 };
 
 export type Topic = TopicProperties & {
   id: TopicId;
 };
-export const topics: Record<TopicId, Topic> = addIdToConfigEntries<
-  TopicId,
-  TopicProperties
->(configuredTopics);
+
+export const getTopics = (t: Translate): Record<TopicId, Topic> =>
+  addIdToConfigEntries<TopicId, TopicProperties>({
+    mobility: {
+      name: t("Mobility"),
+    },
+    vision: {
+      name: t("Vision"),
+    },
+    hearing: {
+      name: t("Hearing"),
+    },
+    toilet: {
+      name: t("Toilet"),
+    },
+    neurodivergent: {
+      name: t("Neurodiversity"),
+    },
+    "air-and-climate": {
+      name: t("Air and Climate"),
+    },
+    "general-assistance": {
+      name: t("Helpful Amenities"),
+    },
+  });
+
+export const getTopicList = (t?: Translate): Topic[] =>
+  Object.values(getTopics(t ?? dummyTranslate));
+
+export const getTopicById = (id: TopicId, t?: Translate): Topic => {
+  return getTopics(t ?? dummyTranslate)[id];
+};

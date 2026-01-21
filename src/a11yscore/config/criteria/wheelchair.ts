@@ -1,17 +1,16 @@
 import { sql } from "drizzle-orm";
-import { t } from "~/utils/i18n";
+import type { Translate } from "~/utils/i18n";
 import type { CriterionProperties } from "~~/src/a11yscore/config/criteria/index";
 
 export type WheelchairCriterionId =
   | "is-wheelchair-accessible"
   | "has-wheelchair-accessible-toilet";
 
-export const wheelchairCriteria: Record<
-  WheelchairCriterionId,
-  CriterionProperties
-> = {
+export const getWheelchairCriteria = (
+  t: Translate,
+): Record<WheelchairCriterionId, CriterionProperties> => ({
   "is-wheelchair-accessible": {
-    name: () => t("Is accessible with wheelchair"),
+    name: t("Is accessible with wheelchair"),
     osmTags: [
       { key: "wheelchair", value: "yes" },
       { key: "wheelchair", value: "limited" },
@@ -25,11 +24,10 @@ export const wheelchairCriteria: Record<
  				ELSE 0
 			END)::bigint`;
     },
-    reason: () =>
-      t(
-        "Wheelchair users should be able to enter and use the most important areas of the facility without barriers and assistance.",
-      ),
-    recommendations: () => [
+    reason: t(
+      "Wheelchair users should be able to enter and use the most important areas of the facility without barriers and assistance.",
+    ),
+    recommendations: [
       t(
         "If the entrance has one or two steps, consider [getting a removable ramp](https://wheelramp.de).",
       ),
@@ -38,7 +36,7 @@ export const wheelchairCriteria: Record<
       ),
       t("Consider widening narrow doorways to at least 90 cm (36 inches)."),
     ],
-    links: () => [
+    links: [
       {
         label: t("Removable ramps for wheelchair accessibility"),
         url: "https://wheelramp.de",
@@ -46,7 +44,7 @@ export const wheelchairCriteria: Record<
     ],
   },
   "has-wheelchair-accessible-toilet": {
-    name: () => t("Toilet is accessible with wheelchair"),
+    name: t("Toilet is accessible with wheelchair"),
     osmTags: [
       { key: "toilets:wheelchair", value: "yes" },
       { key: "toilets:wheelchair", value: "no" },
@@ -57,14 +55,14 @@ export const wheelchairCriteria: Record<
  				WHEN ${table["toilets:wheelchair"]} = 'no' THEN 10
  				ELSE 0
 			END)::bigint`,
-    reason: () => "Wheelchair users must be able to use the toilet.",
-    recommendations: () => [
+    reason: "Wheelchair users must be able to use the toilet.",
+    recommendations: [
       t("Consider installing grab rails to existing toilets."),
       t(
         "Consider raising the toilet seat to a comfortable height (about 48 cm).",
       ),
     ],
-    links: () => [
+    links: [
       {
         label: t(
           "DIN 18040-2 Standard for Accessible Design of Buildings - Bathrooms",
@@ -73,4 +71,4 @@ export const wheelchairCriteria: Record<
       },
     ],
   },
-};
+});

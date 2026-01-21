@@ -9,13 +9,17 @@ import {
   type SubCategoryId,
   type TopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories";
-import { type CriterionId, criteria } from "~~/src/a11yscore/config/criteria";
-import { type TopicId, topics } from "~~/src/a11yscore/config/topics";
+import {
+  type CriterionId,
+  getCriterionById,
+} from "~~/src/a11yscore/config/criteria";
+import { getTopicById, type TopicId } from "~~/src/a11yscore/config/topics";
 import { queryScoreResultsByAdminArea } from "~~/src/a11yscore/queries/query-score-results-by-admin-area";
 import { dataIsUnavailable } from "~~/src/a11yscore/utils/data-quality";
 
 export default defineCachedEventHandler(
   async (event) => {
+    const t = event.context.t;
     const compoundKey = getRouterParam(event, "id");
 
     const adminArea = (
@@ -57,12 +61,12 @@ export default defineCachedEventHandler(
     }
     // there are no scores for planned categories in the database
     // thus, we manually set the score to 0
-    const plannedCategories = getTopLevelCategoryList()
+    const plannedCategories = getTopLevelCategoryList(t)
       .filter((category) => category.planned)
       .map(({ name, description, interpretation, ...category }) => ({
         ...category,
-        name: name(),
-        description: description(),
+        name: name,
+        description: description,
         interpretation: interpretation(0),
         score: {
           score: 0,
@@ -76,17 +80,18 @@ export default defineCachedEventHandler(
       ({ id, topLevelCategory, score, dataQualityFactor }) => {
         const topLevelCategoryProperties = getTopLevelCategoryById(
           topLevelCategory as TopLevelCategoryId,
+          t,
         );
         return {
           id: topLevelCategory,
-          name: topLevelCategoryProperties.name(),
+          name: topLevelCategoryProperties.name,
           score: {
             score,
             dataQualityFactor,
             dataIsUnavailable: dataIsUnavailable(dataQualityFactor),
           },
           interpretation: topLevelCategoryProperties.interpretation?.(score),
-          description: topLevelCategoryProperties.description?.(),
+          description: topLevelCategoryProperties.description,
           planned: topLevelCategoryProperties.planned,
           subCategories: subCategoryScoreResults
             .filter(
@@ -95,22 +100,23 @@ export default defineCachedEventHandler(
             .map(({ id, subCategory, score, dataQualityFactor }) => {
               const subCategoryProperties = getSubCategoryById(
                 subCategory as SubCategoryId,
+                t,
               );
               return {
                 id: subCategory,
-                name: subCategoryProperties.name(),
+                name: subCategoryProperties.name,
                 score: {
                   score,
                   dataQualityFactor,
                   dataIsUnavailable: dataIsUnavailable(dataQualityFactor),
                 },
-                description: subCategoryProperties.description?.(),
+                description: subCategoryProperties.description,
                 osmTags: subCategoryProperties.osmTags,
                 topics: topicScoreResults
                   .filter(({ subCategoryScoreId }) => subCategoryScoreId === id)
                   .map(({ id, topic, score, dataQualityFactor }) => ({
                     id: topic,
-                    name: topics[topic as TopicId].name(),
+                    name: getTopicById(topic as TopicId, t).name,
                     score: {
                       score,
                       dataQualityFactor,
@@ -126,15 +132,17 @@ export default defineCachedEventHandler(
                               ({ criterionId }) => criterionId === criterion,
                             );
 
-                        const criterionProperties =
-                          criteria[criterion as CriterionId];
+                        const criterionProperties = getCriterionById(
+                          criterion as CriterionId,
+                          t,
+                        );
 
                         const genericRecommendations =
-                          criterionProperties.recommendations();
+                          criterionProperties.recommendations;
 
                         return {
                           id: criterion,
-                          name: criterionProperties.name(),
+                          name: criterionProperties.name,
                           score: {
                             score,
                             dataQualityFactor,
@@ -142,15 +150,15 @@ export default defineCachedEventHandler(
                               dataIsUnavailable(dataQualityFactor),
                           },
                           reason:
-                            criterionPivotProperties?.reason?.() ||
-                            criterionProperties.reason(),
+                            criterionPivotProperties?.reason ||
+                            criterionProperties.reason,
                           recommendations:
                             criterionPivotProperties?.recommendations?.(
                               genericRecommendations,
                             ) || genericRecommendations,
                           links:
-                            criterionPivotProperties?.links?.() ||
-                            criterionProperties.links?.() ||
+                            criterionPivotProperties?.links ||
+                            criterionProperties.links ||
                             [],
                           osmTags: criterionProperties.osmTags,
                         };

@@ -1,25 +1,20 @@
-import { sql } from "drizzle-orm";
-import { osm_amenities } from "~/db/schema/osm-sync";
-import { t } from "~/utils/i18n";
-import type {
-  SubCategory,
-  TopLevelCategory,
-} from "~~/src/a11yscore/config/categories/index";
+import type { Translate } from "~/utils/i18n";
+import type { TopLevelCategory } from "~~/src/a11yscore/config/categories/index";
 
 /*
  * top-level category
  */
 
 export type WorkTopLevelCategoryId = "work";
-export const workTopLevelCategory: ({
+export const getWorkTopLevelCategory = ({
+  t,
   weight,
 }: {
+  t: Translate;
   weight: number;
-}) => Record<WorkTopLevelCategoryId, Omit<TopLevelCategory, "id">> = ({
-  weight,
-}) => ({
+}): Record<WorkTopLevelCategoryId, Omit<TopLevelCategory, "id">> => ({
   work: {
-    name: () => t("Work"),
+    name: t("Work"),
     sustainableDevelopmentGoals: [1, 3, 4, 10, 9],
     weight,
     interpretation: (score) => {
@@ -30,10 +25,9 @@ export const workTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
-    description: () =>
-      t(
-        "This category will evaluate the accessibility of work places, including office buildings, company offices, manufacturers and factories.",
-      ),
+    description: t(
+      "This category will evaluate the accessibility of work places, including office buildings, company offices, manufacturers and factories.",
+    ),
     planned: true,
   },
 });

@@ -1,26 +1,23 @@
-import { sql } from "drizzle-orm";
-import { osm_amenities } from "~/db/schema/osm-sync";
-import { t } from "~/utils/i18n";
-import type {
-  SubCategory,
-  TopLevelCategory,
-} from "~~/src/a11yscore/config/categories/index";
+import type { Translate } from "~/utils/i18n";
+import type { TopLevelCategory } from "~~/src/a11yscore/config/categories/index";
 
 /*
  * top-level category
  */
 
 export type GovernmentBuildingsTopLevelCategoryId = "government-buildings";
-export const governmentBuildingsTopLevelCategory: ({
+export const getGovernmentBuildingsTopLevelCategory = ({
+  t,
   weight,
 }: {
+  t: Translate;
   weight: number;
-}) => Record<
+}): Record<
   GovernmentBuildingsTopLevelCategoryId,
   Omit<TopLevelCategory, "id">
-> = ({ weight }) => ({
+> => ({
   "government-buildings": {
-    name: () => t("Government Buildings"),
+    name: t("Government Buildings"),
     sustainableDevelopmentGoals: [8, 10, 16],
     weight,
     interpretation: (score) => {
@@ -35,10 +32,9 @@ export const governmentBuildingsTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
-    description: () =>
-      t(
-        "This category will evaluate the accessibility of government buildings, including townhalls, government offices, authorities, courts and consulates.",
-      ),
+    description: t(
+      "This category will evaluate the accessibility of government buildings, including townhalls, government offices, authorities, courts and consulates.",
+    ),
     planned: true,
   },
 });

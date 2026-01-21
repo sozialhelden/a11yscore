@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { osm_amenities } from "~/db/schema/osm-sync";
-import { t } from "~/utils/i18n";
+import type { Translate } from "~/utils/i18n";
 import type {
   SubCategory,
   TopLevelCategory,
@@ -11,15 +11,15 @@ import type {
  */
 
 export type HealthCareTopLevelCategoryId = "health-care";
-export const healthCareTopLevelCategory: ({
+export const getHealthCareTopLevelCategory = ({
+  t,
   weight,
 }: {
+  t: Translate;
   weight: number;
-}) => Record<HealthCareTopLevelCategoryId, Omit<TopLevelCategory, "id">> = ({
-  weight,
-}) => ({
+}): Record<HealthCareTopLevelCategoryId, Omit<TopLevelCategory, "id">> => ({
   "health-care": {
-    name: () => t("Health Care"),
+    name: t("Health Care"),
     sustainableDevelopmentGoals: [3, 10, 5],
     weight,
     interpretation: (score) => {
@@ -34,10 +34,9 @@ export const healthCareTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
-    description: () =>
-      t(
-        "This category includes medical services and facilities, including hospitals, doctors' offices, pharmacies, clinics, and specialized therapy or counselling centers.",
-      ),
+    description: t(
+      "This category includes medical services and facilities, including hospitals, doctors' offices, pharmacies, clinics, and specialized therapy or counselling centers.",
+    ),
   },
 });
 
@@ -120,16 +119,15 @@ export type HealthCareSubCategoryId =
 
 const weight = 1 / 9;
 
-export const healthCareSubCategories: Record<
-  HealthCareSubCategoryId,
-  Omit<SubCategory, "id">
-> = {
+export const getHealthCareSubCategories = (
+  t: Translate,
+): Record<HealthCareSubCategoryId, Omit<SubCategory, "id">> => ({
   // "unknown-health-care": {
-  //   name: () => t("Unknown Health Care"),
+  //   name: t("Unknown Health Care"),
   //   parent: "health-care",
   //   weight: weight,
   //   osmTags: [{ key: "healthcare", value: "yes" }],
-  //   description: () =>
+  //   description:
   //     t(
   //       "Includes any health care facility (doctors, hospitals, clinics, pharmacies, therapists, psycho therapists, medical shops, and other health facilities that are not further specified on Open Street Map).",
   //     ),
@@ -140,7 +138,7 @@ export const healthCareSubCategories: Record<
   //   topics: genericHealthCareTopics,
   // },
   "health-counselling": {
-    name: () => t("Health Counselling"),
+    name: t("Health Counselling"),
     parent: "health-care",
     weight: weight,
     osmTags: [
@@ -150,10 +148,9 @@ export const healthCareSubCategories: Record<
       { key: "healthcare:counselling", value: "antenatal" },
       { key: "healthcare:counselling", value: "psychiatry" },
     ],
-    description: () =>
-      t(
-        "Includes facilities providing health counselling services such as dietitians, nutritionists, sexual health counselling, antenatal counselling, and psychiatric services.",
-      ),
+    description: t(
+      "Includes facilities providing health counselling services such as dietitians, nutritionists, sexual health counselling, antenatal counselling, and psychiatric services.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`(${sql.join(
@@ -170,7 +167,7 @@ export const healthCareSubCategories: Record<
     topics: genericHealthCareTopics,
   },
   doctors: {
-    name: () => t("Doctors and Medical Practices"),
+    name: t("Doctors and Medical Practices"),
     parent: "health-care",
     weight: weight,
     osmTags: [
@@ -184,10 +181,9 @@ export const healthCareSubCategories: Record<
       { key: "healthcare", value: "optometrist" },
       { key: "healthcare", value: "podiatrist" },
     ],
-    description: () =>
-      t(
-        "Includes all types of doctors' offices, medical practices, dental clinics, veterinarians, audiologists, nurses, optometrists, and podiatrists.",
-      ),
+    description: t(
+      "Includes all types of doctors' offices, medical practices, dental clinics, veterinarians, audiologists, nurses, optometrists, and podiatrists.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`(${sql.join(
@@ -208,17 +204,16 @@ export const healthCareSubCategories: Record<
     topics: genericHealthCareTopics,
   },
   hospitals: {
-    name: () => t("Hospitals"),
+    name: t("Hospitals"),
     parent: "health-care",
     weight: weight,
     osmTags: [
       { key: "amenity", value: "hospital" },
       { key: "healthcare", value: "hospital" },
     ],
-    description: () =>
-      t(
-        "Public or private hospitals providing full medical care and in-patient facilities.",
-      ),
+    description: t(
+      "Public or private hospitals providing full medical care and in-patient facilities.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`${osm_amenities.amenity} = 'hospital' or ${osm_amenities.healthcare} = 'hospital' `,
@@ -226,17 +221,16 @@ export const healthCareSubCategories: Record<
     topics: genericHealthCareTopics,
   },
   clinics: {
-    name: () => t("Clinics and Outpatient Centers"),
+    name: t("Clinics and Outpatient Centers"),
     parent: "health-care",
     weight: weight,
     osmTags: [
       { key: "amenity", value: "clinic" },
       { key: "healthcare", value: "clinic" },
     ],
-    description: () =>
-      t(
-        "Includes walk-in clinics, medical centres (including MVZs), outpatient care, and specialty clinics.",
-      ),
+    description: t(
+      "Includes walk-in clinics, medical centres (including MVZs), outpatient care, and specialty clinics.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`${osm_amenities.amenity} = 'clinic' or ${osm_amenities.healthcare} = 'clinic'`,
@@ -244,14 +238,13 @@ export const healthCareSubCategories: Record<
     topics: genericHealthCareTopics,
   },
   pharmacies: {
-    name: () => t("Pharmacies"),
+    name: t("Pharmacies"),
     parent: "health-care",
     weight: weight,
     osmTags: [{ key: "amenity", value: "pharmacy" }],
-    description: () =>
-      t(
-        "Includes pharmacies and dispensaries, where prescription and over-the-counter medicines are sold.",
-      ),
+    description: t(
+      "Includes pharmacies and dispensaries, where prescription and over-the-counter medicines are sold.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`${osm_amenities.amenity} = 'pharmacy'`,
@@ -259,7 +252,7 @@ export const healthCareSubCategories: Record<
     topics: genericHealthCareTopics,
   },
   therapists: {
-    name: () => t("Therapy and Alternative Medicine Centers"),
+    name: t("Therapy and Alternative Medicine Centers"),
     parent: "health-care",
     weight: weight,
     osmTags: [
@@ -268,10 +261,9 @@ export const healthCareSubCategories: Record<
       { key: "healthcare", value: "speech_therapist" },
       { key: "healthcare", value: "physiotherapist" },
     ],
-    description: () =>
-      t(
-        "Facilities for physical therapy, occupational therapy, speech therapy, physiotherapy, and practices in alternative medicine.",
-      ),
+    description: t(
+      "Facilities for physical therapy, occupational therapy, speech therapy, physiotherapy, and practices in alternative medicine.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`(${sql.join(
@@ -287,14 +279,13 @@ export const healthCareSubCategories: Record<
     topics: genericHealthCareTopics,
   },
   "psycho-therapists": {
-    name: () => t("Psychotherapy Practices"),
+    name: t("Psychotherapy Practices"),
     parent: "health-care",
     weight: weight,
     osmTags: [{ key: "healthcare", value: "psychotherapist" }],
-    description: () =>
-      t(
-        "Offices and centers where psychotherapists offer mental health counseling and support.",
-      ),
+    description: t(
+      "Offices and centers where psychotherapists offer mental health counseling and support.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`${osm_amenities.healthcare} = 'psychotherapist'`,
@@ -302,7 +293,7 @@ export const healthCareSubCategories: Record<
     topics: genericHealthCareTopics,
   },
   "other-health-facilities": {
-    name: () => t("Other Health Facilities"),
+    name: t("Other Health Facilities"),
     parent: "health-care",
     weight: weight,
     osmTags: [
@@ -317,10 +308,9 @@ export const healthCareSubCategories: Record<
       { key: "healthcare", value: "birthing_centre" },
       { key: "healthcare", value: "postpartum_care" },
     ],
-    description: () =>
-      t(
-        "Includes health posts, blood donation centers, dialysis centers, hospices, midwife care, rehabilitation, sample collection sites, vaccination centers, birthing centers, and postpartum recovery facilities.",
-      ),
+    description: t(
+      "Includes health posts, blood donation centers, dialysis centers, hospices, midwife care, rehabilitation, sample collection sites, vaccination centers, birthing centers, and postpartum recovery facilities.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`(${sql.join(
@@ -342,7 +332,7 @@ export const healthCareSubCategories: Record<
     topics: genericHealthCareTopics,
   },
   "health-shops": {
-    name: () => t("Medical Supply & Specialized Health Shops"),
+    name: t("Medical Supply & Specialized Health Shops"),
     parent: "health-care",
     weight: weight,
     osmTags: [
@@ -352,10 +342,9 @@ export const healthCareSubCategories: Record<
       { key: "shop", value: "dentures" },
       { key: "shop", value: "herbalist" },
     ],
-    description: () =>
-      t(
-        "Shops or stores specializing in medical supplies, visual aids, hearing aids, dentures, and herbal medicine products.",
-      ),
+    description: t(
+      "Shops or stores specializing in medical supplies, visual aids, hearing aids, dentures, and herbal medicine products.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`(${sql.join(
@@ -371,4 +360,4 @@ export const healthCareSubCategories: Record<
     },
     topics: genericHealthCareTopics,
   },
-};
+});

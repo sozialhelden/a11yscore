@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { osm_amenities } from "~/db/schema/osm-sync";
-import { t } from "~/utils/i18n";
+import type { Translate } from "~/utils/i18n";
 import type {
   SubCategory,
   TopLevelCategory,
@@ -11,15 +11,15 @@ import type {
  */
 
 export type FoodAndDrinksTopLevelCategoryId = "food-and-drinks";
-export const foodAndDrinksTopLevelCategory: ({
+export const getFoodAndDrinksTopLevelCategory = ({
+  t,
   weight,
 }: {
+  t: Translate;
   weight: number;
-}) => Record<FoodAndDrinksTopLevelCategoryId, Omit<TopLevelCategory, "id">> = ({
-  weight,
-}) => ({
+}): Record<FoodAndDrinksTopLevelCategoryId, Omit<TopLevelCategory, "id">> => ({
   "food-and-drinks": {
-    name: () => t("Food and Drinks"),
+    name: t("Food and Drinks"),
     sustainableDevelopmentGoals: [2, 12, 13, 14],
     weight,
     interpretation: (score) => {
@@ -34,10 +34,9 @@ export const foodAndDrinksTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
-    description: () =>
-      t(
-        "This category includes various dining and shopping venues, including restaurants, cafes, bakeries, and food stores, as well as access to public drinking water.",
-      ),
+    description: t(
+      "This category includes various dining and shopping venues, including restaurants, cafes, bakeries, and food stores, as well as access to public drinking water.",
+    ),
   },
 });
 
@@ -186,15 +185,14 @@ export type FoodAndDrinksSubCategoryId =
   | "canteen"
   | "ice-cream";
 
-const weight = 1 / 10;
-export const foodAndDrinksSubCategories: Record<
-  FoodAndDrinksSubCategoryId,
-  Omit<SubCategory, "id">
-> = {
+const oneTenth = 1 / 10;
+export const getFoodAndDrinksSubCategories = (
+  t: Translate,
+): Record<FoodAndDrinksSubCategoryId, Omit<SubCategory, "id">> => ({
   "drinking-water": {
-    name: () => t("Drinking water"),
+    name: t("Drinking water"),
     parent: "food-and-drinks",
-    weight: weight,
+    weight: oneTenth,
     osmTags: [
       { key: "shop", value: "water" },
       { key: "fountain", value: "drinking" },
@@ -202,10 +200,9 @@ export const foodAndDrinksSubCategories: Record<
       { key: "amenity", value: "drinking_water" },
       { key: "drinking_water", value: "yes" },
     ],
-    description: () =>
-      t(
-        "Includes drinking water fountains, springs, water stores and public taps",
-      ),
+    description: t(
+      "Includes drinking water fountains, springs, water stores and public taps",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`(${sql.join(
@@ -250,7 +247,7 @@ export const foodAndDrinksSubCategories: Record<
     ],
   },
   bars: {
-    name: () => t("Bars and pubs"),
+    name: t("Bars and pubs"),
     parent: "food-and-drinks",
     weight: 0.05,
     osmTags: [
@@ -272,13 +269,12 @@ export const foodAndDrinksSubCategories: Record<
     topics: genericGastronomyTopics,
   },
   "food-stores": {
-    name: () => t("Food stores"),
+    name: t("Food stores"),
     parent: "food-and-drinks",
-    weight: weight,
-    description: () =>
-      t(
-        "Includes butcher shops, cheese stores, dairy stores, chocolate shops, coffee shops, delis, farm stores, general food shops, greengrocers, health food stores, pasta shops, seafood markets, spice shops, tea shops, nut stores, tortilla shops, wine shops and liquor stores",
-      ),
+    weight: oneTenth,
+    description: t(
+      "Includes butcher shops, cheese stores, dairy stores, chocolate shops, coffee shops, delis, farm stores, general food shops, greengrocers, health food stores, pasta shops, seafood markets, spice shops, tea shops, nut stores, tortilla shops, wine shops and liquor stores",
+    ),
     osmTags: [
       { key: "shop", value: "butcher" },
       { key: "shop", value: "cheese" },
@@ -328,7 +324,7 @@ export const foodAndDrinksSubCategories: Record<
     topics: genericShopTopics,
   },
   "ice-cream": {
-    name: () => t("Ice cream shops"),
+    name: t("Ice cream shops"),
     parent: "food-and-drinks",
     weight: 0.05,
     osmTags: [
@@ -389,9 +385,9 @@ export const foodAndDrinksSubCategories: Record<
     ],
   },
   bakeries: {
-    name: () => t("Bakeries"),
+    name: t("Bakeries"),
     parent: "food-and-drinks",
-    weight: weight,
+    weight: oneTenth,
     osmTags: [
       { key: "shop", value: "bakery" },
       { key: "shop", value: "confectionery" },
@@ -452,7 +448,7 @@ export const foodAndDrinksSubCategories: Record<
     ],
   },
   restaurants: {
-    name: () => t("Restaurants"),
+    name: t("Restaurants"),
     parent: "food-and-drinks",
     weight: 0.2,
     osmTags: [{ key: "amenity", value: "restaurant" }],
@@ -463,9 +459,9 @@ export const foodAndDrinksSubCategories: Record<
     topics: genericGastronomyTopics,
   },
   cafes: {
-    name: () => t("Cafes"),
+    name: t("Cafes"),
     parent: "food-and-drinks",
-    weight: weight,
+    weight: oneTenth,
     osmTags: [{ key: "amenity", value: "cafe" }],
     sql: {
       from: osm_amenities,
@@ -474,9 +470,9 @@ export const foodAndDrinksSubCategories: Record<
     topics: genericGastronomyTopics,
   },
   "fast-food": {
-    name: () => t("Fast food"),
+    name: t("Fast food"),
     parent: "food-and-drinks",
-    weight: weight,
+    weight: oneTenth,
     osmTags: [{ key: "amenity", value: "fast_food" }],
     sql: {
       from: osm_amenities,
@@ -485,9 +481,9 @@ export const foodAndDrinksSubCategories: Record<
     topics: genericGastronomyTopics,
   },
   canteen: {
-    name: () => t("Canteen"),
+    name: t("Canteen"),
     parent: "food-and-drinks",
-    weight: weight,
+    weight: oneTenth,
     osmTags: [
       { key: "amenity", value: "canteen" },
       { key: "fast_food", value: "cafeteria" },
@@ -499,9 +495,9 @@ export const foodAndDrinksSubCategories: Record<
     topics: genericGastronomyTopics,
   },
   "food-court": {
-    name: () => t("Food court"),
+    name: t("Food court"),
     parent: "food-and-drinks",
-    weight: weight,
+    weight: oneTenth,
     osmTags: [{ key: "amenity", value: "food_court" }],
     sql: {
       from: osm_amenities,
@@ -509,4 +505,4 @@ export const foodAndDrinksSubCategories: Record<
     },
     topics: genericGastronomyTopics,
   },
-};
+});

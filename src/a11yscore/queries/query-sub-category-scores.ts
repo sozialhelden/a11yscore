@@ -2,7 +2,7 @@ import { type SQL, sql } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 import { osmSyncDb } from "~/db";
 import type { OSMTag, SubCategory } from "~~/src/a11yscore/config/categories";
-import { criteria } from "~~/src/a11yscore/config/criteria";
+import { getCriterionById } from "~~/src/a11yscore/config/criteria";
 import { minDataQualityFactor } from "~~/src/a11yscore/config/data-quality";
 import {
   alias,
@@ -95,7 +95,7 @@ export function getCriteriaSelectClauses(subCategory: SubCategory): SQL[] {
       );
 
       const table = subCategory.sql.from;
-      const criterionProperties = criteria[criterionId];
+      const criterionProperties = getCriterionById(criterionId);
 
       selects.push(
         sql`${getTagCountSql(table, criterionProperties.osmTags)} AS ${tagCountAlias}`,

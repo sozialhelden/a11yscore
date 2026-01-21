@@ -1,25 +1,20 @@
-import { sql } from "drizzle-orm";
-import { osm_amenities } from "~/db/schema/osm-sync";
-import { t } from "~/utils/i18n";
-import type {
-  SubCategory,
-  TopLevelCategory,
-} from "~~/src/a11yscore/config/categories/index";
+import type { Translate } from "~/utils/i18n";
+import type { TopLevelCategory } from "~~/src/a11yscore/config/categories/index";
 
 /*
  * top-level category
  */
 
 export type WaysCrossingsTopLevelCategoryId = "ways-crossings";
-export const waysCrossingsTopLevelCategory: ({
+export const getWaysCrossingsTopLevelCategory = ({
+  t,
   weight,
 }: {
+  t: Translate;
   weight: number;
-}) => Record<WaysCrossingsTopLevelCategoryId, Omit<TopLevelCategory, "id">> = ({
-  weight,
-}) => ({
+}): Record<WaysCrossingsTopLevelCategoryId, Omit<TopLevelCategory, "id">> => ({
   "ways-crossings": {
-    name: () => t("Ways and Crossings"),
+    name: t("Ways and Crossings"),
     sustainableDevelopmentGoals: [3, 4, 10],
     weight,
     interpretation: (score) => {
@@ -34,10 +29,9 @@ export const waysCrossingsTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
-    description: () =>
-      t(
-        "This category will evaluate the accessibility of ways and crossings, including pavement surfaces, curb heights, intersections and crossings and traffic lights.",
-      ),
+    description: t(
+      "This category will evaluate the accessibility of ways and crossings, including pavement surfaces, curb heights, intersections and crossings and traffic lights.",
+    ),
     planned: true,
   },
 });

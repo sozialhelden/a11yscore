@@ -10,7 +10,7 @@ export const topLevelCategoryView: JsonView<TopLevelCategory> = ({
 }) => {
   return {
     id,
-    name: name(),
+    name,
   };
 };
 
@@ -22,8 +22,8 @@ export const subCategoryView: JsonView<SubCategory> = ({
 }) => {
   return {
     id,
-    name: name(),
-    description: description?.(),
+    name,
+    description,
     osmTags,
   };
 };

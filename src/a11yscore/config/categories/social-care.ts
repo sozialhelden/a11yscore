@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { osm_amenities } from "~/db/schema/osm-sync";
-import { t } from "~/utils/i18n";
+import type { Translate } from "~/utils/i18n";
 import type {
   SubCategory,
   TopLevelCategory,
@@ -11,15 +11,15 @@ import type {
  */
 
 export type SocialCareTopLevelCategoryId = "social-care";
-export const socialCareTopLevelCategory: ({
+export const getSocialCareTopLevelCategory = ({
+  t,
   weight,
 }: {
+  t: Translate;
   weight: number;
-}) => Record<SocialCareTopLevelCategoryId, Omit<TopLevelCategory, "id">> = ({
-  weight,
-}) => ({
+}): Record<SocialCareTopLevelCategoryId, Omit<TopLevelCategory, "id">> => ({
   "social-care": {
-    name: () => t("Social Care"),
+    name: t("Social Care"),
     sustainableDevelopmentGoals: [1, 2, 3, 5, 10, 11, 16],
     weight,
     interpretation: (score) => {
@@ -34,10 +34,9 @@ export const socialCareTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
-    description: () =>
-      t(
-        "This category includes essential support services, including community centers, counselling, shelters, and facilities for seniors, youth, and people with disabilities.",
-      ),
+    description: t(
+      "This category includes essential support services, including community centers, counselling, shelters, and facilities for seniors, youth, and people with disabilities.",
+    ),
   },
 });
 
@@ -123,12 +122,11 @@ export type SocialCareSubCategoryId =
 
 const weight = 1 / 13;
 
-export const socialCareSubCategories: Record<
-  SocialCareSubCategoryId,
-  Omit<SubCategory, "id">
-> = {
+export const getSocialCareSubCategories = (
+  t: Translate,
+): Record<SocialCareSubCategoryId, Omit<SubCategory, "id">> => ({
   "community-centers": {
-    name: () => t("Community Centers"),
+    name: t("Community Centers"),
     parent: "social-care",
     weight: weight,
     osmTags: [
@@ -136,7 +134,7 @@ export const socialCareSubCategories: Record<
       { key: "amenity", value: "social_centre" },
       { key: "social_facility:for", value: "community" },
     ],
-    description: () => t("Includes community centers and social centers."),
+    description: t("Includes community centers and social centers."),
     sql: {
       from: osm_amenities,
       where: sql`(${sql.join(
@@ -151,7 +149,7 @@ export const socialCareSubCategories: Record<
     topics: genericSocialCareTopics,
   },
   "counselling-services": {
-    name: () => t("Counselling Services and Social Support"),
+    name: t("Counselling Services and Social Support"),
     parent: "social-care",
     weight: weight,
     osmTags: [
@@ -160,10 +158,9 @@ export const socialCareSubCategories: Record<
       { key: "healthcare:counselling", value: "family" },
       { key: "social_facility:for", value: "family" },
     ],
-    description: () =>
-      t(
-        "Includes non-medical counselling such as family and addiction counselling.",
-      ),
+    description: t(
+      "Includes non-medical counselling such as family and addiction counselling.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`(${sql.join(
@@ -179,14 +176,13 @@ export const socialCareSubCategories: Record<
     topics: genericSocialCareTopics,
   },
   "ambulatory-services": {
-    name: () => t("Ambulatory Service Offices"),
+    name: t("Ambulatory Service Offices"),
     parent: "social-care",
     weight: weight,
     osmTags: [{ key: "social_facility", value: "ambulatory_care" }],
-    description: () =>
-      t(
-        "Includes offices providing ambulatory social services and mobile care.",
-      ),
+    description: t(
+      "Includes offices providing ambulatory social services and mobile care.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`${osm_amenities.tags}->'social_facility' = 'ambulatory_care'`,
@@ -194,14 +190,13 @@ export const socialCareSubCategories: Record<
     topics: genericSocialCareTopics,
   },
   "senior-facilities": {
-    name: () => t("Senior Facilities"),
+    name: t("Senior Facilities"),
     parent: "social-care",
     weight: weight,
     osmTags: [{ key: "social_facility:for", value: "senior" }],
-    description: () =>
-      t(
-        "Includes facilities for seniors such as residential groups, nursing homes, assisted living, and day care.",
-      ),
+    description: t(
+      "Includes facilities for seniors such as residential groups, nursing homes, assisted living, and day care.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`${osm_amenities.tags}->'social_facility:for' = 'senior'`,
@@ -209,7 +204,7 @@ export const socialCareSubCategories: Record<
     topics: genericSocialCareTopics,
   },
   "child-youth-facilities": {
-    name: () => t("Child and Youth Facilities"),
+    name: t("Child and Youth Facilities"),
     parent: "social-care",
     weight: weight,
     osmTags: [
@@ -220,10 +215,9 @@ export const socialCareSubCategories: Record<
       { key: "social_facility:for", value: "youth" },
       { key: "social_facility:for", value: "orphan" },
     ],
-    description: () =>
-      t(
-        "Includes facilities for children and youth such as residential groups, orphanages, shelters, and social work organizations.",
-      ),
+    description: t(
+      "Includes facilities for children and youth such as residential groups, orphanages, shelters, and social work organizations.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`(${sql.join(
@@ -241,17 +235,16 @@ export const socialCareSubCategories: Record<
     topics: genericSocialCareTopics,
   },
   "disabled-facilities": {
-    name: () => t("Facilities for People with Disabilities"),
+    name: t("Facilities for People with Disabilities"),
     parent: "social-care",
     weight: weight,
     osmTags: [
       { key: "social_facility:for", value: "disabled" },
       { key: "social_facility:for", value: "mental_health" },
     ],
-    description: () =>
-      t(
-        "Includes facilities for people with disabilities such as residential groups, nursing homes, assisted living, day care, and workshops for people with disabilities.",
-      ),
+    description: t(
+      "Includes facilities for people with disabilities such as residential groups, nursing homes, assisted living, day care, and workshops for people with disabilities.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`(${sql.join(
@@ -265,7 +258,7 @@ export const socialCareSubCategories: Record<
     topics: genericSocialCareTopics,
   },
   "refugee-accommodations": {
-    name: () => t("Accommodations for Refugees and Migrants"),
+    name: t("Accommodations for Refugees and Migrants"),
     parent: "social-care",
     weight: weight,
     osmTags: [
@@ -279,8 +272,9 @@ export const socialCareSubCategories: Record<
       { key: "social_facility:for", value: "migrants;refugees" },
       { key: "social_facility:for", value: "displaced" },
     ],
-    description: () =>
-      t("Includes shelters and accommodations for refugees and immigrants."),
+    description: t(
+      "Includes shelters and accommodations for refugees and immigrants.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`${osm_amenities.tags}->'social_facility' = 'shelter'
@@ -301,7 +295,7 @@ export const socialCareSubCategories: Record<
     topics: genericSocialCareTopics,
   },
   "women-mother-shelters": {
-    name: () => t("Shelters for Women and Mothers"),
+    name: t("Shelters for Women and Mothers"),
     parent: "social-care",
     weight: weight,
     osmTags: [
@@ -315,10 +309,9 @@ export const socialCareSubCategories: Record<
       { key: "social_facility:for", value: "women;child" },
       { key: "social_facility:for", value: "women;children" },
     ],
-    description: () =>
-      t(
-        "Includes shelters and accommodations for women, mothers, and their children.",
-      ),
+    description: t(
+      "Includes shelters and accommodations for women, mothers, and their children.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`${osm_amenities.tags}->'social_facility' = 'shelter'
@@ -339,7 +332,7 @@ export const socialCareSubCategories: Record<
     topics: genericSocialCareTopics,
   },
   "queer-facilities": {
-    name: () => t("Facilities for Queer People"),
+    name: t("Facilities for Queer People"),
     parent: "social-care",
     weight: weight,
     osmTags: [
@@ -347,10 +340,9 @@ export const socialCareSubCategories: Record<
       // { key: "social_facility:for", value: "women,lgbtq" },
       // { key: "social_facility:for", value: "women;LGBTI" },
     ],
-    description: () =>
-      t(
-        "Includes facilities and services specifically for queer people, such as LGBTQ+ communities.",
-      ),
+    description: t(
+      "Includes facilities and services specifically for queer people, such as LGBTQ+ communities.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`(${sql.join(
@@ -365,14 +357,13 @@ export const socialCareSubCategories: Record<
     topics: genericSocialCareTopics,
   },
   "addiction-facilities": {
-    name: () => t("Facilities for People with Addiction Problems"),
+    name: t("Facilities for People with Addiction Problems"),
     parent: "social-care",
     weight: weight,
     osmTags: [{ key: "social_facility:for", value: "drug_addicted" }],
-    description: () =>
-      t(
-        "Includes facilities for people with addiction issues, such as addiction counseling, rehabilitation, and support centers.",
-      ),
+    description: t(
+      "Includes facilities for people with addiction issues, such as addiction counseling, rehabilitation, and support centers.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`${osm_amenities.tags}->'social_facility:for' = 'drug_addicted'`,
@@ -380,14 +371,13 @@ export const socialCareSubCategories: Record<
     topics: genericSocialCareTopics,
   },
   "clothing-banks": {
-    name: () => t("Clothing Banks"),
+    name: t("Clothing Banks"),
     parent: "social-care",
     weight: weight,
     osmTags: [{ key: "social_facility", value: "clothing_bank" }],
-    description: () =>
-      t(
-        "Includes clothing banks where people in need can receive free or low-cost clothing.",
-      ),
+    description: t(
+      "Includes clothing banks where people in need can receive free or low-cost clothing.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`${osm_amenities.tags}->'social_facility' = 'clothing_bank'`,
@@ -395,14 +385,13 @@ export const socialCareSubCategories: Record<
     topics: genericSocialCareTopics,
   },
   "charity-shops": {
-    name: () => t("Charity Shops"),
+    name: t("Charity Shops"),
     parent: "social-care",
     weight: weight,
     osmTags: [{ key: "shop", value: "charity" }],
-    description: () =>
-      t(
-        "Includes charity shops offering affordable clothing, household goods, and other items.",
-      ),
+    description: t(
+      "Includes charity shops offering affordable clothing, household goods, and other items.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`${osm_amenities.tags}->'shop' = 'charity'`,
@@ -410,21 +399,20 @@ export const socialCareSubCategories: Record<
     topics: genericSocialCareTopics,
   },
   "soup-kitchens-food-banks": {
-    name: () => t("Food Banks and Soup Kitchens"),
+    name: t("Food Banks and Soup Kitchens"),
     parent: "social-care",
     weight: weight,
     osmTags: [
       { key: "social_facility", value: "soup_kitchen" },
       { key: "social_facility", value: "food_bank" },
     ],
-    description: () =>
-      t(
-        "Includes soup kitchens and food banks providing meals or food support to people in need.",
-      ),
+    description: t(
+      "Includes soup kitchens and food banks providing meals or food support to people in need.",
+    ),
     sql: {
       from: osm_amenities,
       where: sql`${osm_amenities.tags}->'social_facility' = 'soup_kitchen' or ${osm_amenities.tags}->'social_facility' = 'food_bank'`,
     },
     topics: genericSocialCareTopics,
   },
-};
+});

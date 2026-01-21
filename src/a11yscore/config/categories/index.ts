@@ -1,53 +1,54 @@
 import type { SQL } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
+import { dummyTranslate, type Translate } from "~/utils/i18n";
+import {
+  type CultureTopLevelCategoryId,
+  getCultureTopLevelCategory,
+} from "~~/src/a11yscore/config/categories/culture";
+import {
+  type EducationTopLevelCategoryId,
+  getEducationTopLevelCategory,
+} from "~~/src/a11yscore/config/categories/education";
 import {
   type FoodAndDrinksSubCategoryId,
   type FoodAndDrinksTopLevelCategoryId,
-  foodAndDrinksSubCategories,
-  foodAndDrinksTopLevelCategory,
+  getFoodAndDrinksSubCategories,
+  getFoodAndDrinksTopLevelCategory,
 } from "~~/src/a11yscore/config/categories/food-and-drinks";
 import {
+  type GovernmentBuildingsTopLevelCategoryId,
+  getGovernmentBuildingsTopLevelCategory,
+} from "~~/src/a11yscore/config/categories/government-buildings";
+import {
+  getHealthCareSubCategories,
+  getHealthCareTopLevelCategory,
+  type HealthCareSubCategoryId,
+  type HealthCareTopLevelCategoryId,
+} from "~~/src/a11yscore/config/categories/health-care";
+import {
+  getPublicTransportSubCategories,
+  getPublicTransportTopLevelCategory,
   type PublicTransportSubCategoryId,
   type PublicTransportTopLevelCategoryId,
-  publicTransportSubCategories,
-  publicTransportTopLevelCategory,
 } from "~~/src/a11yscore/config/categories/public-transport";
+import {
+  getSocialCareSubCategories,
+  getSocialCareTopLevelCategory,
+  type SocialCareSubCategoryId,
+  type SocialCareTopLevelCategoryId,
+} from "~~/src/a11yscore/config/categories/social-care";
+import {
+  getWaysCrossingsTopLevelCategory,
+  type WaysCrossingsTopLevelCategoryId,
+} from "~~/src/a11yscore/config/categories/ways-crossings";
+import {
+  getWorkTopLevelCategory,
+  type WorkTopLevelCategoryId,
+} from "~~/src/a11yscore/config/categories/work";
 import type { CriterionId } from "~~/src/a11yscore/config/criteria";
 import type { SustainableDevelopmentGoalId } from "~~/src/a11yscore/config/sdgs";
 import type { TopicId } from "~~/src/a11yscore/config/topics";
 import { addIdToConfigEntries } from "~~/src/a11yscore/utils/config";
-import {
-  healthCareSubCategories,
-  type HealthCareSubCategoryId,
-  healthCareTopLevelCategory,
-  type HealthCareTopLevelCategoryId,
-} from "~~/src/a11yscore/config/categories/health-care";
-import {
-  socialCareSubCategories,
-  type SocialCareSubCategoryId,
-  socialCareTopLevelCategory,
-  type SocialCareTopLevelCategoryId,
-} from "~~/src/a11yscore/config/categories/social-care";
-import {
-  educationTopLevelCategory,
-  type EducationTopLevelCategoryId,
-} from "~~/src/a11yscore/config/categories/education";
-import {
-  governmentBuildingsTopLevelCategory,
-  type GovernmentBuildingsTopLevelCategoryId,
-} from "~~/src/a11yscore/config/categories/government-buildings";
-import {
-  workTopLevelCategory,
-  type WorkTopLevelCategoryId,
-} from "~~/src/a11yscore/config/categories/work";
-import {
-  cultureTopLevelCategory,
-  type CultureTopLevelCategoryId,
-} from "~~/src/a11yscore/config/categories/culture";
-import {
-  waysCrossingsTopLevelCategory,
-  type WaysCrossingsTopLevelCategoryId,
-} from "~~/src/a11yscore/config/categories/ways-crossings";
 
 export type TopLevelCategoryId =
   | FoodAndDrinksTopLevelCategoryId
@@ -96,13 +97,13 @@ export type TopLevelCategory = {
   id: TopLevelCategoryId;
   /**
    * The name of the category, used for display purposes.
-   * Make sure to use the `t` function to translate the name.
+   * Make sure to use the given `t` function to translate the name.
    * @example
    * ```
-   * () => t("Food and Drinks")
+   * t("Food and Drinks")
    * ```
    */
-  name: () => string;
+  name: string;
   /**
    * A list of Sustainable Development Goals (SDGs) that this category
    * contributes to.
@@ -141,19 +142,17 @@ export type TopLevelCategory = {
    */
   interpretation: (score: number) => string;
   /**
-   * A description of the contents of the category, used for display purposes.
-   * Make sure to use the `t` function to translate the description.
+   * A description of the category, used for display purposes.
+   * Make sure to use the given `t` function to translate the description.
    * @example
    * ```
-   * () =>
-   *       t(
-   *         "This category includes various dining and shopping venues, including restaurants, cafes,
-   *         bakeries, and food stores, as well as access to public drinking water.",
-   *       ),
-   *
+   * t(
+   *    `This category includes various dining and shopping venues, including restaurants, cafes,
+   *    bakeries, and food stores, as well as access to public drinking water.`
+   * ),
    * ```
    */
-  description?: () => string;
+  description?: string;
   /**
    * A boolean flag to mark upcoming categories. These will be handled differently by the front-end, are excluded from
    * score computation, and contain no subcategories.
@@ -184,13 +183,13 @@ export type SubCategory = {
   parent: TopLevelCategoryId;
   /**
    * The name of the category, used for display purposes.
-   * Make sure to use the `t` function to translate the name.
+   * Make sure to use the given `t` function to translate the name.
    * @example
    * ```
-   * () => t("Gastronomy")
+   * t("Gastronomy")
    * ```
    */
-  name: () => string;
+  name: string;
   /**
    * A numeric weight that indicates the importance of this sub-category inside
    * the parent category. Ideally, the weights of all sub-categories should
@@ -203,13 +202,13 @@ export type SubCategory = {
   weight: number;
   /**
    * An optional description of the category, used for display purposes.
-   * Make sure to use the `t` function to translate the description.
+   * Make sure to use the given `t` function to translate the description.
    * @example
    * ```
-   * () => t("Includes restaurants, cafes, fast-food, cafeteria and canteens.")
+   * t("Includes restaurants, cafes, fast-food, cafeteria and canteens.")
    * ```
    */
-  description?: () => string;
+  description?: string;
   /**
    * Some individual parts of SQL query that will be used to select the data for
    * this sub-category.
@@ -297,20 +296,20 @@ export type SubCategory = {
       /**
        * A description why this criterion is relevant for this topic in this category. This will
        * override the generic reason provided in the criterion configuration.
-       * This will be used for display purposes in the frontend, so make sure to use the `t` function
-       * to translate the description. Markdown syntax is allowed!
+       * This will be used for display purposes in the frontend, so make sure to use the given `t`
+       * function to translate the description. Markdown syntax is allowed!
        * @example
        * ```
-       * () => t("Wheelchair users **must** be able to enter and use the facilities without barriers.")
+       * t("Wheelchair users **must** be able to enter and use the facilities without barriers.")
        * ```
        */
-      reason?: () => string;
+      reason?: string;
       /**
        * A list of recommendations on how to improve this criterion for this topic in this category.
        * This will override the generic recommendations provided in the criterion configuration, those
        * are passed as parameter to the function, so you can still use them if you want.
-       * This will be used for display purposes in the frontend, so make sure to use the `t` function
-       * to translate the description. Markdown syntax is allowed!
+       * This will be used for display purposes in the frontend, so make sure to use the given `t`
+       * function to translate the description. Markdown syntax is allowed!
        * @example
        * ```
        * () => [
@@ -323,11 +322,11 @@ export type SubCategory = {
        * A list of links that provide more information about this criterion. Can be e.g. links to
        * guides, norms, or other resources.
        * This will override the generic links provided in the criterion configuration. This will be
-       * used for display purposes in the frontend, so make sure to use the `t` function to translate
+       * used for display purposes in the frontend, so make sure to use the given `t` function to translate
        * the label.
        * @example
        * ```
-       * () => [
+       * [
        *     {
        *         label: t("DIN 18040 - Accessible building design"),
        *         url: "https://www.din18040.de/wc-toiletten.htm"
@@ -335,56 +334,46 @@ export type SubCategory = {
        * ]
        * ```
        */
-      links?: () => { url: string; label: string }[];
+      links?: { url: string; label: string }[];
     }>;
   }>;
 };
 
-const configuredTopLevelCategories: Record<
-  TopLevelCategoryId,
-  Omit<TopLevelCategory, "id">
-> = {
-  ...foodAndDrinksTopLevelCategory({ weight: 0.1 }),
-  ...publicTransportTopLevelCategory({ weight: 0.3 }),
-  ...healthCareTopLevelCategory({ weight: 0.3 }),
-  ...socialCareTopLevelCategory({ weight: 0.3 }),
-  ...educationTopLevelCategory({ weight: 0 }),
-  ...governmentBuildingsTopLevelCategory({ weight: 0 }),
-  ...workTopLevelCategory({ weight: 0 }),
-  ...cultureTopLevelCategory({ weight: 0 }),
-  ...waysCrossingsTopLevelCategory({ weight: 0 }),
+const getTopLevelCategories = (
+  t: Translate,
+): Record<TopLevelCategoryId, TopLevelCategory> => {
+  return addIdToConfigEntries<TopLevelCategoryId, TopLevelCategory>({
+    ...getFoodAndDrinksTopLevelCategory({ weight: 0.1, t }),
+    ...getHealthCareTopLevelCategory({ weight: 0.3, t }),
+    ...getPublicTransportTopLevelCategory({ weight: 0.3, t }),
+    ...getSocialCareTopLevelCategory({ weight: 0.3, t }),
+    ...getCultureTopLevelCategory({ weight: 0, t }),
+    ...getEducationTopLevelCategory({ weight: 0, t }),
+    ...getWorkTopLevelCategory({ weight: 0, t }),
+    ...getWaysCrossingsTopLevelCategory({ weight: 0, t }),
+    ...getGovernmentBuildingsTopLevelCategory({ weight: 0, t }),
+  });
 };
-
-const configuredSubCategories: Record<
-  SubCategoryId,
-  Omit<SubCategory, "id">
-> = {
-  ...foodAndDrinksSubCategories,
-  ...publicTransportSubCategories,
-  ...healthCareSubCategories,
-  ...socialCareSubCategories,
-  // ...educationSubCategories,
-  // ...governmentBuildingsSubCategories,
-  // ...workSubCategories,
-  // ...cultureSubCategories,
-  // ...waysCrossingsSubCategories,
-};
-
-const topLevelCategories: Record<TopLevelCategoryId, TopLevelCategory> =
-  addIdToConfigEntries<TopLevelCategoryId, TopLevelCategory>(
-    configuredTopLevelCategories,
-  );
-export const getTopLevelCategoryList = () => Object.values(topLevelCategories);
+export const getTopLevelCategoryList = (t?: Translate) =>
+  Object.values(getTopLevelCategories(t ?? dummyTranslate));
 export const getTopLevelCategoryIds = () =>
-  Object.keys(topLevelCategories) as TopLevelCategoryId[];
-export const getTopLevelCategoryById = (id: TopLevelCategoryId) =>
-  topLevelCategories[id];
+  Object.keys(getTopLevelCategories(dummyTranslate)) as TopLevelCategoryId[];
+export const getTopLevelCategoryById = (
+  id: TopLevelCategoryId,
+  t?: Translate,
+) => getTopLevelCategories(t ?? dummyTranslate)[id];
 
-const subCategories: Record<SubCategoryId, SubCategory> = addIdToConfigEntries<
-  SubCategoryId,
-  SubCategory
->(configuredSubCategories);
-export const getSubCategoryList = () => Object.values(subCategories);
+const getSubCategories = (t: Translate): Record<SubCategoryId, SubCategory> =>
+  addIdToConfigEntries<SubCategoryId, SubCategory>({
+    ...getFoodAndDrinksSubCategories(t),
+    ...getHealthCareSubCategories(t),
+    ...getPublicTransportSubCategories(t),
+    ...getSocialCareSubCategories(t),
+  });
+
+export const getSubCategoryList = (t?: Translate) =>
+  Object.values(getSubCategories(t ?? dummyTranslate));
 export const getSubCategoryIds = () =>
-  Object.keys(subCategories) as SubCategoryId[];
-export const getSubCategoryById = (id: SubCategoryId) => subCategories[id];
+  Object.keys(getSubCategories(dummyTranslate)) as SubCategoryId[];
+export const getSubCategoryById = (id: SubCategoryId, t: Translate) =>
+  getSubCategories(t ?? dummyTranslate)[id];

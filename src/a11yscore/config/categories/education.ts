@@ -1,25 +1,20 @@
-import { sql } from "drizzle-orm";
-import { osm_amenities } from "~/db/schema/osm-sync";
-import { t } from "~/utils/i18n";
-import type {
-  SubCategory,
-  TopLevelCategory,
-} from "~~/src/a11yscore/config/categories/index";
+import type { Translate } from "~/utils/i18n";
+import type { TopLevelCategory } from "~~/src/a11yscore/config/categories/index";
 
 /*
  * top-level category
  */
 
 export type EducationTopLevelCategoryId = "education";
-export const educationTopLevelCategory: ({
+export const getEducationTopLevelCategory = ({
+  t,
   weight,
 }: {
+  t: Translate;
   weight: number;
-}) => Record<EducationTopLevelCategoryId, Omit<TopLevelCategory, "id">> = ({
-  weight,
-}) => ({
+}): Record<EducationTopLevelCategoryId, Omit<TopLevelCategory, "id">> => ({
   education: {
-    name: () => t("Education"),
+    name: t("Education"),
     sustainableDevelopmentGoals: [4, 8, 9, 10],
     weight,
     interpretation: (score) => {
@@ -34,10 +29,9 @@ export const educationTopLevelCategory: ({
 
       return t("The score could not be determined due to missing data.");
     },
-    description: () =>
-      t(
-        "This category will evaluate the accessibility of educational facilities, including schools, universities, and libraries.",
-      ),
+    description: t(
+      "This category will evaluate the accessibility of educational facilities, including schools, universities, and libraries.",
+    ),
     planned: true,
   },
 });
