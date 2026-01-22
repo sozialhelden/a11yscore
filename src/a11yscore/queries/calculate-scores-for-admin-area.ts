@@ -39,17 +39,13 @@ export async function calculateScoresForAdminArea(
     const { add, aggregate } = createScoreAggregator();
 
     for (const topLevelCategory of getTopLevelCategoryList()) {
-      const result = await calculateTopLevelCategoryScore(tx, params, {
-        scoreId,
-        topLevelCategory,
-      });
-
-      if (!result) {
-        continue;
-      }
+      if (topLevelCategory.planned) continue;
 
       const { topLevelCategoryScore, topLevelCategoryDataQualityFactor } =
-        result;
+        await calculateTopLevelCategoryScore(tx, params, {
+          scoreId,
+          topLevelCategory,
+        });
       add({
         componentScore: topLevelCategoryScore,
         componentDataQualityFactor: topLevelCategoryDataQualityFactor,
@@ -75,13 +71,6 @@ async function calculateTopLevelCategoryScore(
     topLevelCategory: TopLevelCategory;
   },
 ) {
-  // we exclude planned categories from the score computation and database writes
-  // and just set the top level category score and data quality factor to 0 when assembling
-  // the endpoint response in get-score.ts
-  if (topLevelCategory.planned) {
-    return;
-  }
-
   const topLevelCategoryScoreId = await createTopLevelCategoryScoreResult(tx, {
     scoreId,
     topLevelCategoryId: topLevelCategory.id,
@@ -91,8 +80,6 @@ async function calculateTopLevelCategoryScore(
   });
 
   for (const subCategory of getChildCategories(topLevelCategory.id)) {
-    console.debug("toplevel category", topLevelCategory.id);
-    console.debug("sublevel category", subCategory.id);
     const { subCategoryScore, subCategoryDataQualityFactor } =
       await calculateSubCategoryScore(tx, params, {
         topLevelCategoryScoreId,
