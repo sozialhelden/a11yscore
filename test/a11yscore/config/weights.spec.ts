@@ -1,11 +1,9 @@
 import { describe, expect, test } from "vitest";
 import {
-  getTopLevelCategoryIds,
+  getChildCategories,
   getTopLevelCategoryList,
-  type TopLevelCategoryId,
-  type TopLevelCategory,
-} from "~~/src/a11yscore/config/categories";
-import { getChildCategories } from "~~/src/a11yscore/utils/categories";
+} from "~~/src/a11yscore/config";
+import type { TopLevelCategory } from "~~/src/a11yscore/config/categories";
 
 describe("weights should add up to 1", () => {
   const activeCategories: TopLevelCategory[] = getTopLevelCategoryList().filter(

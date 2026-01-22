@@ -1,6 +1,6 @@
 import type { SQL } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
-import { dummyTranslate, type Translate } from "~/utils/i18n";
+import type { Translate } from "~/utils/i18n";
 import type { OSMTag } from "~~/src/a11yscore/config/categories";
 import {
   getVisionCriteria,
@@ -142,7 +142,7 @@ export type Criterion = CriterionProperties & {
   id: CriterionId;
 };
 
-const getCriteria = (t: Translate): Record<CriterionId, Criterion> =>
+export const getCriteria = (t: Translate): Record<CriterionId, Criterion> =>
   addIdToConfigEntries<CriterionId, CriterionProperties>({
     ...getGeneralCriteria(t),
     ...getVisionCriteria(t),
@@ -153,10 +153,3 @@ const getCriteria = (t: Translate): Record<CriterionId, Criterion> =>
     ...getWebsiteCriteria(t),
     ...getWheelchairCriteria(t),
   });
-
-export const getCriterionList = (t?: Translate): Criterion[] =>
-  Object.values(getCriteria(t ?? dummyTranslate));
-
-export const getCriterionById = (id: CriterionId, t?: Translate): Criterion => {
-  return getCriteria(t ?? dummyTranslate)[id];
-};

@@ -1,7 +1,9 @@
 import { useIsDevelopment } from "~/utils/env";
-import { getTopLevelCategoryList } from "~~/src/a11yscore/config/categories";
-import { getCriterionList } from "~~/src/a11yscore/config/criteria";
-import { getChildCategories } from "~~/src/a11yscore/utils/categories";
+import {
+  getChildCategories,
+  getCriterionList,
+  getTopLevelCategoryList,
+} from "~~/src/a11yscore/config";
 import { byName } from "~~/src/a11yscore/utils/sort";
 import {
   subCategoryView,

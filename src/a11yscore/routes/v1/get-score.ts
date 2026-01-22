@@ -1,19 +1,21 @@
 import { eq } from "drizzle-orm";
-import { appDb } from "~/db";
+import { appDb, osmSyncDb } from "~/db";
 import { adminAreas } from "~/db/schema/app";
+import { osm_admin } from "~/db/schema/osm-sync";
 import { useIsDevelopment } from "~/utils/env";
 import {
+  getCriterionById,
   getSubCategoryById,
+  getTopicById,
   getTopLevelCategoryById,
   getTopLevelCategoryList,
-  type SubCategoryId,
-  type TopLevelCategoryId,
+} from "~~/src/a11yscore/config";
+import type {
+  SubCategoryId,
+  TopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories";
-import {
-  type CriterionId,
-  getCriterionById,
-} from "~~/src/a11yscore/config/criteria";
-import { getTopicById, type TopicId } from "~~/src/a11yscore/config/topics";
+import type { CriterionId } from "~~/src/a11yscore/config/criteria";
+import type { TopicId } from "~~/src/a11yscore/config/topics";
 import { queryScoreResultsByAdminArea } from "~~/src/a11yscore/queries/query-score-results-by-admin-area";
 import { dataIsUnavailable } from "~~/src/a11yscore/utils/data-quality";
 
