@@ -59,6 +59,7 @@ export default defineCachedEventHandler(
         message: "Calculated score for admin area not found",
       });
     }
+
     // there are no scores for planned categories in the database
     // thus, we manually set the score to 0
     const plannedCategories = getTopLevelCategoryList(t)
@@ -68,6 +69,7 @@ export default defineCachedEventHandler(
         name: name,
         description: description,
         interpretation: interpretation(0),
+        subCategories: [],
         score: {
           score: 0,
           dataQualityFactor: 0,
