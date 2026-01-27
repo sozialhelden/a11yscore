@@ -23,24 +23,6 @@ import {
 } from "~~/src/a11yscore/config/topics";
 
 /*
- * Topics
- */
-export const getTopicList = (t?: Translate): Topic[] =>
-  Object.values(getTopics(t ?? dummyTranslate));
-export const getTopicById = (id: TopicId, t?: Translate): Topic => {
-  return getTopics(t ?? dummyTranslate)[id];
-};
-
-/*
- * Criteria
- */
-export const getCriterionList = (t?: Translate): Criterion[] =>
-  Object.values(getCriteria(t ?? dummyTranslate));
-export const getCriterionById = (id: CriterionId, t?: Translate): Criterion => {
-  return getCriteria(t ?? dummyTranslate)[id];
-};
-
-/*
  * Top-level categories
  */
 export const getTopLevelCategoryList = (t?: Translate) =>
@@ -69,6 +51,24 @@ export const getSubCategoryIds = () =>
   Object.keys(getSubCategories(dummyTranslate)) as SubCategoryId[];
 export const getSubCategoryById = (id: SubCategoryId, t: Translate) =>
   getSubCategories(t ?? dummyTranslate)[id];
+
+/*
+ * Topics
+ */
+export const getTopicList = (t?: Translate): Topic[] =>
+  Object.values(getTopics(t ?? dummyTranslate));
+export const getTopicById = (id: TopicId, t?: Translate): Topic => {
+  return getTopics(t ?? dummyTranslate)[id];
+};
+
+/*
+ * Criteria
+ */
+export const getCriterionList = (t?: Translate): Criterion[] =>
+  Object.values(getCriteria(t ?? dummyTranslate));
+export const getCriterionById = (id: CriterionId, t?: Translate): Criterion => {
+  return getCriteria(t ?? dummyTranslate)[id];
+};
 
 /*
  * Sustainable Development Goals

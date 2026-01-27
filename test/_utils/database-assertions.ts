@@ -2,10 +2,11 @@ import { and, eq, gt, lt } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 import { expect } from "vitest";
 import { appDb, type osmSyncDb } from "~/db";
+import { NoRecordFoundError } from "~~/test/_utils/errors/NoRecordFoundError";
 
 type Database = typeof appDb | typeof osmSyncDb;
-type Table = PgTableWithColumns<any>;
-type Conditions = Record<
+export type Table = PgTableWithColumns<any>;
+export type Conditions = Record<
   string,
   string | number | boolean | { comparator: "eq" | "gt" | "lt"; value: string }
 >;
@@ -39,9 +40,7 @@ export async function query<T extends { [x: string]: any }>(
     );
 
   if (result.length === 0) {
-    throw new Error(
-      `No record found in table "${table}" matching conditions: ${JSON.stringify(conditions)}`,
-    );
+    throw new NoRecordFoundError(table, conditions);
   }
 
   return result;
@@ -54,6 +53,21 @@ export async function findFirst(
 ) {
   const results = await query(database, table, conditions);
   return results[0];
+}
+
+export async function findFirstOrNull(
+  db: Database,
+  table: Table,
+  conditions: Conditions,
+) {
+  try {
+    return await findFirst(db, table, conditions);
+  } catch (error) {
+    if (error instanceof NoRecordFoundError) {
+      return null;
+    }
+    throw error;
+  }
 }
 
 export async function appDbHas(table: Table, conditions: Conditions) {

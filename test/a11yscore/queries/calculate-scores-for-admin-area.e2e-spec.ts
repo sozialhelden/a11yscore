@@ -14,7 +14,7 @@ import {
 } from "~~/test/_factories/categories.factory";
 import { criteriaFactory } from "~~/test/_factories/criteria.factory";
 import { topicsFactory } from "~~/test/_factories/topics.factory";
-import { findFirst } from "~~/test/_utils/database-assertions";
+import { findFirst, findFirstOrNull } from "~~/test/_utils/database-assertions";
 import { mockCategories, mockCriteria } from "~~/test/_utils/mocks";
 import { seedAdminArea } from "~~/test/_utils/seeders";
 
@@ -35,11 +35,11 @@ describe("calculateScoresForAdminArea", () => {
     getCriteriaMock().mockReturnValue({
       [criterion.id]: criterion,
     });
-    getTopLevelCategoriesMock().mockReturnValue({
-      [topLevelCategory.id]: topLevelCategory,
-    });
     getSubCategoriesMock().mockReturnValue({
       [subCategory.id]: subCategory,
+    });
+    getTopLevelCategoriesMock().mockReturnValue({
+      [topLevelCategory.id]: topLevelCategory,
     });
 
     const { calculateScoresForAdminArea } = await import(
@@ -80,5 +80,24 @@ describe("calculateScoresForAdminArea", () => {
       criterion: criterion.id,
     });
     expect(criterionScore.id).toBeTruthy();
+  });
+
+  it("does not persist scores for planned categories in the database", async () => {
+    const plannedCategory = topLevelCategoryFactory({ planned: true });
+
+    getTopLevelCategoriesMock().mockReturnValue({
+      [plannedCategory.id]: plannedCategory,
+    });
+
+    const { calculateScoresForAdminArea } = await import(
+      "~~/src/a11yscore/queries/calculate-scores-for-admin-area"
+    );
+
+    await calculateScoresForAdminArea(getAdminArea().id, {});
+
+    const row = await findFirstOrNull(appDb, topLevelCategoryScores, {
+      topLevelCategory: plannedCategory.id,
+    });
+    expect(row).toBeNull();
   });
 });
