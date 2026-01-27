@@ -1,4 +1,3 @@
-import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { appDb } from "~/db";
 import {
@@ -15,6 +14,7 @@ import {
 } from "~~/test/_factories/categories.factory";
 import { criteriaFactory } from "~~/test/_factories/criteria.factory";
 import { topicsFactory } from "~~/test/_factories/topics.factory";
+import { findFirst } from "~~/test/_utils/database-assertions";
 import { mockCategories, mockCriteria } from "~~/test/_utils/mocks";
 import { seedAdminArea } from "~~/test/_utils/seeders";
 
@@ -48,67 +48,37 @@ describe("calculateScoresForAdminArea", () => {
 
     await calculateScoresForAdminArea(getAdminArea().id, {});
 
-    const score = (
-      await appDb
-        .select()
-        .from(scores)
-        .where(eq(scores.adminAreaId, getAdminArea().id))
-    ).shift();
+    const score = await findFirst(appDb, scores, {
+      adminAreaId: getAdminArea().id,
+    });
     expect(score.id).toBeTruthy();
 
-    const topLevelCategoryScore = (
-      await appDb
-        .select()
-        .from(topLevelCategoryScores)
-        .where(
-          and(
-            eq(topLevelCategoryScores.scoreId, score.id),
-            eq(topLevelCategoryScores.topLevelCategory, topLevelCategory.id),
-          ),
-        )
-    ).shift();
+    const topLevelCategoryScore = await findFirst(
+      appDb,
+      topLevelCategoryScores,
+      {
+        scoreId: score.id,
+        topLevelCategory: topLevelCategory.id,
+      },
+    );
     expect(topLevelCategoryScore.id).toBeTruthy();
 
-    const subCategoryScore = (
-      await appDb
-        .select()
-        .from(subCategoryScores)
-        .where(
-          and(
-            eq(
-              subCategoryScores.topLevelCategoryScoreId,
-              topLevelCategoryScore.id,
-            ),
-            eq(subCategoryScores.subCategory, subCategory.id),
-          ),
-        )
-    ).shift();
+    const subCategoryScore = await findFirst(appDb, subCategoryScores, {
+      topLevelCategoryScoreId: topLevelCategoryScore.id,
+      subCategory: subCategory.id,
+    });
     expect(subCategoryScore.id).toBeTruthy();
 
-    const topicScore = (
-      await appDb
-        .select()
-        .from(topicScores)
-        .where(
-          and(
-            eq(topicScores.subCategoryScoreId, subCategoryScore.id),
-            eq(topicScores.topic, topic.id),
-          ),
-        )
-    ).shift();
+    const topicScore = await findFirst(appDb, topicScores, {
+      subCategoryScoreId: subCategoryScore.id,
+      topic: topic.id,
+    });
     expect(topicScore.id).toBeTruthy();
 
-    const criterionScore = (
-      await appDb
-        .select()
-        .from(criterionScores)
-        .where(
-          and(
-            eq(criterionScores.topicScoreId, topicScore.id),
-            eq(criterionScores.criterion, criterion.id),
-          ),
-        )
-    ).shift();
+    const criterionScore = await findFirst(appDb, criterionScores, {
+      topicScoreId: topicScore.id,
+      criterion: criterion.id,
+    });
     expect(criterionScore.id).toBeTruthy();
   });
 });
