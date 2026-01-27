@@ -40,7 +40,7 @@
     "nitropack": "2.12.9",
     "type-fest": "5.2.0",
     "typescript": "5.9.3",
-    "vitest": "4.0.16"
+    "vitest": "4.0.18"
   },
   "dependencies": {
     "tsx": "4.21.0",
