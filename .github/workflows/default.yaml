@@ -37,7 +37,7 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
       - run: cp .env.ci .env
-      - uses: hoverkraft-tech/compose-action@3846bcd61da338e9eaaf83e7ed0234a12b099b72 # v2.4.1
+      - uses: hoverkraft-tech/compose-action@05da55b2bb8a5a759d1c4732095044bd9018c050 # v2.4.3
         with:
           compose-file: ./docker-compose.ci.yml
       - run: ./docker/wait-for-healthy-server-container.sh
