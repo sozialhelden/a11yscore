@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BASE_URL } from "~/test/setup";
+import { BASE_URL } from "~~/test/setup";
 
 describe("i18n", () => {
   for (const { header, expected } of [

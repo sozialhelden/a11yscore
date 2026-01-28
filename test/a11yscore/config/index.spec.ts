@@ -4,14 +4,14 @@ import type {
   TopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories";
 
-const getSubCategoryListMock = vi.fn();
+const getSubCategoriesMock = vi.fn();
 
 vi.mock(
   import("~~/src/a11yscore/config/categories"),
   async (importOriginal) => {
     return {
       ...(await importOriginal()),
-      getSubCategoryList: getSubCategoryListMock,
+      getSubCategories: getSubCategoriesMock,
     };
   },
 );
@@ -22,23 +22,21 @@ describe("getChildCategories", () => {
   });
 
   it("should return child categories for a given parent category", async () => {
-    getSubCategoryListMock.mockReturnValue([
-      {
+    getSubCategoriesMock.mockReturnValue({
+      "sub-cat-1": {
         id: "sub-cat-1",
         parent: "top-cat-1",
       },
-      {
+      "sub-cat-2": {
         id: "sub-cat-2",
         parent: "top-cat-1",
       },
-      {
+      "sub-cat-3": {
         id: "sub-cat-3",
         parent: "top-cat-2",
       },
-    ]);
-    const { getChildCategories } = await import(
-      "~~/src/a11yscore/utils/categories"
-    );
+    });
+    const { getChildCategories } = await import("~~/src/a11yscore/config");
     expect(getChildCategories("top-cat-1" as TopLevelCategoryId)).toEqual([
       {
         id: "sub-cat-1",

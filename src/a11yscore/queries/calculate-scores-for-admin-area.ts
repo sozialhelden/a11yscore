@@ -1,8 +1,11 @@
 import { appDb } from "~/db";
 import {
+  getChildCategories,
   getTopLevelCategoryList,
-  type SubCategory,
-  type TopLevelCategory,
+} from "~~/src/a11yscore/config";
+import type {
+  SubCategory,
+  TopLevelCategory,
 } from "~~/src/a11yscore/config/categories";
 import {
   type AppDbTransaction,
@@ -21,7 +24,6 @@ import {
   type ScoreQueryResults,
   type SQLSelectParams,
 } from "~~/src/a11yscore/queries/query-sub-category-scores";
-import { getChildCategories } from "~~/src/a11yscore/utils/categories";
 import { roundDataQualityFactor } from "~~/src/a11yscore/utils/data-quality";
 import { createScoreAggregator } from "~~/src/a11yscore/utils/score-aggregator";
 import {

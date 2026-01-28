@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addIdToConfigEntries } from "../utils/config";
+import { addIdToConfigEntries } from "~~/src/a11yscore/utils/config";
 
 describe("addIdToConfigEntries", () => {
   it("adds an id property to config entries", () => {

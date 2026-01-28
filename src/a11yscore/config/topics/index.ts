@@ -1,4 +1,4 @@
-import { dummyTranslate, type Translate } from "~/utils/i18n";
+import type { Translate } from "~/utils/i18n";
 import { addIdToConfigEntries } from "~~/src/a11yscore/utils/config";
 
 export type TopicId =
@@ -42,10 +42,3 @@ export const getTopics = (t: Translate): Record<TopicId, Topic> =>
       name: t("Helpful Amenities"),
     },
   });
-
-export const getTopicList = (t?: Translate): Topic[] =>
-  Object.values(getTopics(t ?? dummyTranslate));
-
-export const getTopicById = (id: TopicId, t?: Translate): Topic => {
-  return getTopics(t ?? dummyTranslate)[id];
-};

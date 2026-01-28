@@ -19,6 +19,7 @@
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:migrate-test": "env-cmd -- bash -c 'export NITRO_DATABASE_APP_USER=$NITRO_TEST_DATABASE_APP_USER; export NITRO_DATABASE_APP_PASSWORD=$NITRO_TEST_DATABASE_APP_PASSWORD; export NITRO_DATABASE_APP_DB=$NITRO_TEST_DATABASE_APP_DB; export NITRO_DATABASE_APP_HOST=$NITRO_TEST_DATABASE_APP_HOST; export NITRO_DATABASE_APP_PORT=$NITRO_TEST_DATABASE_APP_PORT; export NITRO_DATABASE_APP_SSL=$NITRO_TEST_DATABASE_APP_SSL; export NITRO_TEST_DATABASE_APP_ALLOW_SELF_SIGNED=$NITRO_DATABASE_APP_ALLOW_SELF_SIGNED; drizzle-kit migrate'",
     "job:compute-scores": "env-cmd -- bash -c 'curl \"http://localhost:3000/a11yscore/v1/auth/queue/jobs/compute-scores\" --request POST --header \"Authorization: Basic $(echo -n $NITRO_INTERNAL_AUTH_USER:$NITRO_INTERNAL_AUTH_PASSWORD | base64)\"'",
     "job:compute-admin-area-score": "env-cmd -- bash -c 'curl \"http://localhost:3000/a11yscore/v1/auth/queue/jobs/compute-admin-area-score\" --request POST --header \"Authorization: Basic $(echo -n $NITRO_INTERNAL_AUTH_USER:$NITRO_INTERNAL_AUTH_PASSWORD | base64)\" --header \"Content-Type: application/json\" --data \"{\\\"adminArea\\\":{\\\"id\\\":\\\"$1\\\"}}\"' _ ",
     "job:sync-admin-areas": "env-cmd -- bash -c 'curl \"http://localhost:3000/a11yscore/v1/auth/queue/jobs/sync-admin-areas\" --request POST --header \"Authorization: Basic $(echo -n $NITRO_INTERNAL_AUTH_USER:$NITRO_INTERNAL_AUTH_PASSWORD | base64)\"'",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.13",
+    "@faker-js/faker": "10.2.0",
     "@transifex/cli": "7.1.5",
     "@types/node": "25.0.10",
     "@types/pg": "8.15.6",
@@ -43,7 +45,6 @@
     "vitest": "4.0.18"
   },
   "dependencies": {
-    "tsx": "4.21.0",
     "@sozialhelden/core": "2.3.0",
     "@transifex/native": "7.1.5",
     "bullmq": "5.67.1",
@@ -51,6 +52,7 @@
     "drizzle-kit": "0.31.7",
     "drizzle-orm": "0.44.7",
     "pg": "8.16.3",
-    "slug": "11.0.1"
+    "slug": "11.0.1",
+    "tsx": "4.21.0"
   }
 }

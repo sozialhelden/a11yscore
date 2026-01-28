@@ -1,5 +1,5 @@
 import type { IntRange } from "type-fest";
-import { dummyTranslate, type Translate } from "~/utils/i18n";
+import type { Translate } from "~/utils/i18n";
 import { addIdToConfigEntries } from "~~/src/a11yscore/utils/config";
 
 export type SustainableDevelopmentGoalId = IntRange<1, 18>;
@@ -72,15 +72,3 @@ export const getSustainableDevelopmentGoals = (
       name: t("Partnerships for the Goals"),
     },
   });
-
-export const sustainableDevelopmentGoalList = (
-  t?: Translate,
-): SustainableDevelopmentGoal[] =>
-  Object.values(getSustainableDevelopmentGoals(t ?? dummyTranslate));
-
-export const getSustainableDevelopmentGoalById = (
-  id: SustainableDevelopmentGoalId,
-  t?: Translate,
-): SustainableDevelopmentGoal => {
-  return getSustainableDevelopmentGoals(t ?? dummyTranslate)[id];
-};

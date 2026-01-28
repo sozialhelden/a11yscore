@@ -1,6 +1,6 @@
 import type { SQL } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
-import { dummyTranslate, type Translate } from "~/utils/i18n";
+import type { Translate } from "~/utils/i18n";
 import {
   type CultureTopLevelCategoryId,
   getCultureTopLevelCategory,
@@ -339,7 +339,7 @@ export type SubCategory = {
   }>;
 };
 
-const getTopLevelCategories = (
+export const getTopLevelCategories = (
   t: Translate,
 ): Record<TopLevelCategoryId, TopLevelCategory> => {
   return addIdToConfigEntries<TopLevelCategoryId, TopLevelCategory>({
@@ -354,26 +354,13 @@ const getTopLevelCategories = (
     ...getGovernmentBuildingsTopLevelCategory({ weight: 0, t }),
   });
 };
-export const getTopLevelCategoryList = (t?: Translate) =>
-  Object.values(getTopLevelCategories(t ?? dummyTranslate));
-export const getTopLevelCategoryIds = () =>
-  Object.keys(getTopLevelCategories(dummyTranslate)) as TopLevelCategoryId[];
-export const getTopLevelCategoryById = (
-  id: TopLevelCategoryId,
-  t?: Translate,
-) => getTopLevelCategories(t ?? dummyTranslate)[id];
 
-const getSubCategories = (t: Translate): Record<SubCategoryId, SubCategory> =>
+export const getSubCategories = (
+  t: Translate,
+): Record<SubCategoryId, SubCategory> =>
   addIdToConfigEntries<SubCategoryId, SubCategory>({
     ...getFoodAndDrinksSubCategories(t),
     ...getHealthCareSubCategories(t),
     ...getPublicTransportSubCategories(t),
     ...getSocialCareSubCategories(t),
   });
-
-export const getSubCategoryList = (t?: Translate) =>
-  Object.values(getSubCategories(t ?? dummyTranslate));
-export const getSubCategoryIds = () =>
-  Object.keys(getSubCategories(dummyTranslate)) as SubCategoryId[];
-export const getSubCategoryById = (id: SubCategoryId, t: Translate) =>
-  getSubCategories(t ?? dummyTranslate)[id];
