@@ -14,7 +14,7 @@ import {
 } from "~~/test/_factories/categories.factory";
 import { criteriaFactory } from "~~/test/_factories/criteria.factory";
 import { topicsFactory } from "~~/test/_factories/topics.factory";
-import { findFirst, findFirstOrNull } from "~~/test/_utils/database-assertions";
+import { appDbHasNot, findFirst } from "~~/test/_utils/database-assertions";
 import { mockCategories, mockCriteria } from "~~/test/_utils/mocks";
 import { seedAdminArea } from "~~/test/_utils/seeders";
 
@@ -95,9 +95,8 @@ describe("calculateScoresForAdminArea", () => {
 
     await calculateScoresForAdminArea(getAdminArea().id, {});
 
-    const row = await findFirstOrNull(appDb, topLevelCategoryScores, {
+    await appDbHasNot(topLevelCategoryScores, {
       topLevelCategory: plannedCategory.id,
     });
-    expect(row).toBeNull();
   });
 });

@@ -55,21 +55,12 @@ export async function findFirst(
   return results[0];
 }
 
-export async function findFirstOrNull(
-  db: Database,
-  table: Table,
-  conditions: Conditions,
-) {
-  try {
-    return await findFirst(db, table, conditions);
-  } catch (error) {
-    if (error instanceof NoRecordFoundError) {
-      return null;
-    }
-    throw error;
-  }
-}
-
 export async function appDbHas(table: Table, conditions: Conditions) {
   await expect(findFirst(appDb, table, conditions)).resolves.toBeTruthy();
+}
+
+export async function appDbHasNot(table: Table, conditions: Conditions) {
+  await expect(findFirst(appDb, table, conditions)).rejects.toBeInstanceOf(
+    NoRecordFoundError,
+  );
 }
