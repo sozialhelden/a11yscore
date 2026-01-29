@@ -38,6 +38,7 @@ COPY --from=build /app/package-lock.json .
 COPY --from=build /app/drizzle.config.ts .
 COPY --from=build /app/vitest.config.ts .
 COPY --from=build /app/src ./src
+COPY --from=build /app/test ./test
 COPY --from=build /app/tsconfig.json ./tsconfig.json
 COPY --from=build /app/.nitro/types ./.nitro/types
 

@@ -1,8 +1,8 @@
 import { type SQL, sql } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 import { osmSyncDb } from "~/db";
+import { getCriterionById } from "~~/src/a11yscore/config";
 import type { OSMTag, SubCategory } from "~~/src/a11yscore/config/categories";
-import { getCriterionById } from "~~/src/a11yscore/config/criteria";
 import { minDataQualityFactor } from "~~/src/a11yscore/config/data-quality";
 import {
   alias,
@@ -116,6 +116,10 @@ export function getTagCountSql(
   table: PgTableWithColumns<any>,
   osmTags: OSMTag[],
 ) {
+  if (!osmTags.length) {
+    return sql<number>`0`;
+  }
+
   return sql<number>`
         SUM(CASE ${sql.join(
           osmTags.map(
@@ -138,8 +142,13 @@ export function getDataQualityFactorSql(
       -- Coalesce takes care to zero it, even if the math operation returns null (e.g. no rows)
       (COALESCE(
         (
-            ${getTagCountSql(table, osmTags)}
-            / COUNT(*)::float
+            -- Make sure there's no division by zero even if there are no rows
+            CASE WHEN COUNT(*) = 0 THEN 0 ELSE
+            (
+              ${getTagCountSql(table, osmTags)}
+              / COUNT(*)::float
+            )
+            END
         ), 
         0
       ) * ${sql.raw(String(1 - minDataQualityFactor))} + ${sql.raw(String(minDataQualityFactor))})
