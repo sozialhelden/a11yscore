@@ -104,6 +104,53 @@ const genericSocialCareTopics: SubCategory["topics"] = [
     ],
   },
 ];
+const socialShopsTopics: SubCategory["topics"] = [
+  {
+    topicId: "mobility",
+    criteria: [
+      {
+        criterionId: "is-wheelchair-accessible",
+        weight: 1.0,
+      },
+    ],
+  },
+  {
+    topicId: "vision",
+    criteria: [
+      {
+        criterionId: "is-accessible-to-visually-impaired",
+        weight: 1,
+      },
+    ],
+  },
+  {
+    topicId: "air-and-climate",
+    criteria: [
+      {
+        criterionId: "has-air-conditioning",
+        weight: 1,
+      },
+    ],
+  },
+  {
+    topicId: "hearing",
+    criteria: [
+      {
+        criterionId: "is-accessible-to-hearing-impaired",
+        weight: 1,
+      },
+    ],
+  },
+  {
+    topicId: "general-assistance",
+    criteria: [
+      {
+        criterionId: "has-website",
+        weight: 1,
+      },
+    ],
+  },
+];
 
 export type SocialCareSubCategoryId =
   | "community-centers"
@@ -382,7 +429,7 @@ export const getSocialCareSubCategories = (
       from: osm_amenities,
       where: sql`${osm_amenities.tags}->'social_facility' = 'clothing_bank'`,
     },
-    topics: genericSocialCareTopics,
+    topics: socialShopsTopics,
   },
   "charity-shops": {
     name: t("Charity Shops"),
@@ -396,7 +443,7 @@ export const getSocialCareSubCategories = (
       from: osm_amenities,
       where: sql`${osm_amenities.tags}->'shop' = 'charity'`,
     },
-    topics: genericSocialCareTopics,
+    topics: socialShopsTopics,
   },
   "soup-kitchens-food-banks": {
     name: t("Food Banks and Soup Kitchens"),
@@ -413,6 +460,6 @@ export const getSocialCareSubCategories = (
       from: osm_amenities,
       where: sql`${osm_amenities.tags}->'social_facility' = 'soup_kitchen' or ${osm_amenities.tags}->'social_facility' = 'food_bank'`,
     },
-    topics: genericSocialCareTopics,
+    topics: socialShopsTopics,
   },
 });
