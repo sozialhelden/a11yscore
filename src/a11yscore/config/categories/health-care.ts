@@ -44,7 +44,7 @@ export const getHealthCareTopLevelCategory = ({
  * sub categories
  */
 
-const genericHealthCareTopics: SubCategory["topics"] = [
+const clincAndDoctorsTopics: SubCategory["topics"] = [
   {
     topicId: "mobility",
     criteria: [
@@ -72,6 +72,54 @@ const genericHealthCareTopics: SubCategory["topics"] = [
     criteria: [
       {
         criterionId: "has-toilet",
+        weight: 1,
+      },
+    ],
+  },
+  {
+    topicId: "air-and-climate",
+    criteria: [
+      {
+        criterionId: "has-air-conditioning",
+        weight: 1,
+      },
+    ],
+  },
+  {
+    topicId: "hearing",
+    criteria: [
+      {
+        criterionId: "is-accessible-to-hearing-impaired",
+        weight: 1,
+      },
+    ],
+  },
+  {
+    topicId: "general-assistance",
+    criteria: [
+      {
+        criterionId: "has-website",
+        weight: 1,
+      },
+    ],
+  },
+];
+
+const healthCareShopsTopics: SubCategory["topics"] = [
+  {
+    topicId: "mobility",
+    criteria: [
+      {
+        criterionId: "is-wheelchair-accessible",
+        weight: 1.0,
+      },
+    ],
+  },
+  {
+    topicId: "vision",
+    criteria: [
+      {
+        criterionId: "is-accessible-to-visually-impaired",
         weight: 1,
       },
     ],
@@ -164,7 +212,7 @@ export const getHealthCareSubCategories = (
         sql` OR `,
       )})`,
     },
-    topics: genericHealthCareTopics,
+    topics: healthCareShopsTopics,
   },
   doctors: {
     name: t("Doctors and Medical Practices"),
@@ -201,7 +249,7 @@ export const getHealthCareSubCategories = (
         sql` OR `,
       )})`,
     },
-    topics: genericHealthCareTopics,
+    topics: clincAndDoctorsTopics,
   },
   hospitals: {
     name: t("Hospitals"),
@@ -218,7 +266,7 @@ export const getHealthCareSubCategories = (
       from: osm_amenities,
       where: sql`${osm_amenities.amenity} = 'hospital' or ${osm_amenities.healthcare} = 'hospital' `,
     },
-    topics: genericHealthCareTopics,
+    topics: clincAndDoctorsTopics,
   },
   clinics: {
     name: t("Clinics and Outpatient Centers"),
@@ -235,7 +283,7 @@ export const getHealthCareSubCategories = (
       from: osm_amenities,
       where: sql`${osm_amenities.amenity} = 'clinic' or ${osm_amenities.healthcare} = 'clinic'`,
     },
-    topics: genericHealthCareTopics,
+    topics: clincAndDoctorsTopics,
   },
   pharmacies: {
     name: t("Pharmacies"),
@@ -249,7 +297,7 @@ export const getHealthCareSubCategories = (
       from: osm_amenities,
       where: sql`${osm_amenities.amenity} = 'pharmacy'`,
     },
-    topics: genericHealthCareTopics,
+    topics: healthCareShopsTopics,
   },
   therapists: {
     name: t("Therapy and Alternative Medicine Centers"),
@@ -276,7 +324,7 @@ export const getHealthCareSubCategories = (
         sql` OR `,
       )})`,
     },
-    topics: genericHealthCareTopics,
+    topics: clincAndDoctorsTopics,
   },
   "psycho-therapists": {
     name: t("Psychotherapy Practices"),
@@ -290,7 +338,7 @@ export const getHealthCareSubCategories = (
       from: osm_amenities,
       where: sql`${osm_amenities.healthcare} = 'psychotherapist'`,
     },
-    topics: genericHealthCareTopics,
+    topics: clincAndDoctorsTopics,
   },
   "other-health-facilities": {
     name: t("Other Health Facilities"),
@@ -329,7 +377,7 @@ export const getHealthCareSubCategories = (
         sql` OR `,
       )})`,
     },
-    topics: genericHealthCareTopics,
+    topics: clincAndDoctorsTopics,
   },
   "health-shops": {
     name: t("Medical Supply & Specialized Health Shops"),
@@ -358,6 +406,6 @@ export const getHealthCareSubCategories = (
         sql` OR `,
       )})`,
     },
-    topics: genericHealthCareTopics,
+    topics: healthCareShopsTopics,
   },
 });
