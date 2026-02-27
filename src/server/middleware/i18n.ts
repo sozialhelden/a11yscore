@@ -5,6 +5,7 @@ import {
   getMostPreferableLanguageTag,
   type LanguageTag,
 } from "@sozialhelden/core";
+import type { tx } from "@transifex/native";
 
 export default defineEventHandler(async (event) => {
   const languageFromQuery = getQuery(event).lang as string | undefined;

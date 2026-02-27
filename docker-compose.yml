@@ -14,7 +14,7 @@ services:
       - $NITRO_DATABASE_APP_PORT:5432
 
   redis:
-    image: redis:8.2-alpine
+    image: redis:8.4-alpine
     volumes:
       - redis-data:/data
     ports:
@@ -46,7 +46,7 @@ services:
       - $NITRO_TEST_DATABASE_OSM_SYNC_PORT:5432
 
   redis_test:
-    image: redis:8.2-alpine
+    image: redis:8.4-alpine
     ports:
       - $NITRO_TEST_REDIS_PORT:6379
 
