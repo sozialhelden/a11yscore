@@ -6,7 +6,9 @@ import {
   getCultureTopLevelCategory,
 } from "~~/src/a11yscore/config/categories/culture";
 import {
+  type EducationSubCategoryId,
   type EducationTopLevelCategoryId,
+  getEducationSubCategories,
   getEducationTopLevelCategory,
 } from "~~/src/a11yscore/config/categories/education";
 import {
@@ -65,7 +67,8 @@ export type SubCategoryId =
   | FoodAndDrinksSubCategoryId
   | PublicTransportSubCategoryId
   | HealthCareSubCategoryId
-  | SocialCareSubCategoryId;
+  | SocialCareSubCategoryId
+  | EducationSubCategoryId;
 
 export type OSMTag = {
   /**
@@ -369,6 +372,7 @@ const getSubCategories = (t: Translate): Record<SubCategoryId, SubCategory> =>
     ...getHealthCareSubCategories(t),
     ...getPublicTransportSubCategories(t),
     ...getSocialCareSubCategories(t),
+    ...getEducationSubCategories(t),
   });
 
 export const getSubCategoryList = (t?: Translate) =>
