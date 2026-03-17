@@ -20,7 +20,7 @@ export const getEducationTopLevelCategory = ({
 }): Record<EducationTopLevelCategoryId, Omit<TopLevelCategory, "id">> => ({
   education: {
     name: t("Education"),
-    sustainableDevelopmentGoals: [4, 8, 9, 10],
+    sustainableDevelopmentGoals: [4, 5, 8, 9, 10, 11, 17],
     weight,
     interpretation: (score) => {
       if (score >= 75)
@@ -245,7 +245,6 @@ export const getEducationSubCategories = (
     weight: weight,
     osmTags: [
       { key: "college", value: "adult_education" },
-      { key: "education", value: "driving_school" },
       { key: "education", value: "language_school" },
       { key: "education", value: "music_school" },
       { key: "education", value: "prep_school" },
@@ -265,14 +264,13 @@ export const getEducationSubCategories = (
       { key: "amenity", value: "traffic_park" },
     ],
     description: t(
-      "Includes specialized education facilities such as driving schools, language schools, music schools, dance schools, cooking schools, libraries, research institutes, and other vocational or specialized education providers.",
+      "Includes specialized education facilities such as language schools, music schools, dance schools, cooking schools, libraries, research institutes, and other vocational or specialized education providers.",
     ),
     sql: {
       from: osm_amenities,
       where: sql`(${sql.join(
         [
           sql`${osm_amenities.tags}->'college' = 'adult_education'`,
-          sql`${osm_amenities.tags}->'education' = 'driving_school'`,
           sql`${osm_amenities.tags}->'education' = 'language_school'`,
           sql`${osm_amenities.tags}->'education' = 'music_school'`,
           sql`${osm_amenities.tags}->'education' = 'prep_school'`,
