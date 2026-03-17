@@ -18,15 +18,16 @@ import {
   getFoodAndDrinksTopLevelCategory,
 } from "~~/src/a11yscore/config/categories/food-and-drinks";
 import {
-  type GovernmentBuildingsTopLevelCategoryId,
-  getGovernmentBuildingsTopLevelCategory,
-} from "~~/src/a11yscore/config/categories/government-buildings";
-import {
   getHealthCareSubCategories,
   getHealthCareTopLevelCategory,
   type HealthCareSubCategoryId,
   type HealthCareTopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories/health-care";
+import {
+  getPublicInstitutionsSubCategories,
+  getPublicInstitutionsTopLevelCategory,
+  type PublicInstitutionsTopLevelCategoryId,
+} from "~~/src/a11yscore/config/categories/public-institutions";
 import {
   getPublicTransportSubCategories,
   getPublicTransportTopLevelCategory,
@@ -58,7 +59,7 @@ export type TopLevelCategoryId =
   | HealthCareTopLevelCategoryId
   | SocialCareTopLevelCategoryId
   | EducationTopLevelCategoryId
-  | GovernmentBuildingsTopLevelCategoryId
+  | PublicInstitutionsTopLevelCategoryId
   | WorkTopLevelCategoryId
   | CultureTopLevelCategoryId
   | WaysCrossingsTopLevelCategoryId;
@@ -354,7 +355,7 @@ const getTopLevelCategories = (
     ...getEducationTopLevelCategory({ weight: 0, t }),
     ...getWorkTopLevelCategory({ weight: 0, t }),
     ...getWaysCrossingsTopLevelCategory({ weight: 0, t }),
-    ...getGovernmentBuildingsTopLevelCategory({ weight: 0, t }),
+    ...getPublicInstitutionsTopLevelCategory({ weight: 0, t }),
   });
 };
 export const getTopLevelCategoryList = (t?: Translate) =>
@@ -373,6 +374,7 @@ const getSubCategories = (t: Translate): Record<SubCategoryId, SubCategory> =>
     ...getPublicTransportSubCategories(t),
     ...getSocialCareSubCategories(t),
     ...getEducationSubCategories(t),
+    ...getPublicInstitutionsSubCategories(t),
   });
 
 export const getSubCategoryList = (t?: Translate) =>

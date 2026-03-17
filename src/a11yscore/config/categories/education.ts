@@ -20,7 +20,7 @@ export const getEducationTopLevelCategory = ({
 }): Record<EducationTopLevelCategoryId, Omit<TopLevelCategory, "id">> => ({
   education: {
     name: t("Education"),
-    sustainableDevelopmentGoals: [4, 8, 9, 10],
+    sustainableDevelopmentGoals: [4, 5, 8, 9, 10, 11, 17],
     weight,
     interpretation: (score) => {
       if (score >= 75)
