@@ -101,6 +101,8 @@ export type EducationSubCategoryId =
   | "driving-schools";
 
 const weight = 1 / 5;
+// college = adult_education marks "Volkshochschulen" in Germany, which are a specific type of education facilities
+// that don't fit well in the other categories, so we put them in "other education" and exclude them from "schools" and "higher education"
 export const getEducationSubCategories = (
   t: Translate,
 ): Record<EducationSubCategoryId, Omit<SubCategory, "id">> => ({
@@ -148,7 +150,8 @@ export const getEducationSubCategories = (
           sql`${osm_amenities.tags}->'education' = 'school'`,
         ],
         sql` OR `,
-      )}) AND ${osm_amenities.tags}->'college' != 'adult_education'`,
+      )})
+      AND (${osm_amenities.tags}->'college' IS NULL OR ${osm_amenities.tags}->'college' != 'adult_education')`,
     },
     topics: genericEducationTopics,
   },
@@ -161,9 +164,10 @@ export const getEducationSubCategories = (
       { key: "amenity", value: "college" },
       { key: "education", value: "university" },
       { key: "education", value: "college" },
+      { key: "police", value: "academy" },
     ],
     description: t(
-      "Includes universities, colleges and other higher education institutions that provide education and research opportunities for students typically aged 18 and above.",
+      "Includes universities, colleges and other higher education institutions like police academies that provide education and research opportunities for students typically aged 18 and above.",
     ),
     sql: {
       from: osm_amenities,
@@ -173,9 +177,11 @@ export const getEducationSubCategories = (
           sql`${osm_amenities.amenity} = 'college'`,
           sql`${osm_amenities.tags}->'education' = 'university'`,
           sql`${osm_amenities.tags}->'education' = 'college'`,
+          sql`${osm_amenities.tags}->'police' = 'academy'`,
         ],
         sql` OR `,
-      )}) AND ${osm_amenities.tags}->'college' != 'adult_education'`,
+      )})
+      AND (${osm_amenities.tags}->'college' IS NULL OR ${osm_amenities.tags}->'college' != 'adult_education')`,
     },
     topics: [
       {
