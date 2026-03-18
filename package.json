@@ -27,7 +27,7 @@
     "postinstall": "nitro prepare && husky"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.7",
+    "@biomejs/biome": "2.4.8",
     "@transifex/cli": "7.1.5",
     "@types/node": "25.5.0",
     "@types/pg": "8.18.0",
