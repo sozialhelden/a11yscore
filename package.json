@@ -30,7 +30,7 @@
     "@biomejs/biome": "2.4.8",
     "@transifex/cli": "7.1.5",
     "@types/node": "25.5.0",
-    "@types/pg": "8.18.0",
+    "@types/pg": "8.20.0",
     "@types/slug": "5.0.9",
     "alex": "11.0.1",
     "concurrently": "9.2.1",
