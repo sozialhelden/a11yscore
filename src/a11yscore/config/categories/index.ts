@@ -26,6 +26,7 @@ import {
 import {
   getPublicInstitutionsSubCategories,
   getPublicInstitutionsTopLevelCategory,
+  type PublicInstitutionsSubCategoryId,
   type PublicInstitutionsTopLevelCategoryId,
 } from "~~/src/a11yscore/config/categories/public-institutions";
 import {
@@ -69,6 +70,7 @@ export type SubCategoryId =
   | PublicTransportSubCategoryId
   | HealthCareSubCategoryId
   | SocialCareSubCategoryId
+  | PublicInstitutionsSubCategoryId
   | EducationSubCategoryId;
 
 export type OSMTag = {
@@ -348,14 +350,14 @@ const getTopLevelCategories = (
 ): Record<TopLevelCategoryId, TopLevelCategory> => {
   return addIdToConfigEntries<TopLevelCategoryId, TopLevelCategory>({
     ...getFoodAndDrinksTopLevelCategory({ weight: 0.1, t }),
-    ...getHealthCareTopLevelCategory({ weight: 0.3, t }),
-    ...getPublicTransportTopLevelCategory({ weight: 0.3, t }),
-    ...getSocialCareTopLevelCategory({ weight: 0.3, t }),
+    ...getHealthCareTopLevelCategory({ weight: 0.18, t }),
+    ...getPublicTransportTopLevelCategory({ weight: 0.18, t }),
+    ...getSocialCareTopLevelCategory({ weight: 0.18, t }),
     ...getCultureTopLevelCategory({ weight: 0, t }),
-    ...getEducationTopLevelCategory({ weight: 0, t }),
+    ...getEducationTopLevelCategory({ weight: 0.18, t }),
     ...getWorkTopLevelCategory({ weight: 0, t }),
     ...getWaysCrossingsTopLevelCategory({ weight: 0, t }),
-    ...getPublicInstitutionsTopLevelCategory({ weight: 0, t }),
+    ...getPublicInstitutionsTopLevelCategory({ weight: 0.18, t }),
   });
 };
 export const getTopLevelCategoryList = (t?: Translate) =>
