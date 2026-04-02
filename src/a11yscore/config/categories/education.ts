@@ -20,7 +20,7 @@ export const getEducationTopLevelCategory = ({
 }): Record<EducationTopLevelCategoryId, Omit<TopLevelCategory, "id">> => ({
   education: {
     name: t("Education"),
-    sustainableDevelopmentGoals: [4, 8, 9, 10],
+    sustainableDevelopmentGoals: [4, 5, 8, 9, 10, 11, 17],
     weight,
     interpretation: (score) => {
       if (score >= 75)
@@ -265,6 +265,7 @@ export const getEducationSubCategories = (
       { key: "amenity", value: "traffic_park" },
     ],
     description: t(
+      "Includes specialized education facilities such as language schools, music schools, dance schools, cooking schools, libraries, research institutes, and other vocational or specialized education providers.",
       "Includes specialized education facilities such as driving schools, language schools, music schools, dance schools, cooking schools, libraries, research institutes, and other vocational or specialized education providers.",
     ),
     sql: {
