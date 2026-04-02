@@ -27,29 +27,29 @@
     "postinstall": "nitro prepare && husky"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.7",
+    "@biomejs/biome": "2.4.10",
     "@transifex/cli": "7.1.5",
     "@types/node": "25.5.0",
-    "@types/pg": "8.18.0",
+    "@types/pg": "8.20.0",
     "@types/slug": "5.0.9",
     "alex": "11.0.1",
     "concurrently": "9.2.1",
     "env-cmd": "11.0.0",
     "husky": "9.1.7",
     "lint-staged": "16.4.0",
-    "nitropack": "2.13.1",
-    "type-fest": "5.4.4",
+    "nitropack": "2.13.3",
+    "type-fest": "5.5.0",
     "typescript": "5.9.3",
-    "vitest": "4.1.0"
+    "vitest": "4.1.2"
   },
   "dependencies": {
     "tsx": "4.21.0",
     "@sozialhelden/core": "2.3.0",
     "@transifex/native": "7.1.5",
-    "bullmq": "5.71.0",
-    "dotenv": "17.3.1",
-    "drizzle-kit": "0.31.9",
-    "drizzle-orm": "0.45.1",
+    "bullmq": "5.72.0",
+    "dotenv": "17.4.0",
+    "drizzle-kit": "0.31.10",
+    "drizzle-orm": "0.45.2",
     "pg": "8.20.0",
     "slug": "11.0.1"
   }
