@@ -92,8 +92,10 @@ function run() {
   });
 
   worker.on("failed", (job, error) => {
+    const rootCause =
+      error.cause instanceof Error ? error.cause.message : error.message;
     console.error(
-      `Job ${job.name} with id "${job.id}" has failed with "${error.message}".`,
+      `Job ${job.name} with id "${job.id}" has failed: ${rootCause}`,
     );
   });
 

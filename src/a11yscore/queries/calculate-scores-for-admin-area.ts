@@ -34,27 +34,37 @@ export async function calculateScoresForAdminArea(
   adminAreaId: string,
   params: SQLSelectParams,
 ) {
-  await appDb.transaction(async (tx) => {
-    const scoreId = await createScoreResult(tx, { adminAreaId });
-    const { add, aggregate } = createScoreAggregator();
+  try {
+    await appDb.transaction(async (tx) => {
+      const scoreId = await createScoreResult(tx, { adminAreaId });
+      const { add, aggregate } = createScoreAggregator();
 
-    for (const topLevelCategory of getTopLevelCategoryList()) {
-      if (topLevelCategory.planned) continue;
+      for (const topLevelCategory of getTopLevelCategoryList()) {
+        if (topLevelCategory.planned) continue;
 
-      const { topLevelCategoryScore, topLevelCategoryDataQualityFactor } =
-        await calculateTopLevelCategoryScore(tx, params, {
-          scoreId,
-          topLevelCategory,
+        const { topLevelCategoryScore, topLevelCategoryDataQualityFactor } =
+          await calculateTopLevelCategoryScore(tx, params, {
+            scoreId,
+            topLevelCategory,
+          });
+        add({
+          componentScore: topLevelCategoryScore,
+          componentDataQualityFactor: topLevelCategoryDataQualityFactor,
+          componentWeight: topLevelCategory.weight,
         });
-      add({
-        componentScore: topLevelCategoryScore,
-        componentDataQualityFactor: topLevelCategoryDataQualityFactor,
-        componentWeight: topLevelCategory.weight,
-      });
-    }
+      }
 
-    await updateScoreResult(tx, scoreId, aggregate());
-  });
+      await updateScoreResult(tx, scoreId, aggregate());
+    });
+  } catch (error) {
+    const rootCause =
+      error instanceof Error && error.cause ? error.cause : error;
+    console.error(
+      `Failed to calculate scores for admin area ${adminAreaId}:`,
+      rootCause,
+    );
+    throw error;
+  }
 }
 
 /**
