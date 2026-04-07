@@ -353,11 +353,11 @@ const getTopLevelCategories = (
     ...getHealthCareTopLevelCategory({ weight: 0.18, t }),
     ...getPublicTransportTopLevelCategory({ weight: 0.18, t }),
     ...getSocialCareTopLevelCategory({ weight: 0.18, t }),
-    ...getCultureTopLevelCategory({ weight: 0, t }),
     ...getEducationTopLevelCategory({ weight: 0.18, t }),
+    ...getPublicInstitutionsTopLevelCategory({ weight: 0.18, t }),
+    ...getCultureTopLevelCategory({ weight: 0, t }),
     ...getWorkTopLevelCategory({ weight: 0, t }),
     ...getWaysCrossingsTopLevelCategory({ weight: 0, t }),
-    ...getPublicInstitutionsTopLevelCategory({ weight: 0.18, t }),
   });
 };
 export const getTopLevelCategoryList = (t?: Translate) =>
