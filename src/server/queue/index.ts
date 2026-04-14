@@ -34,3 +34,13 @@ export type SetAdminAreaImageJob = Job<
   undefined,
   typeof setAdminAreaImageJobId
 >;
+
+export const benchmarkScoreComputationJobId = "benchmark-score-computation";
+export type BenchmarkScoreComputationJob = Job<
+  {
+    adminArea: typeof adminAreas.$inferSelect;
+    implementation?: "original" | "optimized" | "both";
+  },
+  { originalMs?: number; optimizedMs?: number; scoresMatch?: boolean },
+  typeof benchmarkScoreComputationJobId
+>;

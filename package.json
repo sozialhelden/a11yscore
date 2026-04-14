@@ -22,6 +22,7 @@
     "job:compute-scores": "env-cmd -- bash -c 'curl \"http://localhost:3000/a11yscore/v1/auth/queue/jobs/compute-scores\" --request POST --header \"Authorization: Basic $(echo -n $NITRO_INTERNAL_AUTH_USER:$NITRO_INTERNAL_AUTH_PASSWORD | base64)\"'",
     "job:compute-admin-area-score": "env-cmd -- bash -c 'curl \"http://localhost:3000/a11yscore/v1/auth/queue/jobs/compute-admin-area-score\" --request POST --header \"Authorization: Basic $(echo -n $NITRO_INTERNAL_AUTH_USER:$NITRO_INTERNAL_AUTH_PASSWORD | base64)\" --header \"Content-Type: application/json\" --data \"{\\\"adminArea\\\":{\\\"id\\\":\\\"$1\\\"}}\"' _ ",
     "job:sync-admin-areas": "env-cmd -- bash -c 'curl \"http://localhost:3000/a11yscore/v1/auth/queue/jobs/sync-admin-areas\" --request POST --header \"Authorization: Basic $(echo -n $NITRO_INTERNAL_AUTH_USER:$NITRO_INTERNAL_AUTH_PASSWORD | base64)\"'",
+    "job:benchmark-score-computation": "env-cmd -- bash -c 'curl \"http://localhost:3000/a11yscore/v1/auth/queue/jobs/benchmark-score-computation\" --request POST --header \"Authorization: Basic $(echo -n $NITRO_INTERNAL_AUTH_USER:$NITRO_INTERNAL_AUTH_PASSWORD | base64)\" --header \"Content-Type: application/json\" --data \"{\\\"adminArea\\\":{\\\"id\\\":\\\"$1\\\"}}\"' _ ",
     "transifex:sync": "env-cmd --use-shell -- txjs-cli push src/ --token=\\$NITRO_TRANSIFEX_TOKEN --secret=\\$NITRO_TRANSIFEX_SECRET",
     "transifex:dry-run": "env-cmd --use-shell -- txjs-cli push src/ --token=\\$NITRO_TRANSIFEX_TOKEN --secret=\\$NITRO_TRANSIFEX_SECRET --dry-run --verbose",
     "postinstall": "nitro prepare && husky"
@@ -43,14 +44,15 @@
     "vitest": "4.1.3"
   },
   "dependencies": {
-    "tsx": "4.21.0",
     "@sozialhelden/core": "2.3.0",
     "@transifex/native": "7.1.5",
     "bullmq": "5.73.1",
     "dotenv": "17.4.1",
     "drizzle-kit": "0.31.10",
     "drizzle-orm": "0.45.2",
+    "p-limit": "^7.3.0",
     "pg": "8.20.0",
-    "slug": "11.0.1"
+    "slug": "11.0.1",
+    "tsx": "4.21.0"
   }
 }

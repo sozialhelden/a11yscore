@@ -1,4 +1,5 @@
 import {
+  benchmarkScoreComputationJobId,
   computeAdminAreaScoreJobId,
   computeScoresJobId,
   scoreQueue,
@@ -10,6 +11,7 @@ const allowedJobs = [
   computeScoresJobId,
   computeAdminAreaScoreJobId,
   syncAdminAreasJobId,
+  benchmarkScoreComputationJobId,
 ];
 
 export default defineEventHandler(async (event) => {

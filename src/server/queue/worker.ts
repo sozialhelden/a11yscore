@@ -1,8 +1,10 @@
 import { Worker } from "bullmq";
 import { redisConnection } from "~/queue/env";
 import {
+  type BenchmarkScoreComputationJob,
   type ComputeAdminAreaScoreJob,
   type ComputeScoresJob,
+  benchmarkScoreComputationJobId,
   computeAdminAreaScoreJobId,
   computeScoresJobId,
   type SetAdminAreaImageJob,
@@ -13,6 +15,7 @@ import {
   syncAdminAreasJobId,
 } from "~/queue/index";
 
+import { handle as handleBenchmarkScoreComputation } from "~~/src/a11yscore/jobs/benchmark-score-computation";
 import { handle as handleComputeAdminAreaScore } from "~~/src/a11yscore/jobs/compute-admin-area-score";
 import { handle as handleComputeScores } from "~~/src/a11yscore/jobs/compute-scores";
 import { handle as handleSetAdminAreaImage } from "~~/src/a11yscore/jobs/set-admin-area-image";
@@ -55,24 +58,24 @@ function run() {
   // more jobs in the future, please refactor this.
   const worker = new Worker(
     scoreQueueId,
-    async (
-      job:
-        | ComputeScoresJob
-        | ComputeAdminAreaScoreJob
-        | SyncAdminAreasJob
-        | SetAdminAreaImageJob,
-    ) => {
+    // biome-ignore lint/suspicious/noExplicitAny: BullMQ worker processes multiple job types with different return types
+    async (job: any) => {
       if (job.name === computeScoresJobId) {
         return handleComputeScores();
       }
       if (job.name === computeAdminAreaScoreJobId) {
-        return handleComputeAdminAreaScore(job);
+        return handleComputeAdminAreaScore(job as ComputeAdminAreaScoreJob);
       }
       if (job.name === syncAdminAreasJobId) {
         return handleSyncAdminAreas();
       }
       if (job.name === setAdminAreaImageJobId) {
-        return handleSetAdminAreaImage(job);
+        return handleSetAdminAreaImage(job as SetAdminAreaImageJob);
+      }
+      if (job.name === benchmarkScoreComputationJobId) {
+        return handleBenchmarkScoreComputation(
+          job as BenchmarkScoreComputationJob,
+        );
       }
     },
     {

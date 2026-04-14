@@ -18,7 +18,13 @@ export async function handle(job: ComputeAdminAreaScoreJob) {
       sql`JOIN ${osm_admin} ON ST_Intersects(${table.geometry}, ${osm_admin.geometry})`,
   ];
 
+  const start = performance.now();
   await calculateScoresForAdminArea(adminAreaId, { where, join });
+  const elapsed = Math.round(performance.now() - start);
+
+  console.debug(
+    `Score computation for admin area ${adminAreaId} completed in ${elapsed}ms`,
+  );
 }
 
 async function getAdminArea(id?: string) {

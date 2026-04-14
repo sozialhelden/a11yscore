@@ -50,6 +50,18 @@ services:
     ports:
       - $NITRO_TEST_REDIS_PORT:6379
 
+  # separate database for benchmarking the optimized score computation (V2)
+  # against the original implementation without polluting the main app database
+  database_benchmark:
+    image: postgis/postgis:17-3.5
+    platform: linux/amd64
+    environment:
+      POSTGRES_USER: $NITRO_DATABASE_BENCHMARK_USER
+      POSTGRES_PASSWORD: $NITRO_DATABASE_BENCHMARK_PASSWORD
+      POSTGRES_DB: $NITRO_DATABASE_BENCHMARK_DB
+    ports:
+      - $NITRO_DATABASE_BENCHMARK_PORT:5432
+
 volumes:
   postgres-data:
   redis-data:
