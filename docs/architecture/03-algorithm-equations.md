@@ -68,7 +68,7 @@ where:
 - $\beta_k$ is the weight of the sub-category $k$
 
 ### Region Score
-Finally the a1yy-Score for the entire region or city is computed as the weighted average of the category scores:
+Finally the a11y-Score for the entire region or city is computed as the weighted average of the category scores:
 
 $$ S_{region} = \sum_{n \in N} \alpha_n S_{\mathrm{cat}_n} $$
 
@@ -117,7 +117,7 @@ $$ DQC = (\sum_{c \in C} \hat{\alpha}_c) * 100 $$
 
 Where:
 - $C$ is the number of base criteria (all other criteria except the data quality criterion) within the topic
-- $\hat{\alpha}_c$ is the normalized data quality adjusted weight of criterion $c$
+- $\hat{\alpha}_c$ is the data quality adjusted weight of criterion $c$
 
 
 
