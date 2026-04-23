@@ -41,7 +41,7 @@ fi
 
 # Force every psql session to be read-only with a generous timeout so a bad
 # spatial join cannot run forever against production.
-export PGOPTIONS="-c default_transaction_read_only=on -c statement_timeout=600000"
+export PGOPTIONS="-c default_transaction_read_only=on -c statement_timeout=1800000"
 
 PSQL=(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -v ON_ERROR_STOP=1)
 
@@ -58,10 +58,24 @@ if ! "${PSQL[@]}" -c "SELECT 1;" > /dev/null 2>&1; then
 fi
 
 # ── Admin areas to dump ───────────────────────────────────────────────────────
-# Berlin:         -62422  (admin_level 4, kreisfreie Stadt)
-# Kreis Segeberg: -62532  (admin_level 6, Landkreis in Schleswig-Holstein)
+# Read from the shared regions.json used by a11yscore-experiments.
+# Falls back to a small default set if the file is not found.
 
-ADMIN_OSM_IDS="-62422, -62532"
+REGIONS_FILE="${REGIONS_FILE:-$(cd "$SCRIPT_DIR" && realpath ../../a11yscore-experiments/src/data/scoring/regions.json 2>/dev/null || echo "")}"
+
+if [ -n "$REGIONS_FILE" ] && [ -f "$REGIONS_FILE" ]; then
+  echo "Reading regions from $REGIONS_FILE"
+  # Extract osm_id values with lightweight grep/sed (no jq dependency)
+  ADMIN_OSM_IDS=$(grep '"osm_id"' "$REGIONS_FILE" | sed -E 's/.*"osm_id": *(-?[0-9]+).*/\1/' | paste -sd, -)
+else
+  echo "Regions file not found, using default (Berlin + Aschaffenburg)"
+  ADMIN_OSM_IDS="-62422, -62532"
+fi
+
+echo "Admin OSM IDs: $ADMIN_OSM_IDS"
+
+# Seconds to sleep between tables to avoid overloading the DB
+THROTTLE_SECS="${THROTTLE_SECS:-2}"
 
 TABLES=(osm_admin osm_admin_gen0 osm_admin_gen1 osm_amenities osm_platforms osm_stations)
 
@@ -82,6 +96,8 @@ SET client_min_messages = 'warning';
 HEADER
 
 # ── Dump each table, spatially filtered ──────────────────────────────────────
+# Uses EXISTS + spatial index join instead of ST_Union to avoid building a
+# massive combined geometry that kills performance with many regions.
 
 for TABLE in "${TABLES[@]}"; do
   echo -n "  $TABLE … "
@@ -89,9 +105,11 @@ for TABLE in "${TABLES[@]}"; do
   COUNT=$("${PSQL[@]}" --no-align --tuples-only -c "
     SELECT count(*)
     FROM $TABLE t
-    WHERE ST_Intersects(t.geometry, (
-      SELECT ST_Union(geometry) FROM osm_admin WHERE osm_id IN ($ADMIN_OSM_IDS)
-    ))
+    WHERE EXISTS (
+      SELECT 1 FROM osm_admin a
+      WHERE a.osm_id IN ($ADMIN_OSM_IDS)
+        AND ST_Intersects(t.geometry, a.geometry)
+    )
   ")
   echo "$COUNT rows"
 
@@ -101,16 +119,24 @@ for TABLE in "${TABLES[@]}"; do
     echo "COPY $TABLE FROM stdin;"
     "${PSQL[@]}" -c "
       COPY (
-        SELECT t.*
+        SELECT DISTINCT ON (t.ctid) t.*
         FROM $TABLE t
-        WHERE ST_Intersects(t.geometry, (
-          SELECT ST_Union(geometry) FROM osm_admin WHERE osm_id IN ($ADMIN_OSM_IDS)
-        ))
+        WHERE EXISTS (
+          SELECT 1 FROM osm_admin a
+          WHERE a.osm_id IN ($ADMIN_OSM_IDS)
+            AND ST_Intersects(t.geometry, a.geometry)
+        )
       ) TO STDOUT
     "
     echo "\\."
     echo ""
   } >> "$OUTPUT"
+
+  # Throttle between tables to avoid overloading the production DB
+  if [ "$TABLE" != "${TABLES[${#TABLES[@]}-1]}" ]; then
+    echo "  (sleeping ${THROTTLE_SECS}s…)"
+    sleep "$THROTTLE_SECS"
+  fi
 done
 
 # ── Footer ───────────────────────────────────────────────────────────────────
@@ -128,10 +154,4 @@ echo "  1. docker compose up osm_database_test -d"
 echo "  2. PGPASSWORD=imposm psql -h localhost -p 54322 -U imposm -d imposm -f docker/osm_database-schema.sql"
 echo "  3. PGPASSWORD=imposm psql -h localhost -p 54322 -U imposm -d imposm -f docker/osm-subset-data.sql"
 echo "  4. PGPASSWORD=imposm psql -h localhost -p 54322 -U imposm -d imposm -f docker/scoring-config-schema-and-seed.sql"
-
-
-
-
-
-
 
