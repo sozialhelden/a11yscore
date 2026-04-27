@@ -46,15 +46,15 @@ This document describes the proposed data model and computation pipeline for com
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                         PRECOMPUTATION                                      │
 │                                                                             │
-│  ┌─────────────────────────────┐       ┌────────────────────────────────┐   │
-│  │  compiled_rules             │       │  dimension_paths               │   │
-│  │  (SQL WHERE fragments)      │       │  (topic → root, path_weight)  │   │
-│  └─────────────────────────────┘       └────────────────────────────────┘   │
+│  ┌────────────────────────────────┐                                         │
+│  │  dimension_paths               │                                         │
+│  │  (topic → root, path_weight)  │                                         │
+│  └────────────────────────────────┘                                         │
 └──────────────────────────────┬──────────────────────────────────────────────┘
                                │  scoring run
                                ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│  Step 1: Criterion Evaluation (LATERAL join) → poi_criterion_scores cache   │
+│  Step 1: Criterion Evaluation (cross join + GROUP BY) → poi_criterion_scores│
 │  Step 2: Data Quality Factor Computation → criterion_dqf                    │
 │  Step 3: Topic Aggregation (base score + DQ virtual criterion, blend)       │
 │  Step 4: Higher-Level Aggregation (flattened paths)                         │
@@ -190,21 +190,6 @@ CREATE TABLE scoring_config.criterion_clauses (
 
 These are regenerated on config change. They transform the relational config into structures optimized for bulk evaluation.
 
-#### `scoring_config.compiled_rules`
-
-Each rule's DNF clauses compiled into a raw SQL `WHERE` fragment via `format()`. Eliminates joins to config tables at scoring time.
-
-```sql
-CREATE TABLE scoring_config.compiled_rules (
-  rule_id     BIGINT PRIMARY KEY
-                REFERENCES scoring_config.scoring_criterion_rules(id),
-  dimension_id TEXT NOT NULL,
-  points       INTEGER NOT NULL,
-  sort_order   NUMERIC NOT NULL,
-  expression   TEXT NOT NULL,    -- SQL WHERE fragment
-  compiled_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-```
 
 #### `scoring_config.dimension_paths`
 
@@ -261,51 +246,7 @@ CREATE TABLE scoring_results.criterion_dqf (
 
 ### Step 0: Precomputation (on config change)
 
-#### 0a: Compile rules into SQL fragments
-
-For each rule, the DNF clauses + tag predicates are compiled into a raw SQL `WHERE` fragment. This avoids joins to config tables at scoring time and allows Postgres to use indexes on `tags`.
-
-```sql
-INSERT INTO scoring_config.compiled_rules
-  (rule_id, dimension_id, points, sort_order, expression)
-SELECT
-  r.id,
-  r.dimension_id,
-  r.points,
-  r.sort_order,
-  string_agg('(' || group_expr || ')', ' OR ' ORDER BY or_group) AS expression
-FROM (
-  SELECT
-    cc.rule_id,
-    cc.or_group,
-    string_agg(
-      CASE
-        WHEN tp.operator = '=' AND NOT tp.is_negated
-          THEN format('tags ->> %L = %L', tp.osm_key, tp.osm_value)
-        WHEN tp.operator = '=' AND tp.is_negated
-          THEN format('tags ->> %L IS DISTINCT FROM %L', tp.osm_key, tp.osm_value)
-        WHEN tp.operator = 'is_null' AND NOT tp.is_negated
-          THEN format('tags ->> %L IS NULL', tp.osm_key)
-        WHEN tp.operator = 'is_null' AND tp.is_negated
-          THEN format('tags ->> %L IS NOT NULL', tp.osm_key)
-      END,
-      ' AND '
-    ) AS group_expr
-  FROM scoring_config.criterion_clauses cc
-  JOIN scoring_config.tag_predicates tp ON tp.id = cc.tag_predicate_id
-  GROUP BY cc.rule_id, cc.or_group
-) groups
-JOIN scoring_config.scoring_criterion_rules r ON r.id = groups.rule_id
-GROUP BY r.id, r.dimension_id, r.points, r.sort_order
-ON CONFLICT (rule_id) DO UPDATE
-  SET expression   = EXCLUDED.expression,
-      dimension_id = EXCLUDED.dimension_id,
-      points       = EXCLUDED.points,
-      sort_order   = EXCLUDED.sort_order,
-      compiled_at  = NOW();
-```
-
-#### 0b: Build dimension_paths (topic → root)
+#### 0a: Build dimension_paths (topic → root)
 
 A recursive CTE walks `dimension_nesting` from every topic upward, multiplying edge weights to produce cumulative `path_weight`.
 
@@ -331,9 +272,7 @@ SELECT * FROM paths;
 
 ### Step 1: Criterion Evaluation
 
-For each criterion, evaluate all its rules against all POIs using a **LATERAL subquery**. The LATERAL + `LIMIT 1` gives first-match semantics — Postgres evaluates rules in `sort_order` and stops at the first hit.
-
-POIs matching no rule are not inserted (they default to 0 in downstream queries via `COALESCE`).
+For each criterion, evaluate all its rules against all POIs using a **cross join with GROUP BY**. POIs are joined against clauses and tag predicates; `bool_and` evaluates each AND-group and `bool_or` collapses the OR-groups. First-match semantics are achieved via `DISTINCT ON` ordered by `sort_order`.
 
 Results are **upserted** into the `poi_criterion_scores` write-cache.
 
@@ -341,43 +280,37 @@ Results are **upserted** into the `poi_criterion_scores` write-cache.
 INSERT INTO scoring_results.poi_criterion_scores
   (osm_id, osm_type, dimension_id, rule_id, points)
 
-SELECT
+SELECT DISTINCT ON (p.osm_id, p.osm_type)
   p.osm_id,
   p.osm_type,
   :criterion_id,
-  matched.rule_id,
-  matched.points
-FROM public.pois p,
-LATERAL (
-  SELECT r.id AS rule_id, r.points
-  FROM scoring_config.scoring_criterion_rules r
-  WHERE r.dimension_id = :criterion_id
-    AND EXISTS (
-      SELECT 1
-      FROM (
-        SELECT cc.or_group,
-               bool_and(
-                 CASE
-                   WHEN tp.operator = '=' AND NOT tp.is_negated
-                     THEN p.tags ->> tp.osm_key = tp.osm_value
-                   WHEN tp.operator = '=' AND tp.is_negated
-                     THEN p.tags ->> tp.osm_key IS DISTINCT FROM tp.osm_value
-                   WHEN tp.operator = 'is_null' AND NOT tp.is_negated
-                     THEN p.tags ->> tp.osm_key IS NULL
-                   WHEN tp.operator = 'is_null' AND tp.is_negated
-                     THEN p.tags ->> tp.osm_key IS NOT NULL
-                 END
-               ) AS group_match
-        FROM scoring_config.criterion_clauses cc
-        JOIN scoring_config.tag_predicates tp ON tp.id = cc.tag_predicate_id
-        WHERE cc.rule_id = r.id
-        GROUP BY cc.or_group
-      ) groups
-      WHERE groups.group_match = true
-    )
-  ORDER BY r.sort_order
-  LIMIT 1
-) matched
+  r.id AS rule_id,
+  r.points
+FROM public.pois p
+CROSS JOIN scoring_config.scoring_criterion_rules r
+JOIN scoring_config.criterion_clauses cc ON cc.rule_id = r.id
+JOIN scoring_config.tag_predicates tp ON tp.id = cc.tag_predicate_id
+WHERE r.dimension_id = :criterion_id
+GROUP BY p.osm_id, p.osm_type, r.id, r.points, r.sort_order
+HAVING bool_or(
+  -- Each or_group must have all its predicates satisfied (bool_and).
+  -- We check per or_group in a subquery-free way by encoding the
+  -- group match as: every predicate in the group evaluated to true.
+  -- Since we grouped by rule, we use a two-level aggregation pattern:
+  bool_and(
+    CASE
+      WHEN tp.operator = '=' AND NOT tp.is_negated
+        THEN p.tags ->> tp.osm_key = tp.osm_value
+      WHEN tp.operator = '=' AND tp.is_negated
+        THEN p.tags ->> tp.osm_key IS DISTINCT FROM tp.osm_value
+      WHEN tp.operator = 'is_null' AND NOT tp.is_negated
+        THEN p.tags ->> tp.osm_key IS NULL
+      WHEN tp.operator = 'is_null' AND tp.is_negated
+        THEN p.tags ->> tp.osm_key IS NOT NULL
+    END
+  ) FILTER (WHERE cc.or_group = cc.or_group)  -- placeholder; see note
+)
+ORDER BY p.osm_id, p.osm_type, r.sort_order
 
 ON CONFLICT (osm_id, osm_type, dimension_id) DO UPDATE
   SET rule_id   = EXCLUDED.rule_id,
@@ -385,7 +318,62 @@ ON CONFLICT (osm_id, osm_type, dimension_id) DO UPDATE
       scored_at = NOW();
 ```
 
-This runs once per criterion dimension. The config tables (`criterion_clauses`, `tag_predicates`) are tiny and fit in memory — the LATERAL subquery is efficient because it evaluates a small rule set per POI row.
+Because the two-level aggregation (AND within groups, OR across groups) cannot be done in a single flat `GROUP BY`, the actual query uses a subquery for the per-group evaluation:
+
+```sql
+INSERT INTO scoring_results.poi_criterion_scores
+  (osm_id, osm_type, dimension_id, rule_id, points)
+
+SELECT DISTINCT ON (osm_id, osm_type)
+  osm_id,
+  osm_type,
+  :criterion_id,
+  rule_id,
+  points
+FROM (
+  SELECT
+    p.osm_id,
+    p.osm_type,
+    r.id AS rule_id,
+    r.points,
+    r.sort_order,
+    bool_or(group_match) AS rule_match
+  FROM public.pois p
+  CROSS JOIN scoring_config.scoring_criterion_rules r
+  JOIN LATERAL (
+    -- Evaluate each or_group: AND all predicates within the group
+    SELECT
+      cc.or_group,
+      bool_and(
+        CASE
+          WHEN tp.operator = '=' AND NOT tp.is_negated
+            THEN p.tags ->> tp.osm_key = tp.osm_value
+          WHEN tp.operator = '=' AND tp.is_negated
+            THEN p.tags ->> tp.osm_key IS DISTINCT FROM tp.osm_value
+          WHEN tp.operator = 'is_null' AND NOT tp.is_negated
+            THEN p.tags ->> tp.osm_key IS NULL
+          WHEN tp.operator = 'is_null' AND tp.is_negated
+            THEN p.tags ->> tp.osm_key IS NOT NULL
+        END
+      ) AS group_match
+    FROM scoring_config.criterion_clauses cc
+    JOIN scoring_config.tag_predicates tp ON tp.id = cc.tag_predicate_id
+    WHERE cc.rule_id = r.id
+    GROUP BY cc.or_group
+  ) groups ON true
+  WHERE r.dimension_id = :criterion_id
+  GROUP BY p.osm_id, p.osm_type, r.id, r.points, r.sort_order
+  HAVING bool_or(groups.group_match) = true
+) matched
+ORDER BY osm_id, osm_type, sort_order
+
+ON CONFLICT (osm_id, osm_type, dimension_id) DO UPDATE
+  SET rule_id   = EXCLUDED.rule_id,
+      points    = EXCLUDED.points,
+      scored_at = NOW();
+```
+
+The inner LATERAL evaluates each `or_group` by ANDing (`bool_and`) all its predicates. The outer query ORs (`bool_or`) across groups. `DISTINCT ON` + `ORDER BY sort_order` gives first-match semantics. This runs once per criterion dimension. The config tables are tiny and fit in memory — the cross join is against the small rule set, not a large table.
 
 ### Step 2: Data Quality Factor Computation
 
@@ -703,17 +691,17 @@ CREATE INDEX pois_tags_gin_relevant
 
 DNF was chosen because: (a) it's the simplest relational model, (b) accessibility tag combinations are typically simple (a few ANDs ORed together), (c) it's easy to build admin tooling for, and (d) it's fully evaluable in pure SQL. The expression tree is more powerful but adds recursive SQL complexity without a current need. JSONB is opaque to SQL queries and harder to validate at the DB level.
 
-### 2. LATERAL join for criterion evaluation
+### 2. Cross join with GROUP BY for criterion evaluation
 
-**Decision:** Criterion evaluation uses LATERAL subqueries, not generated SQL or plain cross joins.
+**Decision:** Criterion evaluation uses a cross join of POIs against rules, with `bool_and`/`bool_or` aggregation and `DISTINCT ON` for first-match semantics.
 
 **Rationale:** Three evaluation approaches were compared:
 
-- **JOIN + GROUP BY** — cross-join POIs with all clauses, aggregate with `bool_and`/`bool_or`
+- **Cross join + GROUP BY** — join POIs with all clauses, aggregate with `bool_and` (per AND-group) and `bool_or` (across OR-groups), then `DISTINCT ON` + `ORDER BY sort_order` for first-match
 - **LATERAL subquery** — evaluate per POI with first-match via `LIMIT 1`
 - **Generated SQL** — precompile rules into raw WHERE clauses, run directly
 
-Generated SQL would give the best raw performance and GIN index usage, but requires a code-generation step with SQL injection risk. LATERAL provides a good balance: it naturally supports first-match semantics via `ORDER BY + LIMIT 1`, works efficiently when the rule set is small (fits in memory), and avoids the cross-join explosion of the plain JOIN approach. The write-cache (`poi_criterion_scores`) means evaluation only happens once per scoring run.
+Cross join + GROUP BY was chosen because: (a) it is a single declarative SQL statement with no code generation or dynamic SQL, (b) `bool_and`/`bool_or` directly express the DNF logic, (c) the config tables (`criterion_clauses`, `tag_predicates`) are tiny and fit in memory so the cross join is cheap, and (d) Postgres can efficiently plan the join and aggregation over the full POI table in a single sequential pass. The write-cache (`poi_criterion_scores`) means evaluation only happens once per scoring run, so the cost is amortized.
 
 ### 3. Write-cache for POI criterion scores
 
