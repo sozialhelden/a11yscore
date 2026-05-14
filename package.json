@@ -43,7 +43,7 @@
     "vitest": "4.1.6"
   },
   "dependencies": {
-    "tsx": "4.21.0",
+    "tsx": "4.22.0",
     "@sozialhelden/core": "2.3.0",
     "@transifex/native": "7.1.6",
     "bullmq": "5.76.8",
