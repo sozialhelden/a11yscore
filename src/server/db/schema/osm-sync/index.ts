@@ -56,6 +56,7 @@ export const osm_admin = pgTable("osm_admin", {
   name: varchar().notNull(),
   admin_level: integer().notNull(),
   wikidata: varchar().notNull(),
+  tags: varchar().notNull(),
   geometry: geometry().notNull(),
 });
 

@@ -70,10 +70,6 @@ const genericPublicInstitutionsTopics: SubCategory["topics"] = [
         weight: 0.25,
       },
       {
-        criterionId: "has-information-board-with-speech-output",
-        weight: 0.25,
-      },
-      {
         criterionId: "has-tactile-writing",
         weight: 0.25,
       },
