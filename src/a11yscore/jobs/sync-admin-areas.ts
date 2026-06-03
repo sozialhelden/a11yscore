@@ -39,19 +39,23 @@ export async function handle() {
       )
       AND ${osm_admin.admin_level} IN ${allowedAdminLevels} 
       AND ${osm_admin.name} != ''
-    
+  
   UNION
-   
-    SELECT ${osm_admin.osm_id}, ${osm_admin.name}, ${osm_admin.admin_level}, ${osm_admin.wikidata},
-      COALESCE(${osm_admin.tags}->'name:en', ${osm_admin.name}) AS name_en
-    FROM ${osm_admin}    
-    WHERE ${osm_admin.osm_id} IN ${includedGlobalCities}      
-      AND ${osm_admin.name} != ''
+
+  SELECT ${osm_admin.osm_id}, ${osm_admin.name}, ${osm_admin.admin_level}, ${osm_admin.wikidata},
+    COALESCE(${osm_admin.tags}->'name:en', ${osm_admin.name}) AS name_en
+  FROM ${osm_admin}    
+  WHERE ${osm_admin.osm_id} IN ${includedGlobalCities}
+
+
   `;
 
   const { rows } = await osmSyncDb.execute<AdminAreaResult>(query);
 
-  for (const result of rows) {
+  const imageJobs: { adminArea: typeof adminAreas.$inferSelect }[] = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const result = rows[i];
     const adminArea = {
       osmId: result.osm_id,
       name: result.name,
@@ -62,26 +66,41 @@ export async function handle() {
       globalCapital: globalCitiesSet.has(result.osm_id),
     };
 
-    const queryResult = await appDb
-      .insert(adminAreas)
-      .values(adminArea)
-      .onConflictDoUpdate({
-        target: adminAreas.osmId,
-        set: adminArea,
-      })
-      .returning();
+    try {
+      const queryResult = await appDb
+        .insert(adminAreas)
+        .values(adminArea)
+        .onConflictDoUpdate({
+          target: adminAreas.osmId,
+          set: adminArea,
+        })
+        .returning();
 
-    await scoreQueue.add(
-      setAdminAreaImageJobId,
-      { adminArea: queryResult.shift() },
-      {
+      const inserted = queryResult.shift();
+      if (inserted) {
+        imageJobs.push({ adminArea: inserted });
+      }
+    } catch (error) {
+      console.error(
+        `[sync-admin-areas] Failed at row ${i + 1}/${rows.length} (osmId=${result.osm_id}, name="${result.name}"):`,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  await scoreQueue.addBulk(
+    imageJobs.map((data) => ({
+      name: setAdminAreaImageJobId,
+      data,
+      opts: {
         attempts: 4,
         backoff: {
-          type: "exponential",
+          type: "exponential" as const,
           delay: 3000,
           jitter: 0.5,
         },
       },
-    );
-  }
+    })),
+  );
 }
