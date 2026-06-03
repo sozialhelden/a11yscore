@@ -63,15 +63,15 @@ const genericPublicInstitutionsTopics: SubCategory["topics"] = [
     criteria: [
       {
         criterionId: "is-accessible-to-visually-impaired",
-        weight: 0.25,
+        weight: 1 / 3,
       },
       {
         criterionId: "has-tactile-paving",
-        weight: 0.25,
+        weight: 1 / 3,
       },
       {
         criterionId: "has-tactile-writing",
-        weight: 0.25,
+        weight: 1 / 3,
       },
     ],
   },
