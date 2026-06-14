@@ -1,4 +1,4 @@
-FROM node:24.15.0-alpine AS base
+FROM node:24.16.0-alpine AS base
 WORKDIR /app
 
 RUN apk add --no-cache curl bash
