@@ -1,9 +1,10 @@
 import { scoreQueue } from "~/queue";
 import { langQueryParameter } from "~/utils/openApi";
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
+  setHeader(event, "Content-Type", "text/plain; version=0.0.4; charset=utf-8");
   const metrics = [await scoreQueue.exportPrometheusMetrics()];
-  return metrics.join("/n");
+  return metrics.join("\n");
 });
 
 defineRouteMeta({
@@ -16,7 +17,7 @@ defineRouteMeta({
       "200": {
         description: "Successful response",
         content: {
-          "application/json": {
+          "text/plain": {
             schema: {
               type: "string",
               description: "Prometheus metrics in text format",
