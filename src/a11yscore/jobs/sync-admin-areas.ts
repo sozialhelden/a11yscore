@@ -7,6 +7,7 @@ import { scoreQueue, setAdminAreaImageJobId } from "~/queue";
 import {
   allowedAdminLevels,
   allowedCountries,
+  includedItalianCities,
 } from "~~/src/a11yscore/config/admin-areas";
 
 // extend slug to handle German characters properly
@@ -26,14 +27,21 @@ export async function handle() {
     JOIN ${osm_admin_gen0} ON ${osm_admin_gen0.osm_id} IN ${allowedCountries}
     WHERE 
         ST_Covers(
-            ${osm_admin_gen0.geometry},
+                ${osm_admin_gen0.geometry},
             -- Checking only for a representative point inside the sub-region avoids
             -- missing sub-regions with exclaves and non-exact border topologies (like
             -- Bavaria in Germany). 
-            ST_PointOnSurface(${osm_admin.geometry})
+                ST_PointOnSurface(${osm_admin.geometry})
         )
-        AND ${osm_admin.admin_level} IN ${allowedAdminLevels}
+        AND ${osm_admin.admin_level} IN ${allowedAdminLevels} 
         AND ${osm_admin.name} != ''
+      
+    UNION
+
+    SELECT ${osm_admin.osm_id}, ${osm_admin.name}, ${osm_admin.admin_level}, ${osm_admin.wikidata}    
+    FROM ${osm_admin}    
+    WHERE ${osm_admin.osm_id} IN ${includedItalianCities}      
+      AND ${osm_admin.name} != ''
   `;
 
   const { rows } = await osmSyncDb.execute<AdminAreaResult>(query);
