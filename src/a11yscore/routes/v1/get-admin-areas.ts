@@ -2,15 +2,25 @@ import { notInArray } from "drizzle-orm";
 import { appDb } from "~/db";
 import { adminAreas } from "~/db/schema/app";
 import { useIsDevelopment } from "~/utils/env";
-import { excludedAdminAreas } from "~~/src/a11yscore/config/admin-areas";
+import {
+  excludedAdminAreas,
+  includedGlobalCities,
+} from "~~/src/a11yscore/config/admin-areas";
+
+const globalCitiesSet = new Set(includedGlobalCities);
 
 export default defineCachedEventHandler(
   async () => {
+    const rows = await appDb
+      .select()
+      .from(adminAreas)
+      .where(notInArray(adminAreas.osmId, excludedAdminAreas));
+
     return {
-      adminAreas: await appDb
-        .select()
-        .from(adminAreas)
-        .where(notInArray(adminAreas.osmId, excludedAdminAreas)),
+      adminAreas: rows.map((area) => ({
+        ...area,
+        globalCapital: globalCitiesSet.has(area.osmId),
+      })),
     };
   },
   {
