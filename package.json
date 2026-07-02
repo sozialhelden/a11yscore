@@ -45,7 +45,7 @@
   "dependencies": {
     "tsx": "4.22.4",
     "@sozialhelden/core": "2.3.0",
-    "@transifex/native": "7.1.6",
+    "@transifex/native": "8.0.1",
     "bullmq": "5.79.2",
     "dotenv": "17.4.2",
     "drizzle-kit": "0.31.10",
