@@ -29,6 +29,13 @@ defineRouteMeta({
                 example: "Berlin",
                 description: "Name of the admin area",
               },
+              nameEn: {
+                type: "string",
+                example: "Berlin",
+                description:
+                  "English name of the admin area (falls back to local name if unavailable)",
+                nullable: true,
+              },
               slug: {
                 type: "string",
                 example: "berlin",

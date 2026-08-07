@@ -20,6 +20,7 @@ export const adminAreas = pgTable(
     adminLevel: integer("admin_level").notNull(),
     slug: varchar("slug").notNull(),
     wikidata: varchar("wikidata"),
+    nameEn: varchar("name_en"),
     image: json("image"),
   },
   (table) => [uniqueIndex("osm_id_idx").on(table.osmId)],
